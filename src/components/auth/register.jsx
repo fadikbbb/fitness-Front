@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 
-export default function Register() {
+function Register() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -12,6 +13,8 @@ export default function Register() {
   const [errors, setErrors] = useState([]);
   const [errorPath, setErrorPath] = useState([]);
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
+  const [passwordVisible, setPasswordVisible] = useState(false); // Password visibility
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -19,6 +22,7 @@ export default function Register() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true); // Show spinner on submit
     try {
       await axios.post("http://localhost:5000/api/v1/auth/register", formData);
       setSuccess("Registration successful!");
@@ -34,31 +38,31 @@ export default function Register() {
       setErrors(error.response.data.errors.map((err) => err.msg));
       setErrorPath(error.response.data.errors.map((err) => err.path));
       setSuccess("");
-      console.log(errors[0]);
+    } finally {
+      setLoading(false); // Hide spinner
     }
   };
 
-  return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-6">Register</h2>
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
 
-      {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          {errors.map((errors, i) =>
-            errorPath[i] === "firstName" ? (
-              <p key={i} className="text-red-500 text-sm mt-1">
-                {errors}
-              </p>
-            ) : (
-              ""
-            )
-          )}
+  return (
+    <div className="max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg mt-10">
+      <h2 className="text-3xl font-bold mb-8 text-center text-indigo-600">
+        Create an Account
+      </h2>
+
+      {success && (
+        <p className="text-green-500 text-sm mb-6 text-center">{success}</p>
+      )}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-1">
           <label
             htmlFor="firstName"
             className="block text-sm font-medium text-gray-700"
           >
-            First Name:
+            First Name
           </label>
           <input
             type="text"
@@ -66,26 +70,25 @@ export default function Register() {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${
-              errorPath === "firstName" ? "border-red-500" : ""
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+              errorPath.includes("firstName")
+                ? "border-red-500"
+                : "border-gray-300"
             }`}
           />
-        </div>
-        <div className="mb-4">
-          {errors.map((errors, i) =>
-            errorPath[i] === "lastName" ? (
-              <p key={i} className="text-red-500 text-sm mt-1">
-                {errors}
-              </p>
-            ) : (
-              ""
-            )
+          {errorPath.includes("firstName") && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors[errorPath.indexOf("firstName")]}
+            </p>
           )}
+        </div>
+
+        <div className="space-y-1">
           <label
             htmlFor="lastName"
             className="block text-sm font-medium text-gray-700"
           >
-            Last Name:
+            Last Name
           </label>
           <input
             type="text"
@@ -93,26 +96,25 @@ export default function Register() {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${
-              errorPath === "lastName" ? "border-red-500" : ""
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+              errorPath.includes("lastName")
+                ? "border-red-500"
+                : "border-gray-300"
             }`}
           />
-        </div>
-        <div className="mb-4">
-          {errors.map((errors, i) =>
-            errorPath[i] === "email" ? (
-              <p key={i} className="text-red-500 text-sm mt-1">
-                {errors}
-              </p>
-            ) : (
-              ""
-            )
+          {errorPath.includes("lastName") && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors[errorPath.indexOf("lastName")]}
+            </p>
           )}
+        </div>
+
+        <div className="space-y-1">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
           >
-            Email:
+            Email
           </label>
           <input
             type="email"
@@ -120,45 +122,67 @@ export default function Register() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${
-              errorPath === "email" ? "border-red-500" : ""
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+              errorPath.includes("email") ? "border-red-500" : "border-gray-300"
             }`}
           />
-        </div>
-        <div className="mb-4">
-          {errors.map((errors, i) =>
-            errorPath[i] === "password" ? (
-              <p key={i} className="text-red-500 text-sm mt-1">
-                {errors}
-              </p>
-            ) : (
-              ""
-            )
+          {errorPath.includes("email") && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors[errorPath.indexOf("email")]}
+            </p>
           )}
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Password:
-          </label>
+        </div>
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Password
+        </label>
+        <div className="space-y-1 relative">
           <input
-            type="password"
+            type={passwordVisible ? "text" : "password"}
             id="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${
-              errorPath === "password" ? "border-red-500" : ""
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+              errorPath.includes("password")
+                ? "border-red-500"
+                : "border-gray-300"
             }`}
           />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute inset-y-0 right-0 px-3 py-1 text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+          </button>
+          {errorPath.includes("password") && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors[errorPath.indexOf("password")]}
+            </p>
+          )}
         </div>
-        <button
-          type="submit"
-          className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Register
-        </button>
+
+        <div>
+          <button
+            type="submit"
+            className={`w-full py-3 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+              loading ? "cursor-not-allowed" : ""
+            }`}
+            disabled={loading}
+          >
+            {loading ? (
+              <FaSpinner className="animate-spin mx-auto" />
+            ) : (
+              "Register"
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );
 }
+
+export default Register;

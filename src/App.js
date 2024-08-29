@@ -7,7 +7,7 @@ import Register from "./components/auth/register";
 import Login from "./components/auth/login";
 import VerifyCode from "./components/auth/VerifyCode";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
-import PasswordReset from "./components/auth/PasswordReset";
+import PasswordReset from "./components/auth/ResetPassword";
 
 function App() {
   return (
@@ -49,7 +49,7 @@ function App() {
               element={<PasswordResetRequest />}
             />
             <Route
-              path="/auth/password-reset/:token"
+              path="/auth/password-reset/rest/:token"
               element={<PasswordReset />}
             />
           </Routes>
