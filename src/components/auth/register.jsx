@@ -1,84 +1,97 @@
-// src/Register.js
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import axios from 'axios';
-import { HiEye, HiEyeOff } from 'react-icons/hi';
 
-const Register = () => {
-    const { register, handleSubmit, formState: { errors }, setError } = useForm();
-    const [showPassword, setShowPassword] = useState(false);
+export default function Register() {
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+    });
 
-    const onSubmit = async (data) => {
+    const [errors, setErrors] = useState([]);
+    const [errorPath, setErrorPath] = useState([]);
+    const [success, setSuccess] = useState('');
+
+    const handleChange = (event) => {
+        setFormData({ ...formData, [event.target.name]: event.target.value });
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/api/v1/auth/register', data);
-            console.log('Form submitted successfully:', response.data);
-            // Optionally redirect or show a success message
+            await axios.post('http://localhost:5000/api/v1/auth/register', formData);
+            setSuccess('Registration successful!');
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: '',
+            });
+            setErrors([]);
+            setErrorPath([]);
         } catch (error) {
-            console.error('There was a problem with the request:', error);
-            if (error.response) {
-                // Handle server errors
-                setError('server', { message: error.response.data.message || 'An error occurred' });
-            } else {
-                // Handle other errors
-                setError('server', { message: 'An unexpected error occurred' });
-            }
+            setErrors(error.response.data.errors.map((err) => err.msg));
+            setErrorPath(error.response.data.errors.map((err) => err.path));
+            setSuccess('');
+            console.log(errors[0]);
         }
     };
 
     return (
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-6">Register</h2>
-            <form onSubmit={handleSubmit(onSubmit)}>
+
+            {success && <p className="text-green-500 text-sm mb-4">{success}</p>}
+            <form onSubmit={handleSubmit}>
                 <div className="mb-4">
+                    {errors.map((errors, i) => errorPath[i] === 'firstName' ? <p key={i} className="text-red-500 text-sm mt-1">{errors}</p> : "")}
                     <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name:</label>
                     <input
                         type="text"
                         id="firstName"
-                        {...register('firstName', { required: 'First name is required' })}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${errorPath === 'firstName' ? 'border-red-500' : ''}`}
                     />
-                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
                 </div>
                 <div className="mb-4">
+                    {errors.map((errors, i) => errorPath[i] === 'lastName' ? <p key={i} className="text-red-500 text-sm mt-1">{errors}</p> : "")}
                     <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name:</label>
                     <input
                         type="text"
                         id="lastName"
-                        {...register('lastName', { required: 'Last name is required' })}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${errorPath === 'lastName' ? 'border-red-500' : ''}`}
                     />
-                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
                 </div>
                 <div className="mb-4">
+                    {errors.map((errors, i) => errorPath[i] === 'email' ? <p key={i} className="text-red-500 text-sm mt-1">{errors}</p> : "")}
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email:</label>
                     <input
                         type="email"
                         id="email"
-                        {...register('email', { required: 'Email is required' })}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${errorPath === 'email' ? 'border-red-500' : ''}`}
                     />
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
                 </div>
-                <div className="mb-4 relative">
+                <div className="mb-4">
+                    {errors.map((errors, i) => errorPath[i] === 'password' ? <p key={i} className="text-red-500 text-sm mt-1">{errors}</p> : "")}
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password:</label>
-
-                    <div className='relative'>
-                        <input
-                            type={showPassword ? 'text' : 'password'}
-                            id="password"
-                            {...register('password', { required: 'Password is required' })}
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 pr-10"
-                        />
-                        <span
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-                        >
-                            {showPassword ? <HiEyeOff className="text-gray-500" /> : <HiEye className="text-gray-500" />}
-                        </span>
-                    </div>
-                    {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className={`mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 ${errorPath === 'password' ? 'border-red-500' : ''}`}
+                    />
                 </div>
-                {errors.server && <p className="text-red-500 text-sm mt-1">{errors.server.message}</p>}
                 <button
                     type="submit"
                     className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -88,6 +101,4 @@ const Register = () => {
             </form>
         </div>
     );
-};
-
-export default Register;
+}
