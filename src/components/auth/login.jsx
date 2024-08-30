@@ -14,8 +14,6 @@ const Login = () => {
   const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data) => {
@@ -31,8 +29,6 @@ const Login = () => {
       } else if (response.data.message) {
         // Assuming success response contains a message
         setEmailSent(true);
-        setEmail(data.email); // Store email in state
-        setPassword(data.password); // Store password in state
         navigate("/auth/verify-code", {
           state: { email: data.email, password: data.password }, // Pass email and password to verification page
         });
@@ -45,33 +41,16 @@ const Login = () => {
     }
   };
 
-  const resendVerificationCode = async () => {
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/auth/resend-code",
-        {
-          email: email,
-          password: password,
-        }
-      );
-      if (response.data.message) {
-        setEmailSent(true);
-        alert("Verification code resent to your email.");
-        navigate("/auth/verify-code", {
-          state: { email, password },
-        }); // Navigate to verification page
-      } else {
-        setError("Failed to resend code. Please try again.");
-      }
-    } catch (error) {
-      console.error("Resend code error:", error);
-      setError("Failed to resend code. Please try again.");
-    }
-  };
-
   // Navigate to home page
   const goToHome = () => {
     navigate("/");
+  };
+
+  // Navigate to password reset request page with email state
+  const goToPasswordResetRequest = () => {
+    navigate("/auth/password-reset-request", {
+      state: { email: document.getElementById("email").value }, // Pass email from input field
+    });
   };
 
   return (
@@ -149,28 +128,22 @@ const Login = () => {
         {error && (
           <p className="mt-4 text-sm text-center text-red-500">{error}</p>
         )}
-        <div className="flex justify-between mt-4">
+        <div className="flex justify-between items-center mt-4">
           <button
             type="button"
-            onClick={resendVerificationCode}
-            className="text-sm text-blue-500 hover:underline"
+            onClick={goToHome}
+            className="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
           >
-            Resend Verification Code
+            Back
           </button>
-          <a
-            href="/auth/password-reset-request"
+          <button
+            type="button"
+            onClick={goToPasswordResetRequest}
             className="text-sm text-blue-500 hover:underline"
           >
             Forgot Password?
-          </a>
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={goToHome}
-          className="w-full mt-4 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
-        >
-          Go to Home
-        </button>
       </div>
     </div>
   );

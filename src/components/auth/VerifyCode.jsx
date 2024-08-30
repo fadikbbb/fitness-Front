@@ -62,15 +62,6 @@ const VerifyCode = () => {
   // Verify the code with the backend
   const verifyCode = async (inputCode) => {
     try {
-      console.log(
-        "Verifying code:",
-        inputCode,
-        "Email:",
-        email,
-        "Password:",
-        password
-      );
-
       const response = await axios.post(
         "http://localhost:5000/api/v1/auth/verify-login-code",
         {
@@ -80,9 +71,15 @@ const VerifyCode = () => {
         }
       );
 
-      if (response.data.success) {
+      if (response.data.message === "success") {
+        const token = response.data.token; // Extract the token from the response
+
+        // Store the token securely
+        localStorage.setItem("authToken", token); // Store token in localStorage
+
         setIsCodeValid(true); // Set code validation status to true
         setShake(true); // Trigger shake animation
+
         setTimeout(() => {
           setShake(false); // Reset shake animation after 500ms
           navigate("/"); // Navigate to home page after successful verification
