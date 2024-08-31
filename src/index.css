@@ -1,8 +1,5 @@
 @tailwind base;
 @tailwind components;
-<<<<<<< HEAD
-@tailwind utilities;
-=======
 @tailwind utilities;
 
 /* src/index.css or src/App.css */
@@ -24,4 +21,3 @@
 .animate-shake {
   animation: shake 0.5s ease-in-out;
 }
->>>>>>> a838839e4162662846349c44acc51961cfcdd42c

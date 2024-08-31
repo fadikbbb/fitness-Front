@@ -27,7 +27,6 @@ const Login = () => {
         setError(response.data.error);
         setEmailSent(false);
       } else if (response.data.message) {
-        // Assuming success response contains a message
         setEmailSent(true);
         navigate("/auth/verify-code", {
           state: { email: data.email, password: data.password }, // Pass email and password to verification page

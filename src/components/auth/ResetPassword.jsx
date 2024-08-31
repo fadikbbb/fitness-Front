@@ -1,39 +1,39 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios"; // Importing Axios
 
 function ResetPassword() {
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+  } = useForm();
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const { token } = useParams(); // Assuming you're using React Router for token param
+  const { token } = useParams();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (newPassword !== confirmPassword) {
+  const onSubmit = async (data) => {
+    if (data.newPassword !== data.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
     try {
-      const response = await fetch(`/api/auth/reset-password/rest/${token}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newPassword }),
-      });
+      const response = await axios.post(
+        `http://localhost:5000/api/auth/reset-password/rest/${token}`,
+        {
+          newPassword: data.newPassword,
+          confirmPassword: data.confirmPassword,
+        }
+      );
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message);
-        setError("");
-      } else {
-        setError(data.error || "Something went wrong");
-        setMessage("");
-      }
+      setMessage(response.data.message);
+      setError("");
     } catch (err) {
-      setError("Network error");
+      setError(err.response?.data?.error || "Something went wrong");
+      setMessage("");
     }
   };
 
@@ -43,23 +43,29 @@ function ResetPassword() {
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Reset Password
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="password"
-            placeholder="New password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="New password"
+              {...register("newPassword", { required: true })}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <div
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </div>
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Confirm password"
+              {...register("confirmPassword", { required: true })}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <button
             type="submit"
             className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"

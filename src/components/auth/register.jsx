@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Register() {
@@ -10,6 +11,7 @@ function Register() {
     password: "",
   });
 
+  const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
   const [errorPath, setErrorPath] = useState([]);
   const [success, setSuccess] = useState("");
@@ -34,6 +36,7 @@ function Register() {
       });
       setErrors([]);
       setErrorPath([]);
+      navigate("/auth/login");
     } catch (error) {
       setErrors(error.response.data.errors.map((err) => err.msg));
       setErrorPath(error.response.data.errors.map((err) => err.path));
@@ -76,13 +79,12 @@ function Register() {
                 : "border-gray-300"
             }`}
           />
-          {errorPath.includes("firstName") && (
+             {errorPath && errorPath.includes("lastName") && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath.indexOf("firstName")]}
+              {errors[errorPath.indexOf("lastName")]}
             </p>
           )}
         </div>
-
         <div className="space-y-1">
           <label
             htmlFor="lastName"
@@ -102,7 +104,7 @@ function Register() {
                 : "border-gray-300"
             }`}
           />
-          {errorPath.includes("lastName") && (
+          {errorPath &&  errorPath.includes("lastName") && (
             <p className="text-red-500 text-xs mt-1">
               {errors[errorPath.indexOf("lastName")]}
             </p>
@@ -126,7 +128,7 @@ function Register() {
               errorPath.includes("email") ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errorPath.includes("email") && (
+          {errorPath && errorPath.includes("email") && (
             <p className="text-red-500 text-xs mt-1">
               {errors[errorPath.indexOf("email")]}
             </p>
@@ -158,12 +160,12 @@ function Register() {
           >
             {passwordVisible ? <FaEyeSlash /> : <FaEye />}
           </button>
-          {errorPath.includes("password") && (
+          </div>
+          {errorPath && errorPath.includes("password") && (
             <p className="text-red-500 text-xs mt-1">
               {errors[errorPath.indexOf("password")]}
             </p>
           )}
-        </div>
 
         <div>
           <button
