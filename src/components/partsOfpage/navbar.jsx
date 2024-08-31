@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 
 function Nav() {
   const [userRole, setUserRole] = useState("");
-  const [token, setToken] = useState(localStorage.getItem("authToken")!==null? localStorage.getItem("authToken") : null);
 
+  const [token, setToken] = useState("");
   useEffect(() => {
+    if (localStorage.getItem("authToken")) {
+      setToken(localStorage.getItem("authToken"));
+    }
     const fetchUserRole = async () => {
       if (token) {
         try {
@@ -21,6 +24,7 @@ function Nav() {
               },
             }
           );
+
           console.log("User details:", response.data.user);
           setUserRole(response.data.user.role);
         } catch (error) {
