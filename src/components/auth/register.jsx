@@ -3,6 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 
+// Define the base URL as a constant
+const BASE_URL =
+  process.env.REACT_APP_BASE_URL || "http://localhost:5000/api/v1";
+
 function Register() {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -26,7 +30,7 @@ function Register() {
     event.preventDefault();
     setLoading(true); // Show spinner on submit
     try {
-      await axios.post("http://localhost:5000/api/v1/auth/register", formData);
+      await axios.post(`${BASE_URL}/auth/register`, formData);
       setSuccess("Registration successful!");
       setFormData({
         firstName: "",
@@ -38,8 +42,10 @@ function Register() {
       setErrorPath([]);
       navigate("/auth/login");
     } catch (error) {
-      setErrors(error.response.data.errors.map((err) => err.msg));
-      setErrorPath(error.response.data.errors.map((err) => err.path));
+      if (error.response && error.response.data) {
+        setErrors(error.response.data.errors.map((err) => err.msg));
+        setErrorPath(error.response.data.errors.map((err) => err.path));
+      }
       setSuccess("");
     } finally {
       setLoading(false); // Hide spinner
@@ -79,9 +85,9 @@ function Register() {
                 : "border-gray-300"
             }`}
           />
-             {errorPath && errorPath.includes("lastName") && (
+          {errorPath.includes("firstName") && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath.indexOf("lastName")]}
+              {errors[errorPath.indexOf("firstName")]}
             </p>
           )}
         </div>
@@ -104,7 +110,7 @@ function Register() {
                 : "border-gray-300"
             }`}
           />
-          {errorPath &&  errorPath.includes("lastName") && (
+          {errorPath.includes("lastName") && (
             <p className="text-red-500 text-xs mt-1">
               {errors[errorPath.indexOf("lastName")]}
             </p>
@@ -128,7 +134,7 @@ function Register() {
               errorPath.includes("email") ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errorPath && errorPath.includes("email") && (
+          {errorPath.includes("email") && (
             <p className="text-red-500 text-xs mt-1">
               {errors[errorPath.indexOf("email")]}
             </p>
@@ -160,12 +166,12 @@ function Register() {
           >
             {passwordVisible ? <FaEyeSlash /> : <FaEye />}
           </button>
-          </div>
-          {errorPath && errorPath.includes("password") && (
+          {errorPath.includes("password") && (
             <p className="text-red-500 text-xs mt-1">
               {errors[errorPath.indexOf("password")]}
             </p>
           )}
+        </div>
 
         <div>
           <button

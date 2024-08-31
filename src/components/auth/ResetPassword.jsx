@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios"; // Importing Axios
 
+// Define the base URL as a constant
+const BASE_URL =
+  process.env.REACT_APP_BASE_URL || "http://localhost:5000/api/auth";
+
 function ResetPassword() {
-  const {
-    register,
-    handleSubmit,
-  } = useForm();
+  const { register, handleSubmit } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -22,10 +23,9 @@ function ResetPassword() {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/auth/reset-password/rest/${token}`,
+        `${BASE_URL}/reset-password/rest/${token}`,
         {
           newPassword: data.newPassword,
-          confirmPassword: data.confirmPassword,
         }
       );
 

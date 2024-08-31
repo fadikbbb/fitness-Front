@@ -16,27 +16,46 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Fetch the base URL from environment variables
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+
   const onSubmit = async (data) => {
     setLoading(true); // Start loading animation
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
-        data
-      );
-      if (response.data.error) {
-        setError(response.data.error);
-        setEmailSent(false);
-      } else if (response.data.message) {
+      const response = await axios.post(`${BASE_URL}/auth/login`, data);
+
+      // Check if response status is OK (200) or Created (201)
+      if (response.ok) {
         setEmailSent(true);
         navigate("/auth/verify-code", {
-          state: { email: data.email, password: data.password }, // Pass email and password to verification page
+          state: { email: data.email, password: data.password },
         });
+      } else {
+        // Handle unexpected success status
+        setError("Unexpected response. Please try again.");
+        setEmailSent(false);
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setError("Login failed. Please try again.");
+      // Handle different error status codes
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError("Bad Request. Please check your input.");
+        } else if (error.response.status === 401) {
+          setError("Unauthorized. Invalid email or password.");
+        } else if (error.response.status === 500) {
+          setError("Server error. Please try again later.");
+        } else {
+          setError(
+            error.response.data.error || "An error occurred. Please try again."
+          );
+        }
+      } else {
+        // Handle network or other errors
+        console.error("Login error:", error);
+        setError("Network error. Please check your connection.");
+      }
     } finally {
-      setLoading(false); // Stop loading animation
+      setLoading(false);
     }
   };
 

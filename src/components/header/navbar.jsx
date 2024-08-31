@@ -1,49 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode"; // Correct import
+// src/components/partsOfpage/navbar.js
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setToken, setUserRole, clearAuthState } from "../../store/authSlice";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-function Nav() {
-  const [userRole, setUserRole] = useState("");
+function NavBar() {
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const userRole = useSelector((state) => state.auth.userRole);
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-  const [token, setToken] = useState("");
   useEffect(() => {
-    if (localStorage.getItem("authToken")) {
-      setToken(localStorage.getItem("authToken"));
-    }
     const fetchUserRole = async () => {
       if (token) {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.userId;
-          const response = await axios.get(
-            `http://localhost:5000/api/v1/users/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const response = await axios.get(`${BASE_URL}/users/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-          console.log("User details:", response.data.user);
-          setUserRole(response.data.user.role);
+          dispatch(setUserRole(response.data.user.role));
         } catch (error) {
           console.error(
             "Error fetching user details:",
             error.response?.data || error.message
           );
 
-          localStorage.removeItem("authToken");
-          setToken(null);
-          setUserRole(null);
+          dispatch(clearAuthState());
         }
       } else {
-        setUserRole(null);
+        dispatch(clearAuthState());
       }
     };
 
     fetchUserRole();
-  }, [token]);
+  }, [token, dispatch, BASE_URL]);
+
   return (
     <nav className="bg-gray-800 text-white p-4">
       <ul className="flex space-x-4">
@@ -58,7 +55,7 @@ function Nav() {
           </Link>
         </li>
 
-        {userRole && userRole === "admin" && (
+        {userRole === "admin" && (
           <li>
             <Link to="/dashboard" className="hover:underline">
               Dashboard
@@ -90,11 +87,7 @@ function Nav() {
         {userRole && (
           <li>
             <button
-              onClick={() => {
-                localStorage.removeItem("authToken");
-                setToken(null);
-                setUserRole(null);
-              }}
+              onClick={() => dispatch(clearAuthState())}
               className="hover:underline"
             >
               Logout
@@ -106,4 +99,4 @@ function Nav() {
   );
 }
 
-export default Nav;
+export default NavBar;

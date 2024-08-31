@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 function RequestPasswordReset() {
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -30,11 +32,14 @@ function RequestPasswordReset() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/v1/auth/password-reset/request", {
-        email,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/auth/password-reset/request`,
+        {
+          email,
+        }
+      );
 
-      if (response.data.message === "success") {
+      if (response.status === 200 && response.data.message === "success") {
         setMessage("Reset link sent successfully!");
         setError("");
       } else {
