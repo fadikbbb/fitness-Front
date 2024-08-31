@@ -7,13 +7,11 @@ import Login from "./components/auth/login";
 import VerifyCode from "./components/auth/VerifyCode";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import PasswordReset from "./components/auth/ResetPassword";
-import Nav from "./components/partsOfpage/navbar";
 import Profile from "./pages/profile";
 function App() {
   return (
     <Router>
       <div>
-        <Nav  />
         <main className="p-6">
           <Routes>
             <Route path="/" element={<Home />} />

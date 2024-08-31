@@ -3,9 +3,17 @@ import { jwtDecode } from "jwt-decode"; // Correct import
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-function Nav() {
+function NavBar({ tokenFromHome }) {
   const [userRole, setUserRole] = useState("");
-  const [token, setToken] = useState(localStorage.getItem("authToken")!==null? localStorage.getItem("authToken") : null);
+  const [token, setToken] = useState(
+    localStorage.getItem("authToken") !== null
+      ? localStorage.getItem("authToken")
+      : null
+  );
+
+  useEffect(() => {
+    setToken(tokenFromHome);
+  }, [tokenFromHome]);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -40,6 +48,7 @@ function Nav() {
 
     fetchUserRole();
   }, [token]);
+
   return (
     <nav className="bg-gray-800 text-white p-4">
       <ul className="flex space-x-4">
@@ -102,4 +111,4 @@ function Nav() {
   );
 }
 
-export default Nav;
+export default NavBar;

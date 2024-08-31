@@ -82,7 +82,7 @@ const VerifyCode = () => {
 
         setTimeout(() => {
           setShake(false); // Reset shake animation after 500ms
-          navigate("/"); // Navigate to home page after successful verification
+          navigate("/", { token: { token } }); // Navigate to home page after successful verification
         }, 500);
       } else {
         setShake(true); // Trigger shake animation if code is incorrect
