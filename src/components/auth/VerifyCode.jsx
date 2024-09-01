@@ -12,7 +12,6 @@ const VerifyCode = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
-  const [isCodeValid, setIsCodeValid] = useState(false);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,8 +64,8 @@ const VerifyCode = () => {
       if (response.status === 200) {
         const token = response.data.token;
         dispatch(setToken(token));
-        setIsCodeValid(true);
         setShake(true);
+        setError("");
         setMessage(response.data.message);
         setTimeout(() => {
           setShake(false);
@@ -74,6 +73,7 @@ const VerifyCode = () => {
         }, 500);
       }
     } catch (error) {
+      setMessage("");
       if (error.response) {
         if (error.response.status === 400) {
           setShake(true);
@@ -93,7 +93,6 @@ const VerifyCode = () => {
           setTimeout(() => setShake(false), 500);
         }
       }
-      // navigate("/auth/login");
     }
   };
 
@@ -118,9 +117,12 @@ const VerifyCode = () => {
       });
       if (response.status === 200) {
         setTimer(300);
+        setCode("");
+        setError("");
         setMessage(response.data.message);
       }
     } catch (error) {
+      setMessage("");
       if (error.response) {
         if (error.response.status === 400) {
           setError(error.response.data.error);
@@ -160,6 +162,7 @@ const VerifyCode = () => {
             ))}
         </div>
         <div>
+          {message && <p className="text-green-500 mt-4">{message}</p>}
           <button
             onClick={handleResendCode}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -168,9 +171,6 @@ const VerifyCode = () => {
           </button>
         </div>
         {error && <p className="text-red-500 mt-4">{error}</p>}
-        {message && isCodeValid && (
-          <p className="text-green-500 mt-4">{message}</p>
-        )}
       </div>
     </div>
   );

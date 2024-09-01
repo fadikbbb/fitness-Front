@@ -26,12 +26,14 @@ const Login = () => {
       // Check if response status is OK (200) or Created (201)
       if (response.status === 200 || response.status === 201) {
         setEmailSent(true);
+        setError("");
         setMessage(response.data.message);
         navigate("/auth/verify-code", {
           state: { email: data.email, password: data.password },
         });
       }
     } catch (error) {
+      setMessage("");
       if (error.response) {
         if (error.response.status === 400) {
           setError(error.response.data.error);
