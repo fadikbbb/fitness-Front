@@ -4,20 +4,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 const Login = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const [emailSent, setEmailSent] = useState(false);
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // Fetch the base URL from environment variables
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   const onSubmit = async (data) => {
     setLoading(true); // Start loading animation
@@ -25,33 +24,27 @@ const Login = () => {
       const response = await axios.post(`${BASE_URL}/auth/login`, data);
 
       // Check if response status is OK (200) or Created (201)
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         setEmailSent(true);
+        setMessage(response.data.message);
         navigate("/auth/verify-code", {
           state: { email: data.email, password: data.password },
         });
-      } else {
-        // Handle unexpected success status
-        setError("Unexpected response. Please try again.");
-        setEmailSent(false);
       }
     } catch (error) {
-      // Handle different error status codes
       if (error.response) {
         if (error.response.status === 400) {
-          setError("Bad Request. Please check your input.");
+          setError(error.response.data.error);
         } else if (error.response.status === 401) {
-          setError("Unauthorized. Invalid email or password.");
+          setError(error.response.data.error);
         } else if (error.response.status === 500) {
-          setError("Server error. Please try again later.");
+          setError(error.response.data.error);
         } else {
           setError(
             error.response.data.error || "An error occurred. Please try again."
           );
         }
       } else {
-        // Handle network or other errors
-        console.error("Login error:", error);
         setError("Network error. Please check your connection.");
       }
     } finally {
@@ -59,7 +52,6 @@ const Login = () => {
     }
   };
 
-  // Navigate to home page
   const goToHome = () => {
     navigate("/");
   };
@@ -67,7 +59,7 @@ const Login = () => {
   // Navigate to password reset request page with email state
   const goToPasswordResetRequest = () => {
     navigate("/auth/password-reset-request", {
-      state: { email: document.getElementById("email").value }, // Pass email from input field
+      state: { email: document.getElementById("email").value },
     });
   };
 
@@ -138,10 +130,8 @@ const Login = () => {
             {!loading && "Login"}
           </button>
         </form>
-        {emailSent && (
-          <p className="mt-4 text-sm text-center text-green-500">
-            Verification code sent to your email. Please check your inbox.
-          </p>
+        {emailSent && message && (
+          <p className="mt-4 text-sm text-center text-green-500">{message}</p>
         )}
         {error && (
           <p className="mt-4 text-sm text-center text-red-500">{error}</p>

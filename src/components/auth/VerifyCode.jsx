@@ -5,18 +5,18 @@ import { useDispatch } from "react-redux";
 import { setToken } from "../../store/authSlice";
 
 // Define the base URL as a constant
-const BASE_URL =
-  process.env.REACT_APP_BASE_URL || "http://localhost:5000/api/v1/auth";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const VerifyCode = () => {
   const [code, setCode] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
   const [isCodeValid, setIsCodeValid] = useState(false);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const { email, password } = location.state || {};
+  const { email, password } = location.state;
   const [timer, setTimer] = useState(300);
   const dispatch = useDispatch();
 
@@ -56,40 +56,50 @@ const VerifyCode = () => {
 
   const verifyCode = async (inputCode) => {
     try {
-      const response = await axios.post(`${BASE_URL}/verify-login-code`, {
+      const response = await axios.post(`${BASE_URL}/auth/verify-login-code`, {
         email,
         password,
         code: inputCode,
       });
 
-      if (response.data.message === "success") {
+      if (response.status === 200) {
         const token = response.data.token;
-        dispatch(setToken(token)); // Dispatch action to set token
-
+        dispatch(setToken(token));
         setIsCodeValid(true);
         setShake(true);
-
+        setMessage(response.data.message);
         setTimeout(() => {
           setShake(false);
-          navigate("/"); // Navigate to home page after successful verification
+          navigate("/");
         }, 500);
-      } else {
-        setShake(true);
-        setErrorMessage("Invalid verification code. Please try again.");
-        setTimeout(() => setShake(false), 500);
       }
     } catch (error) {
-      console.error("Verification error:", error);
-      setErrorMessage(
-        "Code expired or verification failed. Please login again."
-      );
-      navigate("/auth/login");
+      if (error.response) {
+        if (error.response.status === 400) {
+          setShake(true);
+          setError(error.response.data.error);
+          setTimeout(() => setShake(false), 500);
+        } else if (error.response.status === 401) {
+          setShake(true);
+          setError(error.response.data.error);
+          setTimeout(() => setShake(false), 500);
+        } else if (error.response.status === 500) {
+          setShake(true);
+          setError(error.response.data.error);
+          setTimeout(() => setShake(false), 500);
+        } else {
+          setShake(true);
+          setError(error.response.data.error || "Something went wrong");
+          setTimeout(() => setShake(false), 500);
+        }
+      }
+      // navigate("/auth/login");
     }
   };
 
   useEffect(() => {
     if (timer === 0) {
-      setErrorMessage("Code expired. Please login again.");
+      setError("Code expired. Please login again.");
       navigate("/auth/login");
     }
 
@@ -102,21 +112,26 @@ const VerifyCode = () => {
 
   const handleResendCode = async () => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/resend-verification-code`,
-        {
-          email,
-          password,
-        }
-      );
-
-      if (response.data.message === "Verification code sent") {
-        setTimer(300); // Reset timer to 5 minutes
-        setErrorMessage("Verification code resent. Please check your email.");
+      const response = await axios.post(`${BASE_URL}/auth/resend-code`, {
+        email,
+        password,
+      });
+      if (response.status === 200) {
+        setTimer(300);
+        setMessage(response.data.message);
       }
     } catch (error) {
-      console.error("Resend error:", error);
-      setErrorMessage("Error resending verification code. Please try again.");
+      if (error.response) {
+        if (error.response.status === 400) {
+          setError(error.response.data.error);
+        } else if (error.response.status === 401) {
+          setError(error.response.data.error);
+        } else if (error.response.status === 500) {
+          setError(error.response.data.error);
+        } else {
+          setError(error.response.data.error || "Something went wrong");
+        }
+      }
     }
   };
 
@@ -152,7 +167,10 @@ const VerifyCode = () => {
             Resend Code
           </button>
         </div>
-        {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
+        {error && <p className="text-red-500 mt-4">{error}</p>}
+        {message && isCodeValid && (
+          <p className="text-green-500 mt-4">{message}</p>
+        )}
       </div>
     </div>
   );

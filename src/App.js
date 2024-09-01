@@ -16,26 +16,24 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
-        <div>
-          <main className="p-6">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/profile" element={<ProtectedRoute component={Profile} />} />
-              <Route path="/auth/register" element={<Register />} />
-              <Route path="/auth/login" element={<Login />} />
-              <Route path="/auth/verify-code" element={<VerifyCode />} />
-              <Route
-                path="/auth/password-reset-request"
-                element={<PasswordResetRequest />}
-              />
-              <Route
-                path="/auth/password-reset/rest/:token"
-                element={<PasswordReset />}
-              />
-            </Routes>
-          </main>
-        </div>
+        <header>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/profile" element={<ProtectedRoute component={Profile} />} />
+            <Route path="/auth/register" element={<Register />} />
+            <Route path="/auth/login" element={<Login />} />
+            <Route path="/auth/verify-code" element={<VerifyCode />} />
+            <Route
+              path="/auth/password-reset-request"
+              element={<PasswordResetRequest />}
+            />
+            <Route
+              path="/auth/password-reset/rest/:token"
+              element={<PasswordReset />}
+            />
+          </Routes>
+        </header>
       </Router>
     </Provider>
   );
