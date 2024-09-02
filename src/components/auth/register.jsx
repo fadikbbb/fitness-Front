@@ -18,35 +18,45 @@ function Register() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
   const [errorPath, setErrorPath] = useState([]);
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false); // Loading state
   const [passwordVisible, setPasswordVisible] = useState(false); // Password visibility
 
-  const handleChange = (event) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true); // Show spinner on submit
+    setLoading(true);
+    setFormData({
+      firstName: event.target.firstName.value,
+      lastName: event.target.lastName.value,
+      email: event.target.email.value,
+      password: event.target.password.value,
+    });
+    
     try {
-      await axios.post(`${BASE_URL}/auth/register`, formData);
-      setSuccess("Registration successful!");
+      const response = await axios.post(
+        `${BASE_URL}/auth/send-verification-code`,
+        formData
+      );
+      if (response.status === 200) {
+        setErrors([]);
+        setErrorPath([]);
+      }
+      navigate("/auth/verify-code", {
+        state: { ...formData, purpose: "register" },
+      });
       setFormData({
         firstName: "",
         lastName: "",
         email: "",
         password: "",
       });
-      setErrors([]);
-      setErrorPath([]);
-      navigate("/auth/login");
     } catch (error) {
       if (error.response && error.response.data) {
-        setErrors(error.response.data.errors.map((err) => err.msg));
-        setErrorPath(error.response.data.errors.map((err) => err.path));
+        setErrors(error.response.data.errors?.map((err) => err.msg));
+        setErrorPath(error.response.data.errors?.map((err) => err.path));
+      } else {
+        setErrors("something wrong");
+        setErrorPath("");
       }
-      setSuccess("");
     } finally {
       setLoading(false); // Hide spinner
     }
@@ -61,10 +71,6 @@ function Register() {
       <h2 className="text-3xl font-bold mb-8 text-center text-indigo-600">
         Create an Account
       </h2>
-
-      {success && (
-        <p className="text-green-500 text-sm mb-6 text-center">{success}</p>
-      )}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-1">
           <label
@@ -77,17 +83,15 @@ function Register() {
             type="text"
             id="firstName"
             name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath.includes("firstName")
+              errorPath?.includes("firstName")
                 ? "border-red-500"
                 : "border-gray-300"
             }`}
           />
-          {errorPath.includes("firstName") && (
+          {errorPath?.includes("firstName") && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath.indexOf("firstName")]}
+              {errors[errorPath?.indexOf("firstName")]}
             </p>
           )}
         </div>
@@ -102,17 +106,15 @@ function Register() {
             type="text"
             id="lastName"
             name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath.includes("lastName")
+              errorPath?.includes("lastName")
                 ? "border-red-500"
                 : "border-gray-300"
             }`}
           />
-          {errorPath.includes("lastName") && (
+          {errorPath?.includes("lastName") && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath.indexOf("lastName")]}
+              {errors[errorPath?.indexOf("lastName")]}
             </p>
           )}
         </div>
@@ -128,15 +130,15 @@ function Register() {
             type="email"
             id="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath.includes("email") ? "border-red-500" : "border-gray-300"
+              errorPath?.includes("email")
+                ? "border-red-500"
+                : "border-gray-300"
             }`}
           />
-          {errorPath.includes("email") && (
+          {errorPath?.includes("email") && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath.indexOf("email")]}
+              {errors[errorPath?.indexOf("email")]}
             </p>
           )}
         </div>
@@ -151,10 +153,8 @@ function Register() {
             type={passwordVisible ? "text" : "password"}
             id="password"
             name="password"
-            value={formData.password}
-            onChange={handleChange}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath.includes("password")
+              errorPath?.includes("password")
                 ? "border-red-500"
                 : "border-gray-300"
             }`}
@@ -166,9 +166,9 @@ function Register() {
           >
             {passwordVisible ? <FaEyeSlash /> : <FaEye />}
           </button>
-          {errorPath.includes("password") && (
+          {errorPath?.includes("password") && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath.indexOf("password")]}
+              {errors[errorPath?.indexOf("password")]}
             </p>
           )}
         </div>

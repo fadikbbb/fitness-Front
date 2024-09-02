@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -15,9 +15,11 @@ const VerifyCode = () => {
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const { email, password } = location.state;
-  const [timer, setTimer] = useState(300);
   const dispatch = useDispatch();
+  // Check if location.state is available
+  const { state } = location;
+  const purpose = state?.purpose; // Default purpose to "login"
+  const data = state || {}; // Default to an empty object
 
   const handleChange = (e, index) => {
     const { value } = e.target;
@@ -55,68 +57,44 @@ const VerifyCode = () => {
 
   const verifyCode = async (inputCode) => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/verify-login-code`, {
-        email,
-        password,
+      const url =
+        purpose === "login"
+          ? `${BASE_URL}/auth/login`
+          : `${BASE_URL}/auth/register`;
+
+      const response = await axios.post(url, {
+        ...data,
         code: inputCode,
       });
 
-      if (response.status === 200) {
+      if (purpose === "login") {
         const token = response.data.token;
         dispatch(setToken(token));
-        setShake(true);
-        setError("");
-        setMessage(response.data.message);
-        setTimeout(() => {
-          setShake(false);
-          navigate("/");
-        }, 500);
       }
+      setShake(true);
+      setError("");
+      setMessage(response.data.message);
+      navigate(purpose === "login" ? "/" : "../auth/login");
     } catch (error) {
       setMessage("");
       if (error.response) {
-        if (error.response.status === 400) {
-          setShake(true);
-          setError(error.response.data.error);
-          setTimeout(() => setShake(false), 500);
-        } else if (error.response.status === 401) {
-          setShake(true);
-          setError(error.response.data.error);
-          setTimeout(() => setShake(false), 500);
-        } else if (error.response.status === 500) {
-          setShake(true);
-          setError(error.response.data.error);
-          setTimeout(() => setShake(false), 500);
-        } else {
-          setShake(true);
-          setError(error.response.data.error || "Something went wrong");
-          setTimeout(() => setShake(false), 500);
-        }
+        setShake(true);
+        setError(error.response.data.error || "Something went wrong");
+        setTimeout(() => setShake(false), 500);
       }
     }
   };
 
-  useEffect(() => {
-    if (timer === 0) {
-      setError("Code expired. Please login again.");
-      navigate("/auth/login");
-    }
-
-    const countdown = setInterval(() => {
-      setTimer((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(countdown);
-  }, [timer, navigate]);
-
   const handleResendCode = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/resend-code`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/auth/send-verification-code`,
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
       if (response.status === 200) {
-        setTimer(300);
         setCode("");
         setError("");
         setMessage(response.data.message);
@@ -124,15 +102,7 @@ const VerifyCode = () => {
     } catch (error) {
       setMessage("");
       if (error.response) {
-        if (error.response.status === 400) {
-          setError(error.response.data.error);
-        } else if (error.response.status === 401) {
-          setError(error.response.data.error);
-        } else if (error.response.status === 500) {
-          setError(error.response.data.error);
-        } else {
-          setError(error.response.data.error || "Something went wrong");
-        }
+        setError(error.response.data.error || "Something went wrong");
       }
     }
   };

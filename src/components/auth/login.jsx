@@ -21,31 +21,28 @@ const Login = () => {
   const onSubmit = async (data) => {
     setLoading(true); // Start loading animation
     try {
-      const response = await axios.post(`${BASE_URL}/auth/login`, data);
+      const response = await axios.post(
+        `${BASE_URL}/auth/send-verification-code`,
+        data
+      );
 
       // Check if response status is OK (200) or Created (201)
       if (response.status === 200 || response.status === 201) {
         setEmailSent(true);
         setError("");
         setMessage(response.data.message);
+        const dataNavigate = { email: data.email, password: data.password };
         navigate("/auth/verify-code", {
-          state: { email: data.email, password: data.password },
+          purpose: "login",
+          state: dataNavigate,
         });
       }
     } catch (error) {
       setMessage("");
       if (error.response) {
-        if (error.response.status === 400) {
-          setError(error.response.data.error);
-        } else if (error.response.status === 401) {
-          setError(error.response.data.error);
-        } else if (error.response.status === 500) {
-          setError(error.response.data.error);
-        } else {
-          setError(
-            error.response.data.error || "An error occurred. Please try again."
-          );
-        }
+        setError(
+          error.response.data.error || "An error occurred. Please try again."
+        );
       } else {
         setError("Network error. Please check your connection.");
       }
