@@ -18,7 +18,8 @@ const VerifyCode = () => {
   const dispatch = useDispatch();
   // Check if location.state is available
   const { state } = location;
-  const purpose = state?.purpose; // Default purpose to "login"
+  const purpose = state.purpose; // Default purpose to "login"
+  console.log(purpose);
   const data = state || {}; // Default to an empty object
 
   const handleChange = (e, index) => {
@@ -61,7 +62,7 @@ const VerifyCode = () => {
         purpose === "login"
           ? `${BASE_URL}/auth/login`
           : `${BASE_URL}/auth/register`;
-
+console.log(url)
       const response = await axios.post(url, {
         ...data,
         code: inputCode,
@@ -78,6 +79,7 @@ const VerifyCode = () => {
     } catch (error) {
       setMessage("");
       if (error.response) {
+        console.log(error);
         setShake(true);
         setError(error.response.data.error || "Something went wrong");
         setTimeout(() => setShake(false), 500);

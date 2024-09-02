@@ -83,6 +83,7 @@ function Register() {
             type="text"
             id="firstName"
             name="firstName"
+            onChange={(e)=>e.target.value}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
               errorPath?.includes("firstName")
                 ? "border-red-500"
@@ -106,6 +107,8 @@ function Register() {
             type="text"
             id="lastName"
             name="lastName"
+        onChange={(e)=>e.target.value}
+            
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
               errorPath?.includes("lastName")
                 ? "border-red-500"
@@ -118,7 +121,6 @@ function Register() {
             </p>
           )}
         </div>
-
         <div className="space-y-1">
           <label
             htmlFor="email"
@@ -130,6 +132,7 @@ function Register() {
             type="email"
             id="email"
             name="email"
+            onChange={(e)=>e.target.value}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
               errorPath?.includes("email")
                 ? "border-red-500"
@@ -153,6 +156,7 @@ function Register() {
             type={passwordVisible ? "text" : "password"}
             id="password"
             name="password"
+            onChange={(e)=>e.target.value}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
               errorPath?.includes("password")
                 ? "border-red-500"

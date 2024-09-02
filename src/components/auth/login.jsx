@@ -21,6 +21,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     setLoading(true); // Start loading animation
     try {
+      
       const response = await axios.post(
         `${BASE_URL}/auth/send-verification-code`,
         data
@@ -33,8 +34,7 @@ const Login = () => {
         setMessage(response.data.message);
         const dataNavigate = { email: data.email, password: data.password };
         navigate("/auth/verify-code", {
-          purpose: "login",
-          state: dataNavigate,
+          state: { ...dataNavigate, purpose: "login" },
         });
       }
     } catch (error) {
