@@ -1,10 +1,11 @@
 // src/components/partsOfpage/navbar.js
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setToken, setUserRole, clearAuthState } from "../../store/authSlice";
+import { setUserRole, clearAuthState } from "../../store/authSlice";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Logout from "../auth/logout";
 
 function NavBar() {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ function NavBar() {
     fetchUserRole();
   }, [token, dispatch, BASE_URL]);
 
+  
   return (
     <nav className="bg-gray-800 text-white p-4">
       <ul className="flex space-x-4">
@@ -86,12 +88,7 @@ function NavBar() {
         )}
         {userRole && (
           <li>
-            <button
-              onClick={() => dispatch(clearAuthState())}
-              className="hover:underline"
-            >
-              Logout
-            </button>
+           <Logout token={token} />
           </li>
         )}
       </ul>

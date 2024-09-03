@@ -1,39 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios"; // Importing Axios
+import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-// Define the base URL as a constant
-const BASE_URL =
-  process.env.REACT_APP_BASE_URL || "http://localhost:5000/api/auth";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function ResetPassword() {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [globalError, setGlobalError] = useState("");
   const { token } = useParams();
-
-  const onSubmit = async (data) => {
-    if (data.newPassword !== data.confirmPassword) {
-      setError("Passwords do not match");
-      return;
+  const navigate = useNavigate();
+  
+  // Check for token on mount
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/"); // Redirect to home if token exists
     }
-
+  }, [navigate]);
+  const onSubmit = async (data) => {
+    setLoading(true);
     try {
       const response = await axios.post(
-        `${BASE_URL}/reset-password/rest/${token}`,
+        `${BASE_URL}/auth/reset-password/reset/${token}`,
         {
-          newPassword: data.newPassword,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
         }
       );
 
       setMessage(response.data.message);
-      setError("");
-    } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
+      setGlobalError("");
+      setTimeout(() => {
+        navigate("/auth/login");
+      }, 1000);
+    } catch (error) {
+      console.log(error);
       setMessage("");
+      if (error.response?.data && error.response.data?.errors) {
+        error.response.data.errors.forEach((err) => {
+          setError(err.path, {
+            type: "manual",
+            message: err.msg,
+          });
+        });
+      } else {
+        setGlobalError(error.response?.data?.error || "Something went wrong");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,7 +73,9 @@ function ResetPassword() {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="New password"
-              {...register("newPassword", { required: true })}
+              {...register("password", {
+                required: "New password is required",
+              })}
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <div
@@ -57,26 +84,43 @@ function ResetPassword() {
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </div>
+            {errors.password && (
+              <p className="text-red-600 mt-1">{errors.password.message}</p>
+            )}
           </div>
           <div>
             <input
               type="password"
               placeholder="Confirm password"
-              {...register("confirmPassword", { required: true })}
+              {...register("confirmPassword", {
+                required: "Confirm password is required",
+              })}
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {errors.confirmPassword && (
+              <p className="text-red-600 mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
+          {message && (
+            <p className="mt-4 text-green-600 text-center">{message}</p>
+          )}
+          {globalError && (
+            <p className="mt-4 text-red-600 text-center">{globalError}</p>
+          )}
           <button
             type="submit"
-            className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center"
+            disabled={loading}
           >
-            Reset Password
+            {loading ? (
+              <FaSpinner className="animate-spin mr-2" />
+            ) : (
+              "Reset Password"
+            )}
           </button>
         </form>
-        {message && (
-          <p className="mt-4 text-green-600 text-center">{message}</p>
-        )}
-        {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
       </div>
     </div>
   );

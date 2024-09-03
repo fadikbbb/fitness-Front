@@ -9,7 +9,7 @@ import Register from "./components/auth/register";
 import Login from "./components/auth/login";
 import VerifyCode from "./components/auth/VerifyCode";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
-import PasswordReset from "./components/auth/ResetPassword";
+import ResetPassword from "./components/auth/ResetPassword";
 import Profile from "./pages/profile";
 
 function App() {
@@ -25,12 +25,12 @@ function App() {
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/verify-code" element={<VerifyCode />} />
             <Route
-              path="/auth/password-reset-request"
+              path="/auth/reset-password-request"
               element={<PasswordResetRequest />}
             />
             <Route
-              path="/auth/password-reset/rest/:token"
-              element={<PasswordReset />}
+              path="/auth/reset-password/reset/:token"
+              element={<ResetPassword />}
             />
           </Routes>
         </header>

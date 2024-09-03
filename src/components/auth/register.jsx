@@ -1,61 +1,58 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
-
+import { useState, useEffect } from "react";
 // Define the base URL as a constant
-const BASE_URL =
-  process.env.REACT_APP_BASE_URL || "http://localhost:5000/api/v1";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 function Register() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    clearErrors,
+  } = useForm();
 
-  const navigate = useNavigate();
-  const [errors, setErrors] = useState([]);
-  const [errorPath, setErrorPath] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
   const [passwordVisible, setPasswordVisible] = useState(false); // Password visibility
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const navigate = useNavigate();
+
+  // Check for token on mount
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/"); // Redirect to home if token exists
+    }
+  }, [navigate]);
+
+  const onSubmit = async (formData) => {
     setLoading(true);
-    setFormData({
-      firstName: event.target.firstName.value,
-      lastName: event.target.lastName.value,
-      email: event.target.email.value,
-      password: event.target.password.value,
-    });
-    
+
     try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/send-verification-code`,
-        formData
-      );
+      const response = await axios.post(`${BASE_URL}/auth/register`, formData);
       if (response.status === 200) {
-        setErrors([]);
-        setErrorPath([]);
+        clearErrors();
+        navigate("/auth/verify-code", {
+          state: { ...formData, purpose: "register" },
+        });
       }
-      navigate("/auth/verify-code", {
-        state: { ...formData, purpose: "register" },
-      });
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-      });
     } catch (error) {
-      if (error.response && error.response.data) {
-        setErrors(error.response.data.errors?.map((err) => err.msg));
-        setErrorPath(error.response.data.errors?.map((err) => err.path));
+      if (error.response && error.response.data && error.response.data.errors) {
+        // Handle backend validation errors
+        error.response.data.errors.forEach((err) => {
+          setError(err.path, {
+            type: "manual",
+            message: err.msg,
+          });
+        });
       } else {
-        setErrors("something wrong");
-        setErrorPath("");
+        setError(error.response.data?.path, {
+          type: "manual",
+          message: error.response.data?.error,
+        });
       }
     } finally {
       setLoading(false); // Hide spinner
@@ -71,7 +68,7 @@ function Register() {
       <h2 className="text-3xl font-bold mb-8 text-center text-indigo-600">
         Create an Account
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-1">
           <label
             htmlFor="firstName"
@@ -82,17 +79,14 @@ function Register() {
           <input
             type="text"
             id="firstName"
-            name="firstName"
-            onChange={(e)=>e.target.value}
+            {...register("firstName", { required: "First name is required" })}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath?.includes("firstName")
-                ? "border-red-500"
-                : "border-gray-300"
+              errors.firstName ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errorPath?.includes("firstName") && (
+          {errors.firstName && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath?.indexOf("firstName")]}
+              {errors.firstName.message}
             </p>
           )}
         </div>
@@ -106,18 +100,14 @@ function Register() {
           <input
             type="text"
             id="lastName"
-            name="lastName"
-        onChange={(e)=>e.target.value}
-            
+            {...register("lastName", { required: "Last name is required" })}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath?.includes("lastName")
-                ? "border-red-500"
-                : "border-gray-300"
+              errors.lastName ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errorPath?.includes("lastName") && (
+          {errors.lastName && (
             <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath?.indexOf("lastName")]}
+              {errors.lastName.message}
             </p>
           )}
         </div>
@@ -131,18 +121,13 @@ function Register() {
           <input
             type="email"
             id="email"
-            name="email"
-            onChange={(e)=>e.target.value}
+            {...register("email", { required: "Email is required" })}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath?.includes("email")
-                ? "border-red-500"
-                : "border-gray-300"
+              errors.email ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errorPath?.includes("email") && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath?.indexOf("email")]}
-            </p>
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
         <label
@@ -155,12 +140,15 @@ function Register() {
           <input
             type={passwordVisible ? "text" : "password"}
             id="password"
-            name="password"
-            onChange={(e)=>e.target.value}
+            {...register("password", {
+              required: "Password is required",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters long",
+              },
+            })}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-              errorPath?.includes("password")
-                ? "border-red-500"
-                : "border-gray-300"
+              errors.password ? "border-red-500" : "border-gray-300"
             }`}
           />
           <button
@@ -170,12 +158,10 @@ function Register() {
           >
             {passwordVisible ? <FaEyeSlash /> : <FaEye />}
           </button>
-          {errorPath?.includes("password") && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors[errorPath?.indexOf("password")]}
-            </p>
-          )}
         </div>
+        {errors.password && (
+          <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+        )}
 
         <div>
           <button

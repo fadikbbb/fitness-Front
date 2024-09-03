@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -10,6 +11,7 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue, // to set values from location state
   } = useForm();
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -18,27 +20,50 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const location = useLocation();
+  const { email, password } = location.state || {};
+
+  // Check for token on mount
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/"); // Redirect to home if token exists
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    if (email) {
+      setValue("email", email); // use setValue to set the email field value
+    }
+    if (password) {
+      setValue("password", password); // use setValue to set the password field value
+    }
+  }, [email, password, setValue]);
+
   const onSubmit = async (data) => {
     setLoading(true); // Start loading animation
     try {
-      
-      const response = await axios.post(
-        `${BASE_URL}/auth/send-verification-code`,
-        data
-      );
+      const response = await axios.post(`${BASE_URL}/auth/login`, {
+        ...data,
+        purpose: "login",
+      });
 
       // Check if response status is OK (200) or Created (201)
       if (response.status === 200 || response.status === 201) {
         setEmailSent(true);
         setError("");
         setMessage(response.data.message);
-        const dataNavigate = { email: data.email, password: data.password };
         navigate("/auth/verify-code", {
-          state: { ...dataNavigate, purpose: "login" },
+          state: {
+            email: data.email,
+            password: data.password,
+            purpose: "login",
+          },
         });
       }
     } catch (error) {
       setMessage("");
+      console.log(error);
       if (error.response) {
         setError(
           error.response.data.error || "An error occurred. Please try again."
@@ -57,7 +82,7 @@ const Login = () => {
 
   // Navigate to password reset request page with email state
   const goToPasswordResetRequest = () => {
-    navigate("/auth/password-reset-request", {
+    navigate("/auth/reset-password-request", {
       state: { email: document.getElementById("email").value },
     });
   };
