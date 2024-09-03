@@ -6,7 +6,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
+import { useAuth } from "./hooks/useAuth";
 import store from "./store/store";
 import Home from "./pages/home";
 import About from "./pages/about";
@@ -16,7 +17,9 @@ import VerifyCode from "./components/auth/VerifyCode";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import ResetPassword from "./components/auth/ResetPassword";
 import Profile from "./pages/profile";
+import NotFound from "./pages/notfound";
 import AllTarining from "./pages/allTarining";
+
 function App() {
   return (
     <Provider store={store}>
@@ -28,7 +31,11 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route
               path="/profile"
-              element={<ProtectedRoute component={Profile} />}
+              element={
+                <ProtectedRoute>
+                  <ProtectedRoute component={Profile} />{" "}
+                </ProtectedRoute>
+              }
             />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/login" element={<Login />} />
@@ -41,6 +48,7 @@ function App() {
               path="/auth/reset-password/reset/:token"
               element={<ResetPassword />}
             />
+            <Route path="*" element={<NotFound />}></Route>
           </Routes>
         </div>
       </Router>
@@ -48,11 +56,10 @@ function App() {
   );
 }
 
-// ProtectedRoute component to guard routes that require authentication
-function ProtectedRoute({ component: Component }) {
-  const token = useSelector((state) => state.auth.token);
+function ProtectedRoute({ children }) {
+  const isAuthenticated = useAuth();
 
-  return token ? <Component /> : <Navigate to="/auth/login" />;
+  return isAuthenticated ? children : <Navigate to="/auth/login" />;
 }
 
 export default App;

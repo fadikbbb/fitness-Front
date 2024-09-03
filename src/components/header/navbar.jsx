@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserRole, clearAuthState } from "../../store/authSlice";
-import { setUserId } from "../../store/userSlice";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -25,7 +24,6 @@ function NavBar() {
               Authorization: `Bearer ${token}`,
             },
           });
-          dispatch(setUserId(response.data.user._id));
           dispatch(setUserRole(response.data.user.role));
         } catch (error) {
           console.error(
