@@ -62,7 +62,6 @@ const VerifyCode = () => {
       verifyCode(pastedData);
     }
   };
-
   const verifyCode = async (inputCode) => {
     console.log({ ...data, code: inputCode });
     try {
@@ -70,24 +69,24 @@ const VerifyCode = () => {
         ...data,
         code: inputCode,
       });
-
+  
       setShake(true);
       setError("");
       setMessage(response.data.message);
+  
       if (purpose === "login") {
         const token = response.data.token;
-        dispatch(setToken(token));
-        localStorage.setItem("authToken", token);
+        dispatch(setToken(token));  // Store token in Redux state
+        localStorage.setItem("authToken", token);  // Store token in localStorage
+  
         setTimeout(() => {
           setShake(false);
-          navigate("/");
+          navigate("/");  // Redirect to home page
         }, 1000);
       } else if (purpose === "register") {
         setTimeout(() => {
           setShake(false);
-          navigate("/auth/login", {
-            state: { ...data },
-          });
+          navigate("/auth/login", { state: { ...data } });  // Redirect to login page
         }, 1000);
       }
     } catch (error) {
@@ -100,6 +99,7 @@ const VerifyCode = () => {
       }
     }
   };
+  
 
   const handleResendCode = async () => {
     try {

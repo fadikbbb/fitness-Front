@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserRole, clearAuthState } from "../../store/authSlice";
+import { setUserId } from "../../store/userSlice";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -14,8 +15,8 @@ function NavBar() {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   useEffect(() => {
-    const fetchUserRole = async () => {
-      if (token) {
+    if (token) {
+      const fetchUserRole = async () => {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.userId;
@@ -24,25 +25,22 @@ function NavBar() {
               Authorization: `Bearer ${token}`,
             },
           });
-
+          dispatch(setUserId(response.data.user._id));
           dispatch(setUserRole(response.data.user.role));
         } catch (error) {
           console.error(
             "Error fetching user details:",
             error.response?.data || error.message
           );
-
-          dispatch(clearAuthState());
         }
-      } else {
-        dispatch(clearAuthState());
-      }
-    };
+      };
 
-    fetchUserRole();
+      fetchUserRole();
+    } else {
+      dispatch(clearAuthState());
+    }
   }, [token, dispatch, BASE_URL]);
 
-  
   return (
     <nav className="bg-gray-800 text-white p-4">
       <ul className="flex space-x-4">
@@ -64,7 +62,7 @@ function NavBar() {
             </Link>
           </li>
         )}
-        {userRole && userRole !== "admin" && (
+        {userRole && (
           <li>
             <Link to="/profile" className="hover:underline">
               Profile
@@ -88,7 +86,7 @@ function NavBar() {
         )}
         {userRole && (
           <li>
-           <Logout token={token} />
+            <Logout token={token} />
           </li>
         )}
       </ul>

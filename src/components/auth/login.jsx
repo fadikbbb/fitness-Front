@@ -11,7 +11,7 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue, // to set values from location state
+    setValue,
   } = useForm();
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");

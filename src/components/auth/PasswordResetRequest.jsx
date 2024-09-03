@@ -14,19 +14,19 @@ function RequestPasswordReset() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: location.state?.email || "", // Set default email if provided
+      email: location.state?.email || "",
     },
   });
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   // Check for token on mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      navigate("/"); // Redirect to home if token exists
+      navigate("/");
     }
   }, [navigate]);
 
