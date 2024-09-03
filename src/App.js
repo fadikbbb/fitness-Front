@@ -16,7 +16,7 @@ import VerifyCode from "./components/auth/VerifyCode";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import ResetPassword from "./components/auth/ResetPassword";
 import Profile from "./pages/profile";
-
+import AllTarining from "./pages/allTarining";
 function App() {
   return (
     <Provider store={store}>
@@ -24,6 +24,7 @@ function App() {
         <div class="container mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/training" element={<AllTarining />} />
             <Route path="/about" element={<About />} />
             <Route
               path="/profile"

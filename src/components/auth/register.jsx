@@ -42,7 +42,7 @@ function Register() {
     } catch (error) {
       if (error.response && error.response.data && error.response.data.errors) {
         // Handle backend validation errors
-        error.response.data.errors.forEach((err) => {
+        error.response.data?.errors.forEach((err) => {
           setError(err.path, {
             type: "manual",
             message: err.msg,
@@ -53,6 +53,7 @@ function Register() {
           type: "manual",
           message: error.response.data?.error,
         });
+        console.log(error);
       }
     } finally {
       setLoading(false); // Hide spinner
