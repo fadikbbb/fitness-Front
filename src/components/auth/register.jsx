@@ -49,9 +49,9 @@ function Register() {
           });
         });
       } else {
-        setError(error.response.data?.path, {
+        setError(error.response?.data?.path, {
           type: "manual",
-          message: error.response.data?.error,
+          message: error.response?.data?.error,
         });
       }
     } finally {
