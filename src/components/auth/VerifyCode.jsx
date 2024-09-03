@@ -3,11 +3,13 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setToken } from "../../store/authSlice";
-
+import { setUserId } from "../../store/userSlice";
+import { jwtDecode } from "jwt-decode";
 // Define the base URL as a constant
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const VerifyCode = () => {
+
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -76,6 +78,8 @@ const VerifyCode = () => {
   
       if (purpose === "login") {
         const token = response.data.token;
+        const decodedToken = jwtDecode(token);
+        dispatch(setUserId(decodedToken.userId));
         dispatch(setToken(token));  // Store token in Redux state
         localStorage.setItem("authToken", token);  // Store token in localStorage
   

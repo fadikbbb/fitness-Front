@@ -1,43 +1,26 @@
-// Example in a component
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import axiosInstance from "../../utils/axiosInstance";
-import { removeToken } from "../../store/authSlice";
-import { setUserProfile } from "../../store/userSlice";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import ProfileForm from './profileForm'; // Adjust path as necessary
 
-const Dashboard = () => {
-  const dispatch = useDispatch();
-  const userId = useSelector((state) => state.user.userId);
-  const userProfile = useSelector((state) => state.user.userProfile);
-
-  const fetchUserData = async () => {
-    try {
-      if (!userId) {
-        console.error("User ID is not available.");
-        return;
-      }
-
-      const response = await axiosInstance.get(`/users/${userId}`);
-      dispatch(setUserProfile(response.data)); // Update user profile in the store
-    } catch (error) {
-      if (error.response && error.response.status === 401) {
-        dispatch(removeToken());
-      } else {
-        console.error("Failed to fetch user data:", error.message);
-      }
-    }
+function ProfileBody() {
+  const user = {
+    firstName: 'Fadi',
+    lastName: 'Kabbani',
+    email: 'fadi.kabbani@example.com'
+    // Add other user details as needed
   };
-
-  useEffect(() => {
-    fetchUserData();
-  }, [userId]);
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <p>Profile: {userProfile ? userProfile.name : "Loading..."}</p>
+      <h1 className="text-3xl font-bold mb-4">Profile</h1>
+      <div className="flex flex-col gap-4">
+        <ProfileForm user={user} />
+        <Link to="/profile/password" className="btn">Update Password</Link>
+        <Link to="/profile/delete" className="btn">Delete Account</Link>
+        <Link to="/profile/logout" className="btn">Logout</Link>
+      </div>
     </div>
   );
-};
+}
 
-export default Dashboard;
+export default ProfileBody;
