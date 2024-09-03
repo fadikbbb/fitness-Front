@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -18,16 +18,8 @@ const VerifyCode = () => {
   const dispatch = useDispatch();
   // Check if location.state is available
   const { state } = location;
-  const purpose = state?.purpose;
-  const data = state || {};
-
-  // Check for token on mount
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      navigate("/"); // Redirect to home if token exists
-    }
-  }, [navigate]);
+  const purpose = state?.purpose; // Default purpose to "login"
+  const data = state || {}; // Default to an empty object
 
   const handleChange = (e, index) => {
     const { value } = e.target;
@@ -64,49 +56,44 @@ const VerifyCode = () => {
   };
 
   const verifyCode = async (inputCode) => {
-    console.log({ ...data, code: inputCode });
     try {
-      const response = await axios.post(`${BASE_URL}/auth/verify-code`, {
+      const url =
+        purpose === "login"
+          ? `${BASE_URL}/auth/login`
+          : `${BASE_URL}/auth/register`;
+
+      const response = await axios.post(url, {
         ...data,
         code: inputCode,
       });
 
-      setShake(true);
-      setError("");
-      setMessage(response.data.message);
       if (purpose === "login") {
         const token = response.data.token;
         dispatch(setToken(token));
-        localStorage.setItem("authToken", token);
-        setTimeout(() => {
-          setShake(false);
-          navigate("/");
-        }, 1000);
-      } else if (purpose === "register") {
-        setTimeout(() => {
-          setShake(false);
-          navigate("/auth/login", {
-            state: { ...data },
-          });
-        }, 1000);
       }
+      setShake(true);
+      setError("");
+      setMessage(response.data.message);
+      navigate(purpose === "login" ? "/" : "../auth/login");
     } catch (error) {
       setMessage("");
       if (error.response) {
-        console.log(error);
         setShake(true);
         setError(error.response.data.error || "Something went wrong");
-        setTimeout(() => setShake(false), 1000);
+        setTimeout(() => setShake(false), 500);
       }
     }
   };
 
   const handleResendCode = async () => {
     try {
-      const response = await axios.post(`${BASE_URL}/auth/verify-code`, {
-        email: data.email,
-        password: data.password,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/auth/send-verification-code`,
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
       if (response.status === 200) {
         setCode("");
         setError("");
@@ -121,12 +108,8 @@ const VerifyCode = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen ">
-      <div
-        className={`${
-          shake ? "animate-shake" : ""
-        } p-6 rounded-lg shadow-lg bg-white max-w-sm text-center`}
-      >
+    <div className="flex justify-center items-center h-screen">
+      <div className="p-6 rounded-lg shadow-lg bg-white max-w-sm text-center">
         <h2 className="text-2xl mb-4 font-bold">Enter Verification Code</h2>
         <div
           className={`flex justify-center space-x-2 mb-4 ${
@@ -144,15 +127,12 @@ const VerifyCode = () => {
                 ref={(el) => (inputRefs.current[index] = el)}
                 value={code[index] || ""}
                 onChange={(e) => handleChange(e, index)}
-                className={`${error ? "bg-red-100 border-red-500 " : ""} ${
-                  message ? "bg-green-100 border-green-500 " : ""
-                } w-10 h-10 text-center border rounded`}
+                className="w-10 h-10 text-center border rounded"
               />
             ))}
         </div>
         <div>
           {message && <p className="text-green-500 mt-4">{message}</p>}
-          {error && <p className="text-red-500 mt-4">{error}</p>}
           <button
             onClick={handleResendCode}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -160,6 +140,7 @@ const VerifyCode = () => {
             Resend Code
           </button>
         </div>
+        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </div>
   );

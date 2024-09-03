@@ -1,6 +1,11 @@
 // src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { Provider, useSelector } from "react-redux";
 import store from "./store/store";
 import Home from "./pages/home";
@@ -16,11 +21,14 @@ function App() {
   return (
     <Provider store={store}>
       <Router>
-        <header>
+        <div class="container mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/profile" element={<ProtectedRoute component={Profile} />} />
+            <Route
+              path="/profile"
+              element={<ProtectedRoute component={Profile} />}
+            />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/verify-code" element={<VerifyCode />} />
@@ -33,7 +41,7 @@ function App() {
               element={<ResetPassword />}
             />
           </Routes>
-        </header>
+        </div>
       </Router>
     </Provider>
   );
