@@ -45,7 +45,6 @@ function ResetPassword() {
         navigate("/auth/login");
       }, 1000);
     } catch (error) {
-      console.log(error);
       setMessage("");
       if (error.response?.data && error.response.data?.errors) {
         error.response.data.errors.forEach((err) => {

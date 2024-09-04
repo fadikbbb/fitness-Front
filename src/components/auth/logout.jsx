@@ -1,25 +1,16 @@
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { clearAuthState } from "../../store/authSlice";
 import { useState } from "react";
+import apiClient from "../../utils/axiosConfig";
 
 function Logout({ token }) {
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function logoutHandler() {
     try {
       if (token) {
-        const response = await axios.post(
-          `${BASE_URL}/auth/logout`,
-          {},
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          }
-        );
+         await apiClient.post(`/auth/logout`);
         dispatch(clearAuthState());
         setIsModalOpen(false);
       }

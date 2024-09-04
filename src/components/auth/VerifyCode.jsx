@@ -5,24 +5,22 @@ import { useDispatch } from "react-redux";
 import { setToken } from "../../store/authSlice";
 import { setUserId } from "../../store/userSlice";
 import { jwtDecode } from "jwt-decode";
-// Define the base URL as a constant
+
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const VerifyCode = () => {
-
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
+  const [loading, setLoading] = useState(false); // Added loading state
   const inputRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  // Check if location.state is available
   const { state } = location;
   const purpose = state?.purpose; // Default purpose to "login"
-  const data = state || {}; // Default to an empty object
-
+  const [data, setData] = useState(state || {}); // Set data to state || {}; // Default to an empty object
   const handleChange = (e, index) => {
     const { value } = e.target;
     if (/^[0-9]*$/.test(value)) {
@@ -56,78 +54,92 @@ const VerifyCode = () => {
       verifyCode(pastedData);
     }
   };
-  const verifyCode = async (inputCode) => {
-    try {
-      const url =
-        purpose === "login"
-          ? `${BASE_URL}/auth/login`
-          : `${BASE_URL}/auth/register`;
 
-      const response = await axios.post(url, {
+  const verifyCode = async (inputCode) => {
+    setData(state || {});
+
+    setLoading(true); // Set loading to true
+    try {
+      const response = await axios.post(`${BASE_URL}/auth/verify-code`, {
         ...data,
         code: inputCode,
       });
+
+      setMessage(response.data.message);
 
       if (purpose === "login") {
         const token = response.data.token;
         const decodedToken = jwtDecode(token);
         dispatch(setUserId(decodedToken.userId));
-        dispatch(setToken(token));  // Store token in Redux state
-        localStorage.setItem("authToken", token);  // Store token in localStorage
-  
+        dispatch(setToken(token));
+        localStorage.setItem("authToken", token);
+        setShake(true);
         setTimeout(() => {
-          setShake(false);
-          navigate("/"); // Redirect to home page
+          navigate("/");
         }, 1000);
       } else if (purpose === "register") {
+        setShake(true);
         setTimeout(() => {
-          setShake(false);
-          navigate("/auth/login", { state: { ...data } }); // Redirect to login page
+          navigate("/auth/login", { state: { ...data } });
         }, 1000);
       }
-      setShake(true);
       setError("");
-      setMessage(response.data.message);
-      navigate(purpose === "login" ? "/" : "../auth/login");
     } catch (error) {
       setMessage("");
       if (error.response) {
         setShake(true);
         setError(error.response.data.error || "Something went wrong");
-        setTimeout(() => setShake(false), 500);
       }
+    } finally {
+      setTimeout(() => setShake(false), 1000);
+      setLoading(false); // Set loading to false
     }
   };
-
   const handleResendCode = async () => {
+    // Validate required fields before proceeding
+    if (!data.email || !data.purpose) {
+      setError("Please fill in all required fields."); // Show error message
+      return; // Stop the function from proceeding
+    }
+
+    setLoading(true); // Set loading to true
+
     try {
-      const response = await axios.post(
-        `${BASE_URL}/auth/send-verification-code`,
-        {
-          email: data.email,
-          password: data.password,
-        }
-      );
-      if (response.status === 200) {
-        setCode("");
-        setError("");
-        setMessage(response.data.message);
-      }
+      const response = await axios.post(`${BASE_URL}/auth/verify-code`, data);
+
+      setError(""); // Clear any previous errors
+      setShake(true); // Trigger shaking animation
+      setMessage(response.data.message); // Set the success message
+
+      // Clear the code state and input fields
+      setCode("");
+      inputRefs.current.forEach((input) => {
+        if (input) input.value = ""; // Clear each input field
+      });
     } catch (error) {
-      setMessage("");
+      setMessage(""); // Clear the message on error
       if (error.response) {
-        setError(error.response.data.error || "Something went wrong");
+        setError(error.response.data.error || "Something went wrong"); // Set the error message
+      } else {
+        setError("Something went wrong"); // Handle other types of errors
       }
+    } finally {
+      setLoading(false); // Set loading to false
+      setTimeout(() => {
+        setShake(false); // Stop the shaking animation after a delay
+      }, 1000);
     }
   };
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="p-6 rounded-lg shadow-lg bg-white max-w-sm text-center">
+      <div
+        className={` p-6 rounded-lg shadow-lg bg-white max-w-sm text-center`}
+      >
         <h2 className="text-2xl mb-4 font-bold">Enter Verification Code</h2>
         <div
           className={`flex justify-center space-x-2 mb-4 ${
-            shake ? "shake" : ""
+            shake ? "animate-shake" : ""
           }`}
           onPaste={handlePaste}
         >
@@ -141,20 +153,24 @@ const VerifyCode = () => {
                 ref={(el) => (inputRefs.current[index] = el)}
                 value={code[index] || ""}
                 onChange={(e) => handleChange(e, index)}
-                className="w-10 h-10 text-center border rounded"
+                className={`${error ? "border-red-500 bg-red-200" : ""} ${
+                  message ? "border-green-500 bg-green-200" : ""
+                } w-10 h-10 text-center border rounded`}
+                disabled={loading} // Disable input fields during loading
               />
             ))}
         </div>
         <div>
           {message && <p className="text-green-500 mt-4">{message}</p>}
+          {error && <p className="text-red-500 mt-4">{error}</p>}
           <button
             onClick={handleResendCode}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            disabled={loading} // Disable button during loading
           >
-            Resend Code
+            {loading ? "Resending..." : "Resend Code"}
           </button>
         </div>
-        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </div>
   );

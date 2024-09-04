@@ -3,15 +3,13 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserRole, clearAuthState } from "../../store/authSlice";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import Logout from "../auth/logout";
-
+import apiClient from "../../utils/axiosConfig";
 function NavBar() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
   const userRole = useSelector((state) => state.auth.userRole);
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   useEffect(() => {
     if (token) {
@@ -19,11 +17,7 @@ function NavBar() {
         try {
           const decodedToken = jwtDecode(token);
           const userId = decodedToken.userId;
-          const response = await axios.get(`${BASE_URL}/users/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const response = await apiClient.get(`/users/${userId}`);
           dispatch(setUserRole(response.data.user.role));
         } catch (error) {
           console.error(
@@ -37,7 +31,7 @@ function NavBar() {
     } else {
       dispatch(clearAuthState());
     }
-  }, [token, dispatch, BASE_URL]);
+  }, [token, dispatch]);
 
   return (
     <nav className="bg-gray-800 text-white p-4">

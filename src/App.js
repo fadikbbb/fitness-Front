@@ -18,24 +18,17 @@ import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import ResetPassword from "./components/auth/ResetPassword";
 import Profile from "./pages/profile";
 import NotFound from "./pages/notfound";
-import AllTarining from "./pages/allTarining";
-
 function App() {
   return (
     <Provider store={store}>
       <Router>
-        <div class="container mx-auto">
+        <div className="container mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/training" element={<AllTarining />} />
             <Route path="/about" element={<About />} />
             <Route
               path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProtectedRoute component={Profile} />{" "}
-                </ProtectedRoute>
-              }
+              element={<ProtectedRoute element={<Profile />} />}
             />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/login" element={<Login />} />
@@ -56,10 +49,10 @@ function App() {
   );
 }
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ element }) {
   const isAuthenticated = useAuth();
 
-  return isAuthenticated ? children : <Navigate to="/auth/login" />;
+  return isAuthenticated ? element : <Navigate to="/auth/login" />;
 }
 
 export default App;

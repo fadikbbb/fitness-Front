@@ -53,7 +53,6 @@ function Register() {
           type: "manual",
           message: error.response.data?.error,
         });
-        console.log(error);
       }
     } finally {
       setLoading(false); // Hide spinner

@@ -45,7 +45,6 @@ function RequestPasswordReset() {
         setError("");
       }
     } catch (err) {
-      console.log(err);
       setError(err.response?.data?.error || "Something went wrong");
       setMessage("");
     } finally {

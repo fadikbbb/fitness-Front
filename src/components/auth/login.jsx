@@ -63,7 +63,6 @@ const Login = () => {
       }
     } catch (error) {
       setMessage("");
-      console.log(error);
       if (error.response) {
         setError(
           error.response.data.error || "An error occurred. Please try again."
