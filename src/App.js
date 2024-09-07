@@ -18,6 +18,7 @@ import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import ResetPassword from "./components/auth/ResetPassword";
 import Profile from "./pages/profile";
 import NotFound from "./pages/notfound";
+import AllTraining from "./pages/alltraining";
 function App() {
   return (
     <Provider store={store}>
@@ -25,6 +26,7 @@ function App() {
         <div className="container mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/alltraining" element={<AllTraining />} />
             <Route path="/about" element={<About />} />
             <Route
               path="/profile"
