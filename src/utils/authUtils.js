@@ -19,7 +19,6 @@ export const refreshToken = async () => {
 
     return accessToken;
   } catch (error) {
-    console.error("Error refreshing token:", error);
     store.dispatch(removeToken());
     return null;
   }
@@ -33,7 +32,6 @@ export const isTokenExpired = (token) => {
     const exp = jwtPayload.exp;
     return Date.now() >= exp * 1000;
   } catch (error) {
-    console.error("Error checking token expiration:", error);
     return true;
   }
 };

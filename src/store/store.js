@@ -1,12 +1,14 @@
 // src/store/store.js
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
-import userReducer from "./userSlice";
+import exerciseReducer from "./exerciseSlice";
+import foodReducer from './foodSlice'; // Adjust the path based on your file structure
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    user: userReducer,
+    exercise: exerciseReducer,
+    food: foodReducer,
   },
 });
 

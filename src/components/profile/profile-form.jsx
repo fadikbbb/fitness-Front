@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaSpinner } from "react-icons/fa"; // Import the spinner icon
 import apiClient from "../../utils/axiosConfig";
-const ProfileForm = ({ userId }) => {
+import { useParams } from "react-router-dom";
+const ProfileForm = () => {
+  const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false); // Manage loading state
   const [globalError, setGlobalError] = useState(null);

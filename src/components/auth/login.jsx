@@ -26,7 +26,8 @@ const Login = () => {
   // Check for token on mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (token) {
+    console.log(token);
+    if (token != null) {
       navigate("/"); // Redirect to home if token exists
     }
   }, [navigate]);
@@ -65,7 +66,7 @@ const Login = () => {
       setMessage("");
       if (error.response) {
         setError(
-          error.response.data.error || "An error occurred. Please try again."
+          error.response.data.message || "An error occurred. Please try again."
         );
       } else {
         setError("Network error. Please check your connection.");
@@ -87,36 +88,28 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold text-center">Login</h2>
+        <h2 className="text-2xl font-bold text-center text-primary">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="email"
-            >
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
               Email
             </label>
             <input
               id="email"
               type="email"
               {...register("email", { required: "Email is required" })}
-              className={`w-full p-2 border rounded-md focus:outline-none focus:ring ${
+              className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.email.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
             )}
           </div>
           <div className="mb-4 relative">
-            <label
-              className="block mb-2 text-sm font-bold text-gray-700"
-              htmlFor="password"
-            >
+            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
               Password
             </label>
             <div className="relative">
@@ -124,7 +117,7 @@ const Login = () => {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 {...register("password", { required: "Password is required" })}
-                className={`w-full p-2 border rounded-md focus:outline-none focus:ring ${
+                className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -137,15 +130,13 @@ const Login = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.password.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
             )}
           </div>
           <button
             type="submit"
-            className={`w-full px-4 py-2 text-white rounded-md hover:bg-blue-600 transition-transform transform flex items-center justify-center ${
-              loading ? "bg-blue-400" : "bg-blue-500"
+            className={`w-full px-4 py-2 text-white rounded-md hover:bg-buttonHover transition-transform transform flex items-center justify-center ${
+              loading ? "bg-button" : "bg-button"
             } ${loading ? "animate-pulse" : ""}`}
             disabled={loading}
           >
@@ -163,7 +154,7 @@ const Login = () => {
           <button
             type="button"
             onClick={goToHome}
-            className="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+            className="px-4 py-2 text-white bg-button text-center rounded-md hover:bg-buttonHover"
           >
             Back
           </button>
@@ -178,6 +169,7 @@ const Login = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Login;

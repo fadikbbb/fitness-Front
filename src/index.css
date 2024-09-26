@@ -17,11 +17,24 @@
     transform: translateX(10px);
   }
 }
-
+@keyframes plusAndMinus {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
 .animate-shake {
   animation: shake 0.5s ease-in-out;
 }
 
+.animate-plus {
+  animation: plusAndMinus 0.3s ease-in-out;
+}
+.animate-minus {
+  animation: plusAndMinus 0.3s ease-in-out backwards;
+}
 .logout-message {
   background-color: #4caf50; /* Green background */
   color: white; /* White text */

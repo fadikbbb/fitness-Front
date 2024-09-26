@@ -2,8 +2,8 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setToken } from "../../store/authSlice";
-import { setUserId } from "../../store/userSlice";
+import { setUserId, setUserRole, setToken }  from "../../store/authSlice";
+
 import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -69,15 +69,31 @@ const VerifyCode = () => {
 
       if (purpose === "login") {
         const token = response.data.token;
-        const decodedToken = jwtDecode(token);
-        dispatch(setUserId(decodedToken.userId));
-        dispatch(setToken(token));
-        localStorage.setItem("authToken", token);
-        setShake(true);
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      } else if (purpose === "register") {
+        try {
+            const decodedToken = jwtDecode(token); // Decode token safely
+            console.log(decodedToken);
+    
+            // Dispatch actions to set user data
+            dispatch(setUserRole(decodedToken.role));
+            dispatch(setToken(token));
+            dispatch(setUserId(decodedToken.userId));
+            
+            // Store token in localStorage
+            localStorage.setItem("authToken", token);
+    
+            // Optionally, set a shaking effect or any UI effect
+            setShake(true);
+            console.log(decodedToken.role);
+    
+            // Delay navigation to allow the effect to complete
+            setTimeout(() => {
+                navigate("/"); // Navigate to the home page after 1 second
+            }, 1000);
+        } catch (error) {
+            console.error("Error decoding token:", error);
+        }
+    }
+     else if (purpose === "register") {
         setShake(true);
         setTimeout(() => {
           navigate("/auth/login", { state: { ...data } });
@@ -132,15 +148,13 @@ const VerifyCode = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-background">
       <div
-        className={` p-6 rounded-lg shadow-lg bg-white max-w-sm text-center`}
+        className={`p-6 rounded-lg shadow-lg bg-white max-w-sm text-center`}
       >
-        <h2 className="text-2xl mb-4 font-bold">Enter Verification Code</h2>
+        <h2 className="text-2xl mb-4 font-bold text-primary">Enter Verification Code</h2>
         <div
-          className={`flex justify-center space-x-2 mb-4 ${
-            shake ? "animate-shake" : ""
-          }`}
+          className={`flex justify-center space-x-2 mb-4 ${shake ? "animate-shake" : ""}`}
           onPaste={handlePaste}
         >
           {Array(6)
@@ -153,9 +167,11 @@ const VerifyCode = () => {
                 ref={(el) => (inputRefs.current[index] = el)}
                 value={code[index] || ""}
                 onChange={(e) => handleChange(e, index)}
-                className={`${error ? "border-red-500 bg-red-200" : ""} ${
+                className={`${
+                  error ? "border-red-500 bg-red-200" : ""
+                } ${
                   message ? "border-green-500 bg-green-200" : ""
-                } w-10 h-10 text-center border rounded`}
+                } w-10 h-10 text-center border rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary`}
                 disabled={loading} // Disable input fields during loading
               />
             ))}
@@ -165,7 +181,7 @@ const VerifyCode = () => {
           {error && <p className="text-red-500 mt-4">{error}</p>}
           <button
             onClick={handleResendCode}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-button text-white rounded hover:bg-buttonHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             disabled={loading} // Disable button during loading
           >
             {loading ? "Resending..." : "Resend Code"}
@@ -174,6 +190,7 @@ const VerifyCode = () => {
       </div>
     </div>
   );
+  
 };
 
 export default VerifyCode;

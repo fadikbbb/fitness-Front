@@ -53,9 +53,9 @@ function RequestPasswordReset() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+        <h2 className="text-2xl font-bold text-center text-primary mb-6">
           Reset Password
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -63,8 +63,8 @@ function RequestPasswordReset() {
             type="email"
             placeholder="Enter your email"
             {...register("email", { required: "Email is required" })}
-            className={`w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.email ? "border-red-500" : ""
+            className={`w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${
+              errors.email ? "border-red-500" : "border-gray-300"
             }`}
           />
           {errors.email && (
@@ -76,9 +76,9 @@ function RequestPasswordReset() {
           {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
           <button
             type="submit"
-            className={`w-full py-3 rounded-md text-white flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              loading ? "bg-blue-400" : "bg-blue-500"
-            } ${loading ? "cursor-not-allowed" : "hover:bg-blue-600"}`}
+            className={`w-full py-3 rounded-md text-white flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary ${
+              loading ? "bg-button" : "bg-button"
+            } ${loading ? "cursor-not-allowed" : "hover:bg-buttonHover"}`}
             disabled={loading}
           >
             {loading ? (
@@ -91,6 +91,7 @@ function RequestPasswordReset() {
       </div>
     </div>
   );
+  
 }
 
 export default RequestPasswordReset;

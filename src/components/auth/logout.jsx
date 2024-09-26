@@ -2,8 +2,9 @@ import { useDispatch } from "react-redux";
 import { clearAuthState } from "../../store/authSlice";
 import { useState } from "react";
 import apiClient from "../../utils/axiosConfig";
+import { IoLogOutOutline } from "react-icons/io5";
 
-function Logout({ token }) {
+function Logout({ token,textLogout }) {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -19,12 +20,16 @@ function Logout({ token }) {
 
   return (
     <>
-      <button onClick={() => setIsModalOpen(true)} className="hover:underline">
-        Logout
+      <button onClick={() => setIsModalOpen(true)} className="w-full items-center justify-center sm:justify-between flex">
+        <IoLogOutOutline className="w-6 h-6" />
+        {
+          textLogout &&
+          <span className="text-base font-medium ml-4">{textLogout}</span>
+        }
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="fixed z-50 inset-0 flex items-center justify-center  bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
             <h2 className="text-lg font-bold mb-4 text-black">
               Confirm Logout

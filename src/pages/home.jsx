@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "../components/header/navbar";
+import NavBar from "../components/header/navBar";
 import Training from "../components/body/training";
 function Home() {
   return (

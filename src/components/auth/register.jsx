@@ -64,65 +64,52 @@ function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg mt-10">
-      <h2 className="text-3xl font-bold mb-8 text-center text-indigo-600">
+    <div className="max-w-md mx-auto p-8 bg-background rounded-lg shadow-lg mt-10">
+      <h2 className="text-3xl font-bold mb-8 text-center text-primary">
         Create an Account
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-1">
-          <label
-            htmlFor="firstName"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
             First Name
           </label>
           <input
             type="text"
             id="firstName"
             {...register("firstName", { required: "First name is required" })}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
               errors.firstName ? "border-red-500" : "border-gray-300"
             }`}
           />
           {errors.firstName && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.firstName.message}
-            </p>
+            <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
           )}
         </div>
         <div className="space-y-1">
-          <label
-            htmlFor="lastName"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
             Last Name
           </label>
           <input
             type="text"
             id="lastName"
             {...register("lastName", { required: "Last name is required" })}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
               errors.lastName ? "border-red-500" : "border-gray-300"
             }`}
           />
           {errors.lastName && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.lastName.message}
-            </p>
+            <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
           )}
         </div>
         <div className="space-y-1">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
           </label>
           <input
             type="email"
             id="email"
             {...register("email", { required: "Email is required" })}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
               errors.email ? "border-red-500" : "border-gray-300"
             }`}
           />
@@ -130,10 +117,7 @@ function Register() {
             <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
           )}
         </div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
           Password
         </label>
         <div className="space-y-1 relative">
@@ -147,7 +131,7 @@ function Register() {
                 message: "Password must be at least 8 characters long",
               },
             })}
-            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+            className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
               errors.password ? "border-red-500" : "border-gray-300"
             }`}
           />
@@ -162,25 +146,19 @@ function Register() {
         {errors.password && (
           <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
         )}
-
         <div>
           <button
             type="submit"
-            className={`w-full py-3 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-              loading ? "cursor-not-allowed" : ""
-            }`}
+            className={`w-full py-3 px-4 bg-button text-white rounded-md hover:bg-buttonHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${loading ? "cursor-not-allowed" : ""}`}
             disabled={loading}
           >
-            {loading ? (
-              <FaSpinner className="animate-spin mx-auto" />
-            ) : (
-              "Register"
-            )}
+            {loading ? <FaSpinner className="animate-spin mx-auto" /> : "Register"}
           </button>
         </div>
       </form>
     </div>
   );
+  
 }
 
 export default Register;

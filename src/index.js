@@ -5,13 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const theme = localStorage.getItem('theme') || 'light'; // Check the stored theme
+if (theme === 'dark') {
+  document.documentElement.classList.add('dark'); // Apply the dark class if the theme is dark
+} else {
+  document.documentElement.classList.remove('dark'); // Remove dark class if theme is light
+}
 root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

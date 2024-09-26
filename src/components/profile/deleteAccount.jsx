@@ -16,8 +16,7 @@ function DeleteAccount({ userId }) {
       await apiClient.delete(`/users/${userId}`);
       navigate("/auth/register");
       dispatch(clearAuthState());
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   return (
