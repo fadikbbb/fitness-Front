@@ -49,7 +49,7 @@ function NavBar() {
           )}
           {userRole && (
             <li>
-              <Logout token={token} />
+              <Logout token={token} textLogout="" />
             </li>
           )}
           {userRole && (

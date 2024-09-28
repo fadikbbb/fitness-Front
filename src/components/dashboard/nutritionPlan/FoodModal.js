@@ -77,7 +77,7 @@ function FoodModal({ onClose, onAdd }) {
     ];
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 relative">
                 <h1 className="text-3xl font-bold">Add Meal to Nutrition Plan</h1>
                 <button

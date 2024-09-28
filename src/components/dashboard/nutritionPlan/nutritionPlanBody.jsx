@@ -101,7 +101,7 @@ function NutritionPlanBody() {
 
   // Handle input changes and prevent negative numbers
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-50 py-12">
+    <div className="w-full">
       {isLoading ? (
         <p className="text-lg text-gray-700">Loading nutrition plan...</p>
       ) : (
@@ -126,8 +126,8 @@ function NutritionPlanBody() {
                       className="inline-block ml-2 text-red-500 cursor-pointer"
                     />
                     {isOpenMealEdit && (
-                      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                        <form className="bg-white p-8 rounded-lg">
+                     <div className="fixed z-50 inset-0 flex items-center justify-center  bg-black bg-opacity-50">
+                        <form className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
                           <input
                             className="mb-2"
                             value={editFormMeal}

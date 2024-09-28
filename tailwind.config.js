@@ -6,6 +6,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        sm: '640px',   // Small screens and up
+        md: '768px',   // Medium screens and up
+        lg: '1024px',  // Large screens and up
+        xl: '1280px',  // Extra large screens and up
+      },
       colors: {
         primary: '#40513B',
         secondary: '#609966',
@@ -24,18 +30,7 @@ module.exports = {
         success: '#28A745',
         warning: '#FFC107',
         danger: '#DC3545',
-        //
-        // primary: '#FF6F61', // Coral
-        // secondary: '#6B5B95', // Slate Blue
-        // accent: '#88B04B', // Olive Green
-        // background: '#F8F8F8', // Light Gray (Light mode)
-        // darkBackground: '#333333', // Dark mode background
-        // text: '#333333', // Dark Text (Light mode)
-        // darkText: '#F8F8F8', // Light text (Dark mode)
-        // muted: '#A7A7A7', // Muted Gray
-        // success: '#28A745', // Green
-        // warning: '#FFC107', // Yellow
-        // danger: '#DC3545', // Red
+        info: '#17A2B8',
       },
       fontFamily: {
         sans: ['Helvetica', 'Arial', 'sans-serif'],

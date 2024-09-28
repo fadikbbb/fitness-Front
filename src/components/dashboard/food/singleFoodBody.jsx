@@ -1,82 +1,71 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import apiClient from "../../../utils/axiosConfig";
-
+import React, { useState } from "react";
+import useFoodFetching from "../../../hooks/useFoodFetching";
+import useExtractColor from "../../../hooks/useExtractColor";
 function SingleFoodBody() {
-  const { id } = useParams();
-  const [food, setFood] = useState({});
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const { foodData, isLoading, error } = useFoodFetching();
 
-  useEffect(() => {
-    const fetchFood = async () => {
-      try {
-        setIsLoading(true);
-        const response = await apiClient.get(`/foods/${id}`);
-        setFood(response.data.food);
-        setError(null);
-      } catch (error) {
-        setError(error.response.data.message);
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const {
+    colors,
+    loading,
+    error: colorError,
+  } = useExtractColor(foodData?.image);
+  console.log(colors);
 
-    fetchFood();
-  }, [id]);
+  const toggleDetails = () => {
+    setIsOpen((prevState) => !prevState);
+  };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-xl text-gray-600">
-        Loading...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen text-red-600">
-        {error}
-      </div>
-    );
+    return <p className="text-center text-lg">Loading...</p>;
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200">
-      <h1 className="text-4xl font-semibold mb-4 text-center text-gray-800">
-        {food.name}
-      </h1>
-      <img
-        src={food.image}
-        alt={food.name}
-        className="w-full h-64 object-cover rounded-lg mb-4 border border-gray-300 shadow-md"
-      />
-      <div className="space-y-3">
-        <p className="text-lg text-gray-700">
-          <span className="font-semibold">Category:</span> {food.category}
-        </p>
-        <p className="text-lg text-gray-700">
-          <span className="font-semibold">Calories:</span> {food.calories}
-        </p>
-        <p className="text-lg text-gray-700">
-          <span className="font-semibold">Serving Size:</span>{" "}
-          {food.servingSize}
-        </p>
-        <p className="text-lg text-gray-700">
-          <span className="font-semibold">Fat:</span> {food.fat}g
-        </p>
-        <p className="text-lg text-gray-700">
-          <span className="font-semibold">Protein:</span> {food.protein}g
-        </p>
-        <p className="text-lg text-gray-700">
-          <span className="font-semibold">Carbohydrates:</span>{" "}
-          {food.carbohydrates}g
-        </p>
-        <p className="text-lg text-gray-700">
-          <span className="font-semibold">Fiber:</span> {food.fiber}g
-        </p>
+    <div className="w-full h-full flex items-center flex-col justify-center p-4 rounded-lg">
+      {error && (
+        <p className="text-center text-lg text-red-500">Error: {error}</p>
+      )}
+      <div
+        onClick={toggleDetails}
+        className="relative flex justify-center items-center w-full min-h-fit cursor-pointer"
+      >
+        <h1 className="absolute z-30 text-2xl font-semibold text-center text-gray-800 mt-4">
+          {foodData.name}
+        </h1>
+        {foodData.image && (
+          <img
+            src={foodData.image}
+            alt={foodData.name}
+            className="w-1/3 rounded-full z-20"
+          />
+        )}
+
+        {/* {isOpen && (
+          <> */}
+        {[
+          { label: "Category", value: foodData.category },
+          { label: "Serving Size", value: foodData.servingSize },
+          { label: "Fat", value: `${foodData.fat}g` },
+          { label: "Protein", value: `${foodData.protein}g` },
+          { label: "Carbohydrates", value: `${foodData.carbohydrates}g` },
+          { label: "Fiber", value: `${foodData.fiber}g` },
+          { label: "Calories", value: foodData.calories },
+        ].map((detail, index) => (
+          <div
+            key={index}
+            className={`absolute w-full  h-full  lg:w-[calc(33%+350px)] text-end text-lg text-gray-700 animate-detail ${
+              isOpen ? "animate-leave-rotate" : "animate-enter-rotate"
+            }`}
+            style={{
+              "--angle": `${45 * index}deg`,
+            }}
+          >
+            <span className="font-semibold">{detail.label}:</span>{" "}
+            {detail.value}
+          </div>
+        ))}
+        {/* </>
+        )} */}
       </div>
     </div>
   );

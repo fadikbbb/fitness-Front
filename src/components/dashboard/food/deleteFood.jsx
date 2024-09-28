@@ -6,7 +6,7 @@ function DeleteFood({ foodId, onSuccess }) {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false); // New state for loading
+  const [isDeleting, setIsDeleting] = useState(false); 
 
   const handleDelete = () => {
     setDeleteConfirmOpen(true);
@@ -48,7 +48,7 @@ function DeleteFood({ foodId, onSuccess }) {
             <button
               onClick={handleConfirmDelete}
               className="bg-red-500 text-white py-2 px-4 rounded-md mt-4"
-              disabled={isDeleting} // Disable button while deleting
+              disabled={isDeleting} 
             >
               {isDeleting ? "Deleting..." : "Confirm"}
             </button>

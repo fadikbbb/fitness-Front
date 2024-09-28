@@ -5,7 +5,7 @@ import apiClient from "../../../utils/axiosConfig";
 // import { addUser } from "../../../store/userslice";
 
 const AddUser = ({ onAdd }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [addFormOpen, setAddFormOpen] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [message, setMessage] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false); // New loading state
@@ -38,7 +38,7 @@ const AddUser = ({ onAdd }) => {
       setMessage(response.data.message); // check if response.data.message exists
       setError(null);
       setTimeout(() => {
-        setIsOpen(false);
+        setAddFormOpen(false);
       }, 500);
       onAdd();
     } catch (error) {
@@ -54,19 +54,23 @@ const AddUser = ({ onAdd }) => {
       setIsSubmitting(false);
     }
   };
+  const handleOpen = () => {
+    setAddFormOpen(true);
+    setError(null);
+    setMessage(null);
+  };
   return (
-    <div className="w-full flex">
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 m-2 rounded w-1/2 mx-auto"
-      >
-        Add user <FaPlus />
-      </button>
-      {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
-            <h2 className="text-lg font-bold mb-4">Add user</h2>
-
+    <div className="w-[30%] flex justify-end items-center">
+    <button
+      onClick={handleOpen}
+      className=" bg-button hover:bg-buttonHover text-white flex gap-2 items-center px-4 py-2 rounded-lg"
+    >
+      <div className="hidden md:flex"> Add user</div> <FaPlus />
+    </button>
+    {addFormOpen && (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
+          <h2 className="text-lg font-bold mb-4">Add food</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               
               <div className="mb-4">
@@ -271,13 +275,15 @@ const AddUser = ({ onAdd }) => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setAddFormOpen(false)}
                   className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Cancel
                 </button>
               </div>
             </form>
+            {error && <p className="text-red-500">{error}</p>}
+            {message && <p className="text-green-500">{message}</p>}
           </div>
         </div>
       )}

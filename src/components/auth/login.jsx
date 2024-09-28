@@ -19,25 +19,23 @@ const Login = () => {
   const [emailSent, setEmailSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const location = useLocation();
   const { email, password } = location.state || {};
 
-  // Check for token on mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    console.log(token);
     if (token != null) {
-      navigate("/"); // Redirect to home if token exists
+      navigate("/");
     }
   }, [navigate]);
 
   useEffect(() => {
     if (email) {
-      setValue("email", email); // use setValue to set the email field value
+      setValue("email", email);
     }
+
     if (password) {
-      setValue("password", password); // use setValue to set the password field value
+      setValue("password", password);
     }
   }, [email, password, setValue]);
 
@@ -49,7 +47,6 @@ const Login = () => {
         purpose: "login",
       });
 
-      // Check if response status is OK (200) or Created (201)
       if (response.status === 200 || response.status === 201) {
         setEmailSent(true);
         setError("");
@@ -93,7 +90,10 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center text-primary">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">
+            <label
+              className="block mb-2 text-sm font-bold text-gray-700"
+              htmlFor="email"
+            >
               Email
             </label>
             <input
@@ -105,11 +105,16 @@ const Login = () => {
               }`}
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+              <p className="mt-1 text-sm text-red-500">
+                {errors.email.message}
+              </p>
             )}
           </div>
           <div className="mb-4 relative">
-            <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">
+            <label
+              className="block mb-2 text-sm font-bold text-gray-700"
+              htmlFor="password"
+            >
               Password
             </label>
             <div className="relative">
@@ -130,7 +135,9 @@ const Login = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+              <p className="mt-1 text-sm text-red-500">
+                {errors.password.message}
+              </p>
             )}
           </div>
           <button
@@ -169,7 +176,6 @@ const Login = () => {
       </div>
     </div>
   );
-  
 };
 
 export default Login;

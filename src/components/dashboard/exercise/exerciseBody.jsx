@@ -17,8 +17,9 @@ function ExerciseBody() {
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
       search: "",
-      category: "",
+      category: "", // Ensure this matches the value of your "Select category" option
       limit: 5,
+      intensity: "",
     },
   });
 
@@ -34,7 +35,6 @@ function ExerciseBody() {
           formValues.intensity ? `&intensity=${formValues.intensity}` : ""
         }`
       );
-console.log(response.data)
       setExercises(response.data.exercises);
       setTotalPages(Math.ceil(response.data.totalExercises / formValues.limit));
       if (response.data.exercises.length === 0) {
@@ -50,10 +50,15 @@ console.log(response.data)
   };
   useEffect(() => {
     fetchExercises();
-  }, [page,formValues.limit,formValues.search,formValues.category,formValues.intensity,]);
+  }, [
+    page,
+    formValues.limit,
+    formValues.search,
+    formValues.category,
+    formValues.intensity,
+  ]);
 
   const handlePageChange = (newPage) => setPage(newPage);
-
 
   const handleRefresh = () => {
     fetchExercises();
@@ -82,46 +87,44 @@ console.log(response.data)
 
           <AddExercise categories={categories} onAdd={handleRefresh} />
         </div>
-
         <div
-          className={`items-center flex flex-col md:flex-row bg-white rounded-md 
+          className={`items-start  flex flex-col md:flex-row bg-white rounded-md 
       transition-all duration-500 ease-in-out
       ${
         isOpen
           ? "md:min-w-full md:max-w-full md:h-fit max-h-full"
-          : "max-h-[55px] w-full md:min-w-[90px] md:max-w-[92px]"
+          : "max-h-[60px] w-full md:min-w-[90px] md:max-w-[92px]"
       }`}
         >
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="p-4 min-h-[55px] text-left overflow-hidden
-             rounded-b-md  w-full md:w-fit transition-all duration-300
+             rounded-b-md w-full  md:min-w-[100px] md:w-fit transition-all duration-300
               ease-in-out focus:outline-none"
           >
             <div className="flex justify-between items-center">
-              <div className="min-h-full sm:w-[100px] w-full  flex items-center justify-between space-x-2">
+              <div className=" min-h-full w-full  flex items-center justify-between space-x-2">
                 <span>Filters</span>
                 <IoFilterOutline className="w-4 h-4" />
               </div>
             </div>
           </button>
-
           <div
-            className={`h-full w-full transition-all duration-500 ease-in-out overflow-hidden  rounded-md ${
-              isOpen ? " w-full h-fit" : "h-0 md:h-full md:w-0 "
+            className={`w-full  overflow-hidden rounded-md transition-all duration-500 ease-in-out ${
+              isOpen ? "max-h-[300px]" : "max-h-0"
             }`}
           >
             <form
-              className={`space-y-4 flex transition-all duration-500 ease-in-out flex-col md:flex-row md:p-2  md:space-y-0 md:space-x-2 justify-between ${
-                isOpen ? "max-h-full" : "max-h-0"
-              }`}
+              className={`space-y-4 p-4 flex flex-col md:flex-row
+                 md:p-2 md:space-y-0 md:space-x-2 justify-between
+                  transition-opacity duration-300 ease-in-out`}
             >
-              {/* Category Dropdown */}
               <select
                 {...register("category")}
+                defaultValue=""
                 className="w-full md:w-[calc(100%/3 -5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Select category
                 </option>
                 {categories.map((category) => (
@@ -132,12 +135,12 @@ console.log(response.data)
                 <option value="">All</option>
               </select>
 
-              {/* Intensity Dropdown */}
               <select
                 {...register("intensity")}
+                defaultValue=""
                 className="w-full md:w-[calc(100%/3 -5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Select intensity
                 </option>
                 <option value="low">Low</option>
@@ -146,12 +149,12 @@ console.log(response.data)
                 <option value="">All</option>
               </select>
 
-              {/* Limit Dropdown */}
               <select
                 {...register("limit")}
+                defaultValue="5"
                 className="w-full md:w-[calc(100%/3 -5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="" selected disabled>
+                <option value="" disabled>
                   Select limit
                 </option>
                 <option value="5">5</option>
@@ -174,6 +177,7 @@ console.log(response.data)
         <div className="text-center">Loading exercises...</div>
       ) : (
         <>
+          
           <div className="my-4 flex justify-around flex-wrap">
             {exercises.length > 0 ? (
               exercises.map((exercise) => (

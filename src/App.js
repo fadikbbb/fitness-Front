@@ -98,7 +98,7 @@ function App() {
               />}
             />
             <Route path="/dashboard/users/:userId" element={<ViewUser />} />
-            <Route path="/dashboard/food/single-food/:id" element={<SingleFood />} />
+            <Route path="/dashboard/food/single-food/:foodId" element={<SingleFood />} />
             <Route path="/auth/register" element={<Register />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/verify-code" element={<VerifyCode />} />

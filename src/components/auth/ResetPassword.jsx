@@ -20,7 +20,7 @@ function ResetPassword() {
   const [globalError, setGlobalError] = useState("");
   const { token } = useParams();
   const navigate = useNavigate();
-  
+
   // Check for token on mount
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -45,7 +45,10 @@ function ResetPassword() {
         navigate("/auth/login");
       }, 1000);
     } catch (error) {
+      console.log(error);
       setMessage("");
+
+      // Handling backend errors
       if (error.response?.data && error.response.data?.errors) {
         error.response.data.errors.forEach((err) => {
           setError(err.path, {
@@ -53,8 +56,11 @@ function ResetPassword() {
             message: err.msg,
           });
         });
+      } else if (error.response?.data?.error) {
+        setGlobalError(error?.response?.data.error);
+        console.log(error.response.data.error);
       } else {
-        setGlobalError(error.response?.data?.error || "Something went wrong");
+        setGlobalError("Something went wrong. Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -63,72 +69,71 @@ function ResetPassword() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-    <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold text-center text-primary mb-6">
-        Reset Password
-      </h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="relative">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="New password"
-            {...register("password", {
-              required: "New password is required",
-            })}
-            className={`w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${
-              errors.password ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          <div
-            className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
+      <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
+        <h2 className="text-2xl font-bold text-center text-primary mb-6">
+          Reset Password
+        </h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="New password"
+              {...register("password", {
+                required: "New password is required",
+              })}
+              className={`w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            <div
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </div>
+            {errors.password && (
+              <p className="text-red-600 mt-1">{errors.password.message}</p>
+            )}
           </div>
-          {errors.password && (
-            <p className="text-red-600 mt-1">{errors.password.message}</p>
+          <div>
+            <input
+              type="password"
+              placeholder="Confirm password"
+              {...register("confirmPassword", {
+                required: "Confirm password is required",
+              })}
+              className={`w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${
+                errors.confirmPassword ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-600 mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
+          </div>
+          {message && (
+            <p className="mt-4 text-green-600 text-center">{message}</p>
           )}
-        </div>
-        <div>
-          <input
-            type="password"
-            placeholder="Confirm password"
-            {...register("confirmPassword", {
-              required: "Confirm password is required",
-            })}
-            className={`w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${
-              errors.confirmPassword ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.confirmPassword && (
-            <p className="text-red-600 mt-1">
-              {errors.confirmPassword.message}
-            </p>
+          {globalError && (
+            <p className="mt-4 text-red-600 text-center">{globalError}</p>
           )}
-        </div>
-        {message && (
-          <p className="mt-4 text-green-600 text-center">{message}</p>
-        )}
-        {globalError && (
-          <p className="mt-4 text-red-600 text-center">{globalError}</p>
-        )}
-        <button
-          type="submit"
-          className={`w-full py-3 text-white rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary ${
-            loading ? "bg-button" : "bg-button"
-          } ${loading ? "cursor-not-allowed" : "hover:bg-buttonHover"}`}
-          disabled={loading}
-        >
-          {loading ? (
-            <FaSpinner className="animate-spin mr-2" />
-          ) : (
-            "Reset Password"
-          )}
-        </button>
-      </form>
+          <button
+            type="submit"
+            className={`w-full py-3 text-white rounded-md flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary ${
+              loading ? "bg-button" : "bg-button"
+            } ${loading ? "cursor-not-allowed" : "hover:bg-buttonHover"}`}
+            disabled={loading}
+          >
+            {loading ? (
+              <FaSpinner className="animate-spin mr-2" />
+            ) : (
+              "Reset Password"
+            )}
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
-  
   );
 }
 

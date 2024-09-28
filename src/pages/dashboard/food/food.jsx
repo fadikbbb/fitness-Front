@@ -7,7 +7,7 @@ function Food() {
       <NavBar />
       <div className="flex">
         <SideBar />
-        <div className="w-[80%] p-3 bg-background overflow-y-auto">
+        <div className="w-[80%] bg-background overflow-y-auto">
           <FoodBody />
         </div>
       </div>

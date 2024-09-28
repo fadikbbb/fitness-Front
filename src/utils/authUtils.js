@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setToken, removeToken, setRefreshToken } from "../store/authSlice";
+import { setToken, removeToken } from "../store/authSlice";
 import store from "../store/store";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -12,13 +12,11 @@ export const refreshToken = async () => {
       {},
       { withCredentials: true }
     );
-    const { accessToken, refreshToken } = response.data;
-
+    const { accessToken } = response.data;
     store.dispatch(setToken(accessToken));
-    store.dispatch(setRefreshToken(refreshToken));
-
     return accessToken;
   } catch (error) {
+    console.log("Error during token refresh:", error);
     store.dispatch(removeToken());
     return null;
   }

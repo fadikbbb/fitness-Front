@@ -4,10 +4,14 @@ import Navbar from "../../../components/header/navBar";
 
 function NutritionPlan() {
   return (
-    <div>
+    <div className=" bg-gray-100">
       <Navbar />
-      <SideBar />
-      <NutritionPlanBody />
+      <div className="flex ">
+        <SideBar />
+        <div className="w-[80%] bg-background overflow-y-auto">
+          <NutritionPlanBody />
+        </div>
+      </div>
     </div>
   );
 }

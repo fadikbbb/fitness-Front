@@ -2,12 +2,12 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUserId, setUserRole, setToken }  from "../../store/authSlice";
+import { setUserId, setUserRole, setToken } from "../../store/authSlice";
 
 import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
-
+axios.defaults.withCredentials = true;
 const VerifyCode = () => {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
@@ -57,43 +57,29 @@ const VerifyCode = () => {
 
   const verifyCode = async (inputCode) => {
     setData(state || {});
-
     setLoading(true); // Set loading to true
     try {
       const response = await axios.post(`${BASE_URL}/auth/verify-code`, {
         ...data,
         code: inputCode,
       });
-
       setMessage(response.data.message);
-
       if (purpose === "login") {
         const token = response.data.token;
         try {
-            const decodedToken = jwtDecode(token); // Decode token safely
-            console.log(decodedToken);
-    
-            // Dispatch actions to set user data
-            dispatch(setUserRole(decodedToken.role));
-            dispatch(setToken(token));
-            dispatch(setUserId(decodedToken.userId));
-            
-            // Store token in localStorage
-            localStorage.setItem("authToken", token);
-    
-            // Optionally, set a shaking effect or any UI effect
-            setShake(true);
-            console.log(decodedToken.role);
-    
-            // Delay navigation to allow the effect to complete
-            setTimeout(() => {
-                navigate("/"); // Navigate to the home page after 1 second
-            }, 1000);
+          const decodedToken = jwtDecode(token); 
+          dispatch(setUserRole(decodedToken.role));
+          dispatch(setToken(token));
+          dispatch(setUserId(decodedToken.userId));
+          // localStorage.setItem("authToken", token);
+          setShake(true);
+          setTimeout(() => {
+            navigate("/");
+          }, 1000);
         } catch (error) {
-            console.error("Error decoding token:", error);
+          console.error("Error decoding token:", error);
         }
-    }
-     else if (purpose === "register") {
+      } else if (purpose === "register") {
         setShake(true);
         setTimeout(() => {
           navigate("/auth/login", { state: { ...data } });
@@ -108,7 +94,7 @@ const VerifyCode = () => {
       }
     } finally {
       setTimeout(() => setShake(false), 1000);
-      setLoading(false); // Set loading to false
+      setLoading(false);
     }
   };
   const handleResendCode = async () => {
@@ -149,12 +135,14 @@ const VerifyCode = () => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-background">
-      <div
-        className={`p-6 rounded-lg shadow-lg bg-white max-w-sm text-center`}
-      >
-        <h2 className="text-2xl mb-4 font-bold text-primary">Enter Verification Code</h2>
+      <div className={`p-6 rounded-lg shadow-lg bg-white max-w-sm text-center`}>
+        <h2 className="text-2xl mb-4 font-bold text-primary">
+          Enter Verification Code
+        </h2>
         <div
-          className={`flex justify-center space-x-2 mb-4 ${shake ? "animate-shake" : ""}`}
+          className={`flex justify-center space-x-2 mb-4 ${
+            shake ? "animate-shake" : ""
+          }`}
           onPaste={handlePaste}
         >
           {Array(6)
@@ -167,9 +155,7 @@ const VerifyCode = () => {
                 ref={(el) => (inputRefs.current[index] = el)}
                 value={code[index] || ""}
                 onChange={(e) => handleChange(e, index)}
-                className={`${
-                  error ? "border-red-500 bg-red-200" : ""
-                } ${
+                className={`${error ? "border-red-500 bg-red-200" : ""} ${
                   message ? "border-green-500 bg-green-200" : ""
                 } w-10 h-10 text-center border rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary`}
                 disabled={loading} // Disable input fields during loading
@@ -190,7 +176,6 @@ const VerifyCode = () => {
       </div>
     </div>
   );
-  
 };
 
 export default VerifyCode;

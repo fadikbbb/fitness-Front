@@ -22,7 +22,7 @@ function ExerciseForm({
     } else {
       handleAddSubmit(data);
     }
-    reset();
+
   };
   // Initialize useForm with defaultValues
   const {
@@ -31,7 +31,6 @@ function ExerciseForm({
     formState: { errors },
     setError,
     clearErrors,
-    reset,
   } = useForm({
     defaultValues: {
       name: exercise?.name,
@@ -58,8 +57,8 @@ function ExerciseForm({
   }, [formErrors]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} enctype="multipart/form-data" className="space-y-4">
-      <div className="mb-4">
+    <form onSubmit={handleSubmit(onSubmit)} className=" space-y-4" enctype="multipart/form-data" >
+      <div className="flex flex-col items-start ">
         <label htmlFor="name" className="block mb-1 text-left">
           Name:
         </label>
@@ -70,10 +69,10 @@ function ExerciseForm({
           className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500" : "border-gray-300"
             }`}
         />
-        {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+        {errors.name && <small className="text-red-500">{errors.name.message}</small>}
       </div>
 
-      <div className="mb-4">
+      <div className="flex flex-col items-start">
         <label htmlFor="description" className="block mb-1 text-left">
           Description:
         </label>
@@ -84,11 +83,11 @@ function ExerciseForm({
             }`}
         />
         {errors.description && (
-          <p className="text-red-500">{errors.description.message}</p>
+          <small className="text-red-500">{errors.description.message}</small>
         )}
       </div>
 
-      <div className="mb-4">
+      <div className="flex flex-col items-start">
         <label htmlFor="image" className="block mb-1 text-left">
           Image:
         </label>
@@ -100,10 +99,10 @@ function ExerciseForm({
           className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.image ? "border-red-500" : "border-gray-300"
             }`}
         />
-        {errors.image && <p className="text-red-500">{errors.image.message}</p>}
+        {errors.image && <small className="text-red-500">{errors.image.message}</small>}
       </div>
 
-      <div className="mb-4">
+      <div className="flex flex-col items-start">
         <label htmlFor="video" className="block mb-1 text-left">
           Video:
         </label>
@@ -115,10 +114,10 @@ function ExerciseForm({
           className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.video ? "border-red-500" : "border-gray-300"
             }`}
         />
-        {errors.video && <p className="text-red-500">{errors.video.message}</p>}
+        {errors.video && <small className="text-red-500">{errors.video.message}</small>}
       </div>
 
-      <div className="mb-4">
+      <div className="flex flex-col items-start">
         <label htmlFor="category" className="block mb-1 text-left">
           Category:
         </label>
@@ -128,7 +127,7 @@ function ExerciseForm({
           className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.category ? "border-red-500" : "border-gray-300"
             }`}
         >
-          <option value="" disabled>
+          <option value="" disabled selected>
             Select a category
           </option>
           {categories.map((category) => (
@@ -138,21 +137,21 @@ function ExerciseForm({
           ))}
         </select>
         {errors.category && (
-          <p className="text-red-500">{errors.category.message}</p>
+          <small className="text-red-500">{errors.category.message}</small>
         )}
       </div>
 
-      <div className="mb-4">
+      <div className="flex flex-col items-start">
         <label htmlFor="intensity" className="block mb-1 text-left">
           Intensity:
         </label>
         <select
           id="intensity"
           {...register("intensity")}
-          className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.intensity ? "border-red-500" : "border-gray-300"
+          className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.intensity ? "border-red-500 " : "border-gray-300"
             }`}
         >
-          <option value="" disabled>
+          <option value="" disabled selected>
             Select an intensity
           </option>
           <option value="low">Low</option>
@@ -160,10 +159,10 @@ function ExerciseForm({
           <option value="high">High</option>
         </select>
         {errors.intensity && (
-          <p className="text-red-500">{errors.intensity.message}</p>
+          <small  className="text-red-500">{errors.intensity.message}</small>
         )}
       </div>
-      <div className="mb-4">
+      <div className="flex flex-col items-start">
         <label htmlFor="restDuration" className="block mb-1 text-left">
           Rest Duration (in minutes):
         </label>
@@ -175,7 +174,7 @@ function ExerciseForm({
             }`}
         />
         {errors.restDuration && (
-          <p className="text-red-500">{errors.restDuration.message}</p>
+          <small className="text-red-500">{errors.restDuration.message}</small>
         )}
       </div>
       <div className="flex justify-center">

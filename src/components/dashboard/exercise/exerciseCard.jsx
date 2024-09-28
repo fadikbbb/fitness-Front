@@ -3,17 +3,16 @@ import EditExercise from "./editExercise";
 import { Link } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import DeleteExercise from "./deleteExercise";
-
 function ExerciseCard({ exercise, onDelete, onEdit, categories }) {
   return (
-    <div className="m-4 bg-white rounded-xl shadow-lg w-full md:w-3/4 lg:w-1/4">
+    <div className="m-4 bg-white rounded-xl shadow-lg md:w-[calc(50%-2rem)] lg:w-[calc(33%-2rem)] xl:[calc(25%-2rem)] w-full">
       <div className="relative w-full h-48 ">
         <img
           src={exercise.image}
           alt={exercise.name}
-          className="absolute z-10 w-full h-full object-cover rounded-t-xl"
+          className="absolute z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  h-full rounded-t-xl"
         />
-        <div className="absolute z-20 top-2 left-2 bg-blue-500 text-white m-1 text-sm px-3 py-1 rounded-full">
+        <div className="absolute z-20 top-2 left-2 bg-button text-white m-1 text-xs sm:text-sm px-3 py-1 rounded-full">
           {exercise.category}
         </div>
       </div>

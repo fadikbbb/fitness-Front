@@ -14,6 +14,7 @@ function Logout({ token,textLogout }) {
          await apiClient.post(`/auth/logout`);
         dispatch(clearAuthState());
         setIsModalOpen(false);
+        console.log("Logged out successfully");
       }
     } catch (error) {}
   }

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-
+import { FaEdit } from "react-icons/fa";
+import { FaPlusCircle, FaSpinner } from "react-icons/fa";
 function FoodForm({
     handleEditSubmit,
     handleAddSubmit,
@@ -21,7 +22,7 @@ function FoodForm({
         } else {
             handleAddSubmit(data);
         }
-        reset();
+
     };
     const {
         register,
@@ -78,9 +79,9 @@ function FoodForm({
         <form
             onSubmit={handleSubmit(onSubmit)}
             encType="multipart/form-data"
-            className="space-y-4"
+            className="space-y-1"
         >
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="name" className="mr-2">
                     Name:
                 </label>
@@ -88,14 +89,17 @@ function FoodForm({
                     type="text"
                     id="name"
                     {...register("name")}
-                    className="p-2 border border-gray-300 rounded-md"
-                />
+                     className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500" : "border-gray-300"  }`}
+                         />
+                
                 {errors.name && (
-                    <p className="text-red-500">{errors.name.message}</p>
+                    <small className="text-red-500">{errors.name.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="image" className="mr-2">
                     image URL:
                 </label>
@@ -103,21 +107,27 @@ function FoodForm({
                     type="file"
                     id="image"
                     {...register("image")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.image ? "border-red-500" : "border-gray-300"  }`}
+                         
                 />
                 {errors.image && (
-                    <p className="text-red-500">{errors.image.message}</p>
+                    <small className="text-red-500">{errors.image.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="category" className="mr-2">
                     Category:
                 </label>
                 <select
                     id="category"
                     {...register("category")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.category ? "border-red-500" : "border-gray-300"  }`}
+                         
                 >
                     <option value="" disabled selected >Select a category</option>
                     {foodCategories.map((category) => (
@@ -128,11 +138,11 @@ function FoodForm({
                     <option value="">all</option>
                 </select>
                 {errors.category && (
-                    <p className="text-red-500">{errors.category.message}</p>
+                    <small className="text-red-500">{errors.category.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="calories" className="mr-2">
                     Calories:
                 </label>
@@ -141,14 +151,17 @@ function FoodForm({
                     step={0.1}
                     id="calories"
                     {...register("calories")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.calories ? "border-red-500" : "border-gray-300"  }`}
+                         
                 />
                 {errors.calories && (
-                    <p className="text-red-500">{errors.calories.message}</p>
+                    <small className="text-red-500">{errors.calories.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="weight" className="mr-2">
                     Serving Size:
                 </label>
@@ -157,14 +170,17 @@ function FoodForm({
                     step={0.1}
                     id="weight"
                     {...register("weight")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.weight ? "border-red-500" : "border-gray-300"  }`}
+                         
                 />
                 {errors.weight && (
-                    <p className="text-red-500">{errors.weight.message}</p>
+                    <small className="text-red-500">{errors.weight.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="fat" className="mr-2">
                     Fat:
                 </label>
@@ -173,14 +189,17 @@ function FoodForm({
                     step={0.1}
                     id="fat"
                     {...register("fat")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.fat ? "border-red-500" : "border-gray-300"  }`}
+                         
                 />
                 {errors.fat && (
-                    <p className="text-red-500">{errors.fat.message}</p>
+                    <small className="text-red-500">{errors.fat.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="protein" className="mr-2">
                     protein:
                 </label>
@@ -189,14 +208,17 @@ function FoodForm({
                     step={0.1}
                     id="protein"
                     {...register("protein")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.protein ? "border-red-500" : "border-gray-300"  }`}
+                         
                 />
                 {errors.protein && (
-                    <p className="text-red-500">{errors.protein.message}</p>
+                    <small className="text-red-500">{errors.protein.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="carbohydrates" className="mr-2">
                     Carbohydrates:
                 </label>
@@ -205,14 +227,17 @@ function FoodForm({
                     step={0.1}
                     id="carbohydrates"
                     {...register("carbohydrates")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.carbohydrates ? "border-red-500" : "border-gray-300"  }`}
+                         
                 />
                 {errors.carbohydrates && (
-                    <p className="text-red-500">{errors.carbohydrates.message}</p>
+                    <small className="text-red-500">{errors.carbohydrates.message}</small>
                 )}
             </div>
 
-            <div className="mb-4">
+            <div className="flex flex-col items-start">
                 <label htmlFor="fiber" className="mr-2">
                     Fiber:
                 </label>
@@ -221,27 +246,55 @@ function FoodForm({
                     step={0.1}
                     id="fiber"
                     {...register("fiber")}
-                    className="p-2 border border-gray-300 rounded-md"
+                   className={`p-2 border
+                         rounded-md w-full 
+                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.fiber ? "border-red-500" : "border-gray-300"  }`}
+                         
                 />
                 {errors.fiber && (
-                    <p className="text-red-500">{errors.fiber.message}</p>
+                    <small className="text-red-500">{errors.fiber.message}</small>
                 )}
             </div>
 
 
             <div className="flex justify-center">
-                <button
-                    type="submit"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                    disabled={food ?
-                        (isEditing ? true : false)
-                        : (isAdding ? true : false)}
-                >
-                    {food ?
-                        (isEditing ? "editing..." : "edit")
-                        : (isAdding ? "Creating..." : "Create")}
-
-                </button>
+            {food ? (
+          <button
+            type="submit"
+            className={`${isEditing
+              ? "bg-button opacity-[0.5] cursor-not-allowed "
+              : "bg-button hover:bg-buttonHover"
+              } text-white font-bold py-2 px-4 rounded mr-2 flex items-center`}
+            disabled={isEditing}
+          >
+            {isEditing ? (
+              <FaSpinner className="animate-spin text-2xl" />
+            ) : (
+              <>
+                <FaEdit className="text-md mr-2" />
+                Edit Exercise
+              </>
+            )}
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className={`${isAdding
+              ? " bg-button opacity-[0.5] cursor-not-allowed "
+              : " bg-button hover:bg-buttonHover "
+              } text-white font-bold py-2 px-4 rounded mr-2 flex items-center`}
+            disabled={isAdding ? true : false}
+          >
+            {isAdding ? (
+              <FaSpinner className="animate-spin text-2xl " />
+            ) : (
+              <>
+                <FaPlusCircle className="text-md mr-2" />
+                Add Exercise
+              </>
+            )}
+          </button>
+        )}
                 <button
                     type="button"
                     onClick={() => {
