@@ -3,9 +3,11 @@ import { useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import apiClient from "../../../utils/axiosConfig";
 // import { addUser } from "../../../store/userslice";
-
+// import UserForm from "./userForm";
+import { useState } from "react";
 const AddUser = ({ onAdd }) => {
   const [addFormOpen, setAddFormOpen] = React.useState(false);
+  const [formErrors, setFormErrors] = React.useState({});
   const [error, setError] = React.useState(null);
   const [message, setMessage] = React.useState(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false); // New loading state
@@ -13,7 +15,7 @@ const AddUser = ({ onAdd }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: errors ,
   } = useForm({
     defaultValues: {
       email: "",
@@ -30,8 +32,24 @@ const AddUser = ({ onAdd }) => {
     },
   });
   const onSubmit = async (data) => {
-    console.log(data); // log the data being sent
     try {
+      Object.keys(data).forEach((key) => {
+        if (data[key] === "profileImage") {
+          if (data[key].length > 0) {
+            data[key] = data[key][0];
+          }
+        } else if (
+          data[key] !== "" &&
+          data[key] !== 0 &&
+          data[key] !== null &&
+          data[key] !== undefined
+        ) {
+          return data[key];
+        } else {
+          data[key] = null;
+        }
+      });
+      
       setIsSubmitting(true);
       const response = await apiClient.post("/users", data);
       //   dispatch(addUser(response.data.users)); // check if response.data.users exists
@@ -43,13 +61,17 @@ const AddUser = ({ onAdd }) => {
       onAdd();
     } catch (error) {
       console.log(error);
-      if (error.response && error.response.data) {
+      if (error.response && error.response.data.errors) {
+        const errorMessages = {};
+        error.response.data.errors.forEach((err) => {
+          errorMessages[err.path] = err.msg; // Map errors to their respective fields
+        });
+        setFormErrors(errorMessages); // Update formErrors state
+      } else if (error.response && error.response.data.message) {
+        setFormErrors({}); // Clear formErrors state if there are no errors
         setError(error.response.data.message); // Safely handle the error response
-      } else {
-        setError("An unexpected error occurred."); // Handle cases where error.response might be undefined
       }
       setMessage(null);
-      setIsSubmitting(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -61,18 +83,21 @@ const AddUser = ({ onAdd }) => {
   };
   return (
     <div className="w-[30%] flex justify-end items-center">
-    <button
-      onClick={handleOpen}
-      className=" bg-button hover:bg-buttonHover text-white flex gap-2 items-center px-4 py-2 rounded-lg"
-    >
-      <div className="hidden md:flex"> Add user</div> <FaPlus />
-    </button>
-    {addFormOpen && (
-      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-        <div className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
-          <h2 className="text-lg font-bold mb-4">Add food</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              
+      <button
+        onClick={handleOpen}
+        className=" bg-button hover:bg-buttonHover text-white flex gap-2 items-center px-4 py-2 rounded-lg"
+      >
+        <div className="hidden md:flex"> Add user</div> <FaPlus />
+      </button>
+      {addFormOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
+            <h2 className="text-lg font-bold mb-4">Add user</h2>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4"
+              encType="multipart/form-data"
+            >
               <div className="mb-4">
                 <label htmlFor="email" className="mr-2">
                   email
@@ -81,12 +106,12 @@ const AddUser = ({ onAdd }) => {
                   type="email"
                   id="email"
                   {...register("email", {
-                    required: "user first name is required",
+                    required: "email is required",
                   })}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.email && (
-                  <p className="text-red-500">{errors.email.message}</p>
+                {formErrors.email && (
+                  <p className="text-red-500">{formErrors.email.message}</p>
                 )}
               </div>
               <div className="mb-4">
@@ -97,12 +122,12 @@ const AddUser = ({ onAdd }) => {
                   type="password"
                   id="password"
                   {...register("password", {
-                    required: "user first name is required",
+                    required: "password is required",
                   })}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.password && (
-                  <p className="text-red-500">{errors.password.message}</p>
+                {formErrors.password && (
+                  <p className="text-red-500">{formErrors.password}</p>
                 )}
               </div>
               <div className="mb-4">
@@ -117,8 +142,8 @@ const AddUser = ({ onAdd }) => {
                   })}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.firstName && (
-                  <p className="text-red-500">{errors.firstName.message}</p>
+                {formErrors.firstName && (
+                  <p className="text-red-500">{formErrors.firstName}</p>
                 )}
               </div>
               <div className="mb-4">
@@ -133,8 +158,8 @@ const AddUser = ({ onAdd }) => {
                   })}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.lastName && (
-                  <p className="text-red-500">{errors.lastName.message}</p>
+                {formErrors.lastName && (
+                  <p className="text-red-500">{formErrors.lastName}</p>
                 )}
               </div>
 
@@ -143,15 +168,13 @@ const AddUser = ({ onAdd }) => {
                   profile image URL:
                 </label>
                 <input
-                  type="text"
+                  type="file"
                   id="profileImage"
-                  {...register("profileImage", {
-                    required: "profile image URL is required",
-                  })}
+                  {...register("profileImage")}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.profileImage && (
-                  <p className="text-red-500">{errors.profileImage.message}</p>
+                {formErrors.profileImage && (
+                  <p className="text-red-500">{formErrors.profileImage}</p>
                 )}
               </div>
               <div className="mb-4">
@@ -162,13 +185,11 @@ const AddUser = ({ onAdd }) => {
                   type="number"
                   id="weight"
                   step={0.1}
-                  {...register("weight", {
-                    required: " weight URL is required",
-                  })}
+                  {...register("weight")}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.weight && (
-                  <p className="text-red-500">{errors.weight.message}</p>
+                {formErrors.weight && (
+                  <p className="text-red-500">{formErrors.weight}</p>
                 )}
               </div>
               <div className="mb-4">
@@ -178,13 +199,11 @@ const AddUser = ({ onAdd }) => {
                 <input
                   type="number"
                   id="height"
-                  {...register("height", {
-                    required: " height URL is required",
-                  })}
+                  {...register("height")}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.height && (
-                  <p className="text-red-500">{errors.height.message}</p>
+                {formErrors.height && (
+                  <p className="text-red-500">{formErrors.height}</p>
                 )}
               </div>
               <div className="mb-4">
@@ -194,13 +213,11 @@ const AddUser = ({ onAdd }) => {
                 <input
                   type="date"
                   id="dateOfBirth"
-                  {...register("dateOfBirth", {
-                    required: " date of birth URL is required",
-                  })}
+                  {...register("dateOfBirth")}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {errors.dateOfBirth && (
-                  <p className="text-red-500">{errors.dateOfBirth.message}</p>
+                {formErrors.dateOfBirth && (
+                  <p className="text-red-500">{formErrors.dateOfBirth}</p>
                 )}
               </div>
               <div className="mb-4">
@@ -222,9 +239,7 @@ const AddUser = ({ onAdd }) => {
                 </select>
                 <select
                   id="gender"
-                  {...register("gender", {
-                    required: "gender is required",
-                  })}
+                  {...register("gender")}
                   className="p-2 border border-gray-300 rounded-md"
                 >
                   <option disabled value="">
@@ -234,8 +249,8 @@ const AddUser = ({ onAdd }) => {
                   <option value="female">female</option>
                   <option value="other">other</option>
                 </select>
-                {errors.role && (
-                  <p className="text-red-500">{errors.role.message}</p>
+                {formErrors.role && (
+                  <p className="text-red-500">{formErrors.role}</p>
                 )}
               </div>
 
@@ -254,9 +269,9 @@ const AddUser = ({ onAdd }) => {
                   <option value="free">free</option>
                   <option value="premium">premium</option>
                 </select>
-                {errors.subscriptionStatus && (
+                {formErrors.subscriptionStatus && (
                   <p className="text-red-500">
-                    {errors.subscriptionStatus.message}
+                    {formErrors.subscriptionStatus}
                   </p>
                 )}
               </div>
@@ -282,8 +297,6 @@ const AddUser = ({ onAdd }) => {
                 </button>
               </div>
             </form>
-            {error && <p className="text-red-500">{error}</p>}
-            {message && <p className="text-green-500">{message}</p>}
           </div>
         </div>
       )}

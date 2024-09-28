@@ -38,7 +38,9 @@ function EditUser({ user, onSuccess }) {
       onSuccess();
       setTimeout(() => {
         setEditFormOpen(false);
-      }, 2000);
+        setMessage(null); // Clear the message
+      }, 500);
+
     } catch (error) {
       setError(error.response?.data?.message || "An error occurred");
     } finally {

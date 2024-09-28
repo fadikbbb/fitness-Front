@@ -57,11 +57,6 @@ function UserBody() {
     formValues.subscription,
     thereIsChange,
   ]);
-
-
-  const onSubmit = () => {
-    setPage(1);
-  };
   const handlePageChange = (newPage) => setPage(newPage);
   const handleRefresh = () => {
     setThereIsChange(!thereIsChange);

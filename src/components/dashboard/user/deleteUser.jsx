@@ -21,6 +21,7 @@ function DeleteFood({ userId, onSuccess }) {
       setError(null);
       onSuccess();
     } catch (error) {
+      console.log(error);
       setError(error.response?.data?.message || "An error occurred");
       setMessage(null);
     } finally {
