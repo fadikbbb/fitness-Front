@@ -16,7 +16,6 @@ export const refreshToken = async () => {
     store.dispatch(setToken(accessToken));
     return accessToken;
   } catch (error) {
-    console.log("Error during token refresh:", error);
     store.dispatch(removeToken());
     return null;
   }

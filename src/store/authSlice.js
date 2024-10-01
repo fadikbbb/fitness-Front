@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {jwtDecode} from "jwt-decode"; // Ensure correct import for jwtDecode
+import {jwtDecode} from "jwt-decode"; 
 
 // Retrieve token from localStorage
 const token = localStorage.getItem("authToken");
@@ -12,7 +12,6 @@ if (token) {
         const decodedToken = jwtDecode(token);
         userId = decodedToken.userId;
         role = decodedToken.role;
-        console.log(decodedToken);
     } catch (error) {
         console.error("Invalid token:", error);
         localStorage.removeItem("authToken"); // Remove the invalid token
@@ -26,8 +25,6 @@ const initialState = {
     userRole: role || null,
     userId: userId || null,
 };
-
-console.log("Initial Auth State:", initialState);
 
 const authSlice = createSlice({
     name: "auth",

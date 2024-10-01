@@ -1,21 +1,16 @@
 import React, { useState } from "react";
-import apiClient from "../../../utils/axiosConfig";
+import useAddToWorkout from "../../../hooks/workoutPlans/useAddToWorkout";
 import ExerciseModal from "./ExerciseModal";
 
-function AddExerciseToWorkoutPlan({ userId, onAdd }) {
+function AddExerciseToWorkoutPlan({ handleRefresh }) {
   const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState("");
+  const { addToWorkout, error } = useAddToWorkout({
+    handleRefresh,
+    setShowModal,
+  });
+
   const handleAddToWorkout = async (exerciseDetails) => {
-    try {
-      const response = await apiClient.post(`/workout-plans/${userId}`, {
-        day: exerciseDetails.day,
-        exercises: exerciseDetails.exercises,
-      });
-      onAdd();
-    } catch (error) {
-      console.log(error);
-      setError(error.response.data.message);
-    }
+    await addToWorkout(exerciseDetails);
   };
 
   return (
