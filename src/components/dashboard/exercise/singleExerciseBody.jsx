@@ -1,28 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import apiClient from "../../../utils/axiosConfig";
-
+import useFoodFetching from "../../../hooks/exercises/useExerciseFetching";
 function SingleExerciseBody() {
-  const { id } = useParams();
-  const [exercise, setExercise] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchExercise = async () => {
-      try {
-        const response = await apiClient.get(`/exercises/${id}`);
-        setExercise(response.data.exercise);
-      } catch (error) {
-        setError(error.response?.data?.message || "Failed to fetch exercise");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchExercise();
-  }, [id]);
-
+  const { exercise, loading, error } = useFoodFetching();
+  
   if (loading)
     return <div className="text-center text-gray-500">Loading...</div>;
   if (error) return <div className="text-center text-red-500">{error}</div>;

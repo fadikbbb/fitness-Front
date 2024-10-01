@@ -21,21 +21,25 @@ function SideBar() {
     <div className="w-[20%] h-screen overflow-hidden sticky z-40 top-0 bg-hover text-white flex flex-col justify-between ">
       <ul className="flex flex-col space-y-4 my-2">
         <div className="border-b border-primary flex flex-row items-center justify-center md:justify-between">
-          <img className="w-12" src="../../../لقطة شاشة 2024-09-26 173338-fotor-bg-remover-20240926173426.png" alt="" /> 
-        <h3 className="p-4 text-lg font-bold hidden md:block">
-        Fitness Dashboard
-        </h3>
+          <img
+            className=" w-20 md:w-10"
+            src="../../../لقطة شاشة 2024-09-26 173338-fotor-bg-remover-20240926173426.png"
+            alt=""
+          />
+          <h3 className="p-4 text-lg font-bold hidden md:block">
+            Fitness Dashboard
+          </h3>
         </div>
         <li>
           <Link
             to="/dashboard/exercise"
-            className={`flex flex-col items-center sm:justify-between justify-center ${isActive(
+            className={`flex flex-col items-center md:justify-between justify-center ${isActive(
               "/dashboard/exercise"
             )}`}
           >
-            <div className="w-full flex items-center sm:justify-between justify-center p-2 sm:p-4">
-              <GiMuscularTorso className="w-6 h-6 mr-2" />
-              <span className="text-base font-medium sm:block hidden">
+            <div className="w-full flex items-center md:justify-between justify-center p-2 md:p-4">
+              <GiMuscularTorso className="md:w-6 md:h-6 w-8 h-8" />
+              <span className="text-base font-medium md:block hidden">
                 Exercises
               </span>
             </div>
@@ -44,42 +48,42 @@ function SideBar() {
         <li>
           <Link
             to="/dashboard/food"
-            className={`flex items-center sm:justify-between justify-center p-2 sm:p-4 ${isActive(
+            className={`flex items-center md:justify-between justify-center p-2 md:p-4 ${isActive(
               "/dashboard/food"
             )}`}
           >
-            <IoFastFoodOutline className="w-6 h-6 " />
-            <span className="text-base font-medium sm:block hidden">Food</span>
+            <IoFastFoodOutline className="md:w-6 md:h-6 w-8 h-8" />
+            <span className="text-base font-medium md:block hidden">Food</span>
           </Link>
         </li>
         <li>
           <Link
             to="/dashboard/users"
-            className={`flex items-center sm:justify-between justify-center p-2 sm:p-4 ${isActive(
+            className={`flex items-center md:justify-between justify-center p-2 md:p-4 ${isActive(
               "/dashboard/users"
             )}`}
           >
-            <IoPersonOutline className="w-6 h-6 " />
-            <span className="text-base font-medium sm:block hidden">Users</span>
+            <IoPersonOutline className="md:w-6 md:h-6 w-8 h-8" />
+            <span className="text-base font-medium md:block hidden">Users</span>
           </Link>
         </li>
       </ul>
       <ul className="border-t border-primary dark:border-darkText">
         <li>
           <Link
-            to="/dashboard/settings"
-            className="flex items-center sm:justify-between justify-center p-2 sm:p-4"
+            to="/dashboard/setting"
+            className="flex items-center md:justify-between justify-center p-2 md:p-4"
           >
-            <IoSettingsOutline className="w-6 h-6" />
-            <span className="text-base font-medium  sm:block hidden">
+            <IoSettingsOutline className="md:w-6 md:h-6 w-8 h-8" />
+            <span className="text-base font-medium  md:block hidden">
               Settings
             </span>
           </Link>
         </li>
-        <li className="sm:flex hidden items-center sm:justify-between justify-center p-2 sm:p-4">
+        <li className="md:flex hidden items-center md:justify-between justify-center p-2 md:p-4">
           <Logout token={token} textLogout="Logout" />
         </li>
-        <li className="sm:hidden flex items-center sm:justify-between justify-center p-2 sm:p-4">
+        <li className="md:hidden flex items-center md:justify-between justify-center p-2 md:p-4">
           <Logout token={token} textLogout="" />
         </li>
       </ul>

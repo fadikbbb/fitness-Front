@@ -29,85 +29,97 @@ import User from "./pages/dashboard/user/user";
 import Workout from "./pages/dashboard/workoutPlan/workoutPlan";
 import ViewUser from "./components/dashboard/user/viewUser";
 import NutritionPlan from "./pages/dashboard/nutritionPlan/nutritionPlan";
+import SettingPage from "./pages/dashboard/setting/setting";
 function App() {
   return (
     <Provider store={store}>
       <Router>
         <div className=" bg-[#f5f8e2]">
-        <div className="container mx-auto">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/training" element={<AllTraining />} />
-            <Route path="/about" element={<About />} />
+          <div className="container mx-auto">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/training" element={<AllTraining />} />
+              <Route path="/about" element={<About />} />
 
 
-            <Route
-              path="/profile"
-              element={<IsAuthenticated element={<Profile />} />}
-            />
-            <Route
-              path="/profile/edit-profile/:id"
-              element={<IsAuthenticated element={<AccountDetails />} />}
+              <Route
+                path="/profile"
+                element={<IsAuthenticated element={<Profile />} />}
+              />
+              <Route
+                path="/profile/edit-profile/:id"
+                element={<IsAuthenticated element={<AccountDetails />} />}
               />
 
 
-            <Route path="/dashboard/exercise" element=
-              {<IsAuthenticated element=
-                {<IsAuthorization element=
-                  {<Exercise />}
+              <Route path="/dashboard/exercise" element=
+                {<IsAuthenticated element=
+                  {<IsAuthorization element=
+                    {<Exercise />}
                   />}
+                />}
+              />
+              <Route path="/dashboard/single-exercise/:exerciseId" element={<SingleExercise />} />
+              <Route path="/dashboard" element=
+                {<IsAuthenticated element=
+                  {<IsAuthorization element=
+                    {<Dashboard />}
                   />}
-            />
-            <Route path="/dashboard/single-exercise/:id" element={<SingleExercise />} />
-            <Route path="/dashboard" element=
-              {<IsAuthenticated element=
-                {<IsAuthorization element=
-                  {<Dashboard />}
-                  />}
-              />}
+                />}
               />
 
-            <Route path="/dashboard/users" element=
-              {<IsAuthenticated element=
-                {<IsAuthorization element=
-                  {<User />}
+              <Route path="/dashboard/users" element=
+                {<IsAuthenticated element=
+                  {<IsAuthorization element=
+                    {<User />}
                   />}
+                />}
+              />
+
+              <Route path="/dashboard/:userId/workout-plan" element=
+                {<IsAuthenticated element=
+                  {<IsAuthorization element=
+                    {<Workout />}
                   />}
-            />
+                />}
+              />
+              <Route path="/dashboard/:userId/nutrition-plan" element=
+                {<IsAuthenticated element=
+                  {<IsAuthorization element=
+                    {<NutritionPlan />}
+                  />}
+                />}
+              />
 
-            <Route path="/dashboard/:userId/workout-plan" element=
-              {<IsAuthenticated element=
-                {<IsAuthorization element=
-                  {<Workout />}
+              <Route path="/dashboard/food" element=
+                {<IsAuthenticated element=
+                  {<IsAuthorization element=
+                    {<Food />}
+                  />}
                 />}
-              />}
-            />
-            <Route path="/dashboard/:userId/nutrition-plan" element=
-              {<IsAuthenticated element=
-                {<IsAuthorization element=
-                  {<NutritionPlan />}
-                />}
-              />}
-            />
+              />
 
-            <Route path="/dashboard/food" element=
-              {<IsAuthenticated element=
-                {<IsAuthorization element=
-                  {<Food />}
+              <Route path="/dashboard/setting" element=
+                {<IsAuthenticated element=
+                  {<IsAuthorization element=
+                    {<SettingPage />}
+                  />}
                 />}
-              />}
-            />
-            <Route path="/dashboard/users/:userId" element={<ViewUser />} />
-            <Route path="/dashboard/food/single-food/:foodId" element={<SingleFood />} />
-            <Route path="/auth/register" element={<Register />} />
-            <Route path="/auth/login" element={<Login />} />
-            <Route path="/auth/verify-code" element={<VerifyCode />} />
-            <Route path="/auth/reset-password-request" element={<PasswordResetRequest />} />
-            <Route path="/auth/reset-password/reset/:token" element={<ResetPassword />} />
-            <Route path="*" element={<NotFound />}></Route>
-          </Routes>
+              />
+
+              <Route path="/dashboard/users/:userId" element={<ViewUser />} />
+              <Route path="/dashboard/food/single-food/:foodId" element={<SingleFood />} />
+
+
+              <Route path="/auth/register" element={<Register />} />
+              <Route path="/auth/login" element={<Login />} />
+              <Route path="/auth/verify-code" element={<VerifyCode />} />
+              <Route path="/auth/reset-password-request" element={<PasswordResetRequest />} />
+              <Route path="/auth/reset-password/reset/:token" element={<ResetPassword />} />
+              <Route path="*" element={<NotFound />}></Route>
+            </Routes>
+          </div>
         </div>
-</div>
       </Router>
     </Provider>
   );

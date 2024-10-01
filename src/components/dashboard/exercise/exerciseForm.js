@@ -78,7 +78,7 @@ function ExerciseForm({
         </label>
         <textarea
           id="description"
-          {...register("description")} // Added validation
+          {...register("description")}
           className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.description ? "border-red-500" : "border-gray-300"
             }`}
         />
@@ -159,7 +159,7 @@ function ExerciseForm({
           <option value="high">High</option>
         </select>
         {errors.intensity && (
-          <small  className="text-red-500">{errors.intensity.message}</small>
+          <small className="text-red-500">{errors.intensity.message}</small>
         )}
       </div>
       <div className="flex flex-col items-start">

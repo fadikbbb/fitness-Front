@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 const defaultOptions = {
-    maxColors: 3,
-    format: "rgba",
+    maxColors: 5,
+    format: "hex",
     maxSize: 10,
 }
 

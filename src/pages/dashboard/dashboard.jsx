@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SideBar from "../../components/dashboard/sidebar";
-import Navbar from "../../components/header/navBar";
+import Navbar from "../../components/home/navBar";
 import apiClient from "../../utils/axiosConfig";
 import { useSelector } from "react-redux";
 

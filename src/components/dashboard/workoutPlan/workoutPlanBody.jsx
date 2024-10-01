@@ -88,7 +88,9 @@ function WorkoutPlanBody() {
         <div className="w-full max-w-3xl bg-white shadow-md rounded-lg p-6">
           <AddExerciseToWorkoutPlan userId={userId} onAdd={handleRefresh} />
           <h1 className="text-3xl font-bold mb-6 text-center">
-            Workout Plan for {workoutPlan?.userId.firstName}{" "}
+            {workoutPlan?.userId.firstName
+              ? `Workout Plan for ${workoutPlan?.userId.firstName}`
+              : "Workout Plan"}
             {workoutPlan?.userId.lastName}
           </h1>
           {workoutPlan?.days?.length ? (

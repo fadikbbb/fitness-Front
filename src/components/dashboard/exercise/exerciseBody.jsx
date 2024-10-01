@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import apiClient from "../../../utils/axiosConfig";
 import AddExercise from "./addExercise";
 import ExerciseCard from "./exerciseCard";
+import useExercisesFetching from "../../../hooks/exercises/useExercisesFetching";
 import { IoFilterOutline } from "react-icons/io5";
 
 function ExerciseBody() {
-  const [exercises, setExercises] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [changes, setChanges] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   // Initialize React Hook Form
-  const { register, handleSubmit, watch } = useForm({
+  const { register, watch } = useForm({
     defaultValues: {
       search: "",
-      category: "", // Ensure this matches the value of your "Select category" option
+      category: "",
       limit: 5,
       intensity: "",
     },
@@ -25,44 +23,34 @@ function ExerciseBody() {
 
   const formValues = watch();
 
-  const fetchExercises = async () => {
-    setLoading(true);
-    try {
-      const response = await apiClient(
-        `/exercises?page=${page}&limit=${formValues.limit}${
-          formValues.search ? `&search=${formValues.search}` : ""
-        }${formValues.category ? `&category=${formValues.category}` : ""}${
-          formValues.intensity ? `&intensity=${formValues.intensity}` : ""
-        }`
-      );
-      setExercises(response.data.exercises);
-      setTotalPages(Math.ceil(response.data.totalExercises / formValues.limit));
-      if (response.data.exercises.length === 0) {
-        setTotalPages(1);
-        setPage(1);
-      }
-      setError(null);
-    } catch (error) {
-      setError(error.response?.data?.message || "Failed to fetch exercises");
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchExercises();
-  }, [
+  const { exercises, loading, error } = useExercisesFetching({
+    limit: formValues.limit,
+    setPage,
+    search: formValues.search,
+    category: formValues.category,
+    intensity: formValues.intensity,
     page,
-    formValues.limit,
-    formValues.search,
-    formValues.category,
-    formValues.intensity,
-  ]);
+    setTotalPages,
+    changes,
+    setChanges,
+  });
 
   const handlePageChange = (newPage) => setPage(newPage);
+  useEffect(() => {
+    if (page > totalPages) {
+      if (totalPages > 0) {
+        setPage(totalPages);
+      } else {
+        setPage(1);
+        setTotalPages(1);
+      }
+    }
+  }, [totalPages, page]);
 
   const handleRefresh = () => {
-    fetchExercises();
+    setChanges(!changes);
   };
+
   const categories = [
     "strength",
     "cardio",
@@ -74,6 +62,7 @@ function ExerciseBody() {
     "agility",
     "recreational",
   ];
+
   return (
     <main className="w-full p-4 flex flex-col justify-between h-full">
       <div className="w-full flex-col">
@@ -134,7 +123,6 @@ function ExerciseBody() {
                 ))}
                 <option value="">All</option>
               </select>
-
               <select
                 {...register("intensity")}
                 defaultValue=""
@@ -177,7 +165,6 @@ function ExerciseBody() {
         <div className="text-center">Loading exercises...</div>
       ) : (
         <>
-          
           <div className="my-4 flex justify-around flex-wrap">
             {exercises.length > 0 ? (
               exercises.map((exercise) => (

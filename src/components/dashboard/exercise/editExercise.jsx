@@ -1,54 +1,23 @@
 import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import apiClient from "../../../utils/axiosConfig";
+import useEditExercise from "../../../hooks/exercises/useEditExercise";
 import ExerciseForm from "./exerciseForm";
 
 function EditExercise({ categories, exercise, onSuccess }) {
   const [isEditFormOpen, setEditFormOpen] = useState(false);
-  const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
+  const {
+    error,
+    message,
+    isEditing,
+    formErrors,
+    setFormErrors,
+    setError,
+    setMessage,
+    editExercise,
+  } = useEditExercise({setEditFormOpen, onSuccess});
 
   const handleEditSubmit = async (data) => {
-    const formData = new FormData();
-    console.log(data);
-    formData.append("name", data.name);
-    formData.append("description", data.description);
-    formData.append("category", data.category);
-    formData.append("restDuration", data.restDuration);
-    formData.append("intensity", data.intensity);
-    if (data.image && data.image[0]) {
-      formData.append("image", data.image[0]);
-    }
-    if (data.video && data.video[0]) {
-      formData.append("video", data.video[0]);
-    }
-    setIsEditing(true);
-    try {
-      const response = await apiClient.patch(
-        `/exercises/${exercise._id}`,
-        formData
-      );
-      setMessage(response.data.message);
-      setError(null);
-      onSuccess();
-      setTimeout(() => {
-        setEditFormOpen(false);
-      }, 2000);
-    } catch (error) {
-      setMessage(null);
-      console.log(error);
-      if (error.response && error.response.data.message) {
-        setError(error.response.data.message);
-      } else if (error.response && error.response.data.errors) {
-        setFormErrors(error.response.data.errors);
-      } else {
-        setError("An error occurred");
-      }
-    } finally {
-      setIsEditing(false);
-    }
+    await editExercise(exercise._id, data);
   };
 
   return (
@@ -77,7 +46,7 @@ function EditExercise({ categories, exercise, onSuccess }) {
         onClick={() => setEditFormOpen(true)}
         className="md:flex items-center text-blue-500 hover:text-blue-700"
       >
-        <FaEdit className="mr-2" />
+        <FaEdit className="w-8 h-8 sm:w-4 sm:h-4" />
         <div className="hidden md:flex">Edit</div>
       </button>
     </div>

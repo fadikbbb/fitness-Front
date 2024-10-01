@@ -3,14 +3,13 @@ import { useForm } from "react-hook-form";
 import AddFood from "./addFood";
 import FoodCard from "./foodCard";
 import { IoFilterOutline } from "react-icons/io5";
-import useFoodsFetching from "../../../hooks/useFoodsFetching";
-
+import useFoodsFetching from "../../../hooks/foods/useFoodsFetching";
+import { useEffect } from "react";
 function FoodBody() {
   const [page, setPage] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const [changes, setChanges] = useState(false);
-
-  // Initialize React Hook Form
+  const [totalPages, setTotalPages] = useState(1);
   const { register, watch } = useForm({
     defaultValues: {
       search: "",
@@ -18,16 +17,19 @@ function FoodBody() {
       limit: 5,
     },
   });
-
   const formValues = watch();
-  const { foods, totalPages, loading, error } = useFoodsFetching({
+
+  const { foods, loading, error } = useFoodsFetching({
     limit: formValues.limit,
+    setPage,
+    setTotalPages,
     page,
     search: formValues.search,
     category: formValues.category,
     changes,
     setChanges,
   });
+
   const foodCategories = [
     "Fruit",
     "Meat",
@@ -42,7 +44,18 @@ function FoodBody() {
   const handleRefresh = () => {
     setChanges(!changes);
   };
-
+  
+  useEffect(() => {
+    if (page > totalPages) {
+      if (totalPages > 0) {
+        setPage(totalPages);
+      } else {
+        setPage(1);
+        setTotalPages(1);
+      }
+    }
+  }, [totalPages, page]);
+  
   const handlePageChange = (newPage) => setPage(newPage);
 
   return (
@@ -93,12 +106,13 @@ function FoodBody() {
                 {...register("category")}
                 className="w-full md:w-[calc(100%/2 - 5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="">Select a category</option>
+                <option value="" disabled selected>Select a category</option>
                 {foodCategories.map((category) => (
                   <option key={category} value={category}>
                     {category}
                   </option>
                 ))}
+                <option value="">All</option>
               </select>
 
               <select

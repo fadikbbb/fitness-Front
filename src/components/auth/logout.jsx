@@ -4,14 +4,14 @@ import { useState } from "react";
 import apiClient from "../../utils/axiosConfig";
 import { IoLogOutOutline } from "react-icons/io5";
 
-function Logout({ token,textLogout }) {
+function Logout({ token, textLogout }) {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function logoutHandler() {
     try {
       if (token) {
-         await apiClient.post(`/auth/logout`);
+        await apiClient.post(`/auth/logout`);
         dispatch(clearAuthState());
         setIsModalOpen(false);
         console.log("Logged out successfully");
@@ -21,17 +21,19 @@ function Logout({ token,textLogout }) {
 
   return (
     <>
-      <button onClick={() => setIsModalOpen(true)} className="w-full items-center justify-center sm:justify-between flex">
-        <IoLogOutOutline className="w-6 h-6" />
-        {
-          textLogout &&
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="w-full items-center justify-center md:justify-between flex"
+      >
+        <IoLogOutOutline className="md:w-6 md:h-6 h-8 w-8" />
+        {textLogout && (
           <span className="text-base font-medium ml-4">{textLogout}</span>
-        }
+        )}
       </button>
 
       {isModalOpen && (
         <div className="fixed z-50 inset-0 flex items-center justify-center  bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md text-center">
             <h2 className="text-lg font-bold mb-4 text-black">
               Confirm Logout
             </h2>

@@ -1,40 +1,33 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import apiClient from "../../../utils/axiosConfig";
+import { IoFilterOutline } from "react-icons/io5";
+import useFoodsFetching from "../../../hooks/foods/useFoodsFetching";
 
 function FoodModal({ onClose, onAdd }) {
-    const [foods, setFoods] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [page, setPage] = useState(1);
+    const [isOpen, setIsOpen] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [category, setCategory] = useState("");
-    const [limit, setLimit] = useState(5);
-    const [searchQuery, setSearchQuery] = useState("");
     const [selectedFoods, setSelectedFoods] = useState(new Set());
-    const { register, handleSubmit, reset } = useForm({
+
+    const { register, handleSubmit, reset, watch } = useForm({
         defaultValues: {
+            search: "",
+            category: "",
+            limit: 5,
             selectedFoods: [],
         },
     });
 
-    useEffect(() => {
-        const fetchFoods = async () => {
-            setLoading(true);
-            try {
-                const response = await apiClient.get(
-                    `/foods?page=${currentPage}&limit=${limit}${searchQuery ? `&search=${searchQuery}` : ""
-                    }${category ? `&category=${category}` : ""}`
-                );
-                setFoods(response.data.foods);
-                setTotalPages(Math.ceil(response.data.totalFoods / limit));
-            } catch (error) {
-                console.error(error.response?.data?.message || "Failed to fetch foods");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFoods();
-    }, [currentPage, limit, category, searchQuery]);
+    const formValues = watch();
+
+    const { foods, loading, error } = useFoodsFetching({
+        limit: formValues.limit,
+        setPage,
+        setTotalPages,
+        page,
+        search: formValues.search,
+        category: formValues.category,
+    });
 
     const handleSelect = (foodId) => {
         setSelectedFoods((prev) => {
@@ -55,11 +48,9 @@ function FoodModal({ onClose, onAdd }) {
         }));
 
         if (foodData.length > 0) {
-            // Pass the meal structure with foods and total calories to the onAdd function
             onAdd({
-                nameMeal: data.nameMeal,
+                mealName: data.nameMeal,
                 foods: foodData,
-             
             });
             onClose();
             reset();
@@ -67,14 +58,29 @@ function FoodModal({ onClose, onAdd }) {
         }
     };
 
-    const categories = [
-        "protein",
-        "carbs",
-        "fats",
-        "fiber",
-        "vitamins",
-        "minerals",
+    const foodCategories = [
+        "Fruit",
+        "Meat",
+        "Nuts",
+        "Fish",
+        "Grain",
+        "Dairy",
+        "Snack",
+        "Vegetable",
     ];
+
+    useEffect(() => {
+        if (page > totalPages) {
+            if (totalPages > 0) {
+                setPage(totalPages);
+            } else {
+                setPage(1);
+                setTotalPages(1);
+            }
+        }
+    }, [totalPages, page]);
+
+    const handlePageChange = (newPage) => setPage(newPage);
 
     return (
         <div className="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -95,45 +101,71 @@ function FoodModal({ onClose, onAdd }) {
                         className="p-2 border border-gray-300 rounded-md w-full mb-2"
                         aria-label="Meal name"
                     />
+                    <div className="flex flex-row sm:space-y-0 items-center justify-between mb-4">
+                        <input
+                            type="text"
+                            className="h-fit p-2 border rounded-md w-[100%] shadow focus:outline-none focus:ring-2 focus:ring-primary"
+                            placeholder="Search by name"
+                            {...register("search")}
+                        />
+                    </div>
+                    <div
+                        className={`items-start flex flex-col md:flex-row bg-white rounded-md 
+      transition-all duration-500 ease-in-out
+      ${isOpen
+                                ? "md:min-w-full md:max-w-full md:h-fit max-h-full"
+                                : "max-h-[60px] w-full md:min-w-[90px] md:max-w-[92px]"}`
+                        }
+                    >
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="p-4 min-h-[55px] text-left overflow-hidden
+             rounded-b-md w-full  md:min-w-[100px] md:w-fit transition-all duration-300
+              ease-in-out focus:outline-none"
+                        >
+                            <div className="flex justify-between items-center">
+                                <div className="min-h-full w-full flex items-center justify-between space-x-2">
+                                    <span>Filters</span>
+                                    <IoFilterOutline className="w-4 h-4" />
+                                </div>
+                            </div>
+                        </button>
+                        <div
+                            className={`w-full overflow-hidden rounded-md transition-all duration-500 ease-in-out ${isOpen ? "max-h-[300px]" : "max-h-0"
+                                }`}
+                        >
+                            <div
+                                className={`space-y-4 p-4 flex flex-col md:flex-row
+                 md:p-2 md:space-y-0 md:space-x-2 justify-between
+                  transition-opacity duration-300 ease-in-out`}
+                            >
+                                <select
+                                    {...register("category")}
+                                    className="w-full md:w-[calc(100%/2 - 5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
+                                >
+                                    <option value="" disabled selected>Select a category</option>
+                                    {foodCategories.map((category) => (
+                                        <option key={category} value={category}>
+                                            {category}
+                                        </option>
+                                    ))}
+                                    <option value="">All</option>
+                                </select>
 
-                    <select
-                        id="category"
-                        value={category}
-                        onChange={(e) => {
-                            setCategory(e.target.value);
-                            setCurrentPage(1); // Reset page to 1 on category change
-                        }}
-                        className="p-2 border border-gray-300 rounded-md"
-                        aria-label="Select category"
-                    >
-                        <option value="">Select a category</option>
-                        {categories.map((cat) => (
-                            <option key={cat} value={cat}>
-                                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                            </option>
-                        ))}
-                    </select>
-                    <select
-                        id="limit"
-                        value={limit}
-                        onChange={(e) => setLimit(e.target.value)}
-                        className="p-2 border border-gray-300 rounded-md"
-                        aria-label="Select max results"
-                    >
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                        <option value={20}>20</option>
-                        <option value={50}>50</option>
-                    </select>
-                    <input
-                        type="text"
-                        placeholder="Search foods"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="p-2 border border-gray-300 rounded-md"
-                        aria-label="Search foods"
-                    />
+                                <select
+                                    {...register("limit")}
+                                    className="w-full md:w-[calc(100%/2 - 5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
+                                >
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <div className="mt-4">
+                        {error && <p className="text-red-500">{error}</p>}
                         {loading ? (
                             <p>Loading...</p>
                         ) : foods.length === 0 ? (
@@ -158,37 +190,38 @@ function FoodModal({ onClose, onAdd }) {
                                         className="border-gray-300 rounded-md shadow-sm mt-1 w-1/4"
                                         aria-label={`Quantity for ${food.name}`}
                                     />
-                                   
                                 </div>
                             ))
                         )}
                     </div>
+
                     <button
                         type="submit"
                         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 mt-4"
                     >
                         Add Meal
                     </button>
-
-                    <div className="flex justify-between mt-4">
+                    <div className="flex justify-center mt-6">
                         <button
-                            type="button"
-                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                            className="bg-gray-200 text-gray-700 p-2 rounded-md"
-                            disabled={currentPage === 1}
-                            aria-label="Previous page"
+                            onClick={() => handlePageChange(page - 1)}
+                            disabled={page === 1}
+                            className={`px-4 py-2 border rounded-md mr-2 ${page === 1
+                                ? "cursor-not-allowed opacity-50"
+                                : "bg-button hover:bg-buttonHover text-white"
+                                }`}
                         >
                             Previous
                         </button>
-                        <span className="text-gray-700">
-                            Page {currentPage} of {totalPages}
+                        <span className="px-4 py-2">
+                            Page {page} of {totalPages}
                         </span>
                         <button
-                            type="button"
-                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                            className="bg-gray-200 text-gray-700 p-2 rounded-md"
-                            disabled={currentPage === totalPages}
-                            aria-label="Next page"
+                            onClick={() => handlePageChange(page + 1)}
+                            disabled={page === totalPages || foods.length === 0}
+                            className={`px-4 py-2 border rounded-md ml-2 ${page === totalPages
+                                ? "cursor-not-allowed opacity-50"
+                                : "bg-button hover:bg-buttonHover text-white"
+                                }`}
                         >
                             Next
                         </button>

@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Logout from "../auth/logout";
 import ThemeToggle from "../../ThemeToggle";
-import TopBar from "./topBar";
+import TopBar from "../home/topBar";
 import { IoPersonOutline } from "react-icons/io5";
 
 function NavBar() {
@@ -15,18 +15,21 @@ function NavBar() {
       <nav className="flex items-center justify-between bg-secondaryBackground text-white p-4">
         <ul className="flex items-center space-x-4">
           <li>
-            <Link to="/" className="hover:underline">
+            <Link to="/" className="hover:underline md:text-lg text-xs">
               Home
             </Link>
           </li>
           <li>
-            <Link to="/about" className="hover:underline">
+            <Link to="/about" className="hover:underline md:text-lg text-xs">
               About
             </Link>
           </li>
           {userRole === "admin" && (
             <li>
-              <Link to="/dashboard" className="hover:underline">
+              <Link
+                to="/dashboard"
+                className="hover:underline md:text-lg text-xs"
+              >
                 Dashboard
               </Link>
             </li>
@@ -36,12 +39,18 @@ function NavBar() {
           {!userRole && (
             <>
               <li>
-                <Link to="/auth/register" className="hover:underline">
+                <Link
+                  to="/auth/register"
+                  className="hover:underline md:text-lg text-xs"
+                >
                   Register
                 </Link>
               </li>
               <li>
-                <Link to="/auth/login" className="hover:underline">
+                <Link
+                  to="/auth/login"
+                  className="hover:underline md:text-lg text-xs"
+                >
                   Login
                 </Link>
               </li>
@@ -54,7 +63,10 @@ function NavBar() {
           )}
           {userRole && (
             <li>
-              <Link to="/profile" className="hover:underline">
+              <Link
+                to="/profile"
+                className="hover:underline md:text-lg text-xs"
+              >
                 <IoPersonOutline />
               </Link>
             </li>

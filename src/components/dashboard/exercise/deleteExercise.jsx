@@ -1,32 +1,19 @@
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
-import apiClient from "../../../utils/axiosConfig";
+import useDeleteExercise from "../../../hooks/exercises/useDeleteExercise";
 
 function DeleteExercise({ exerciseId, onSuccess }) {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false); // New state for loading
-
+  const { error, loading, message, deleteExercise } = useDeleteExercise(); // Use the hook
   const handleDelete = () => {
     setDeleteConfirmOpen(true);
   };
-
   const handleConfirmDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await apiClient.delete(`/exercises/${exerciseId}`);
-      const data = response.data;
-      setMessage(data.message);
-      setError(null);
+    await deleteExercise(exerciseId);
+    if (!error) {
       onSuccess();
-    } catch (error) {
-      setError(error.response?.data?.message || "An error occurred");
-      setMessage(null);
-    } finally {
-      setIsDeleting(false);
-      setDeleteConfirmOpen(false);
     }
+    setDeleteConfirmOpen(false);
   };
 
   return (
@@ -48,9 +35,9 @@ function DeleteExercise({ exerciseId, onSuccess }) {
             <button
               onClick={handleConfirmDelete}
               className="bg-red-500 text-white py-2 px-4 rounded-md mt-4"
-              disabled={isDeleting} // Disable button while deleting
+              disabled={loading}
             >
-              {isDeleting ? "Deleting..." : "Confirm"}
+              {loading ? "Deleting..." : "Confirm"}
             </button>
             <button
               onClick={() => setDeleteConfirmOpen(false)}
@@ -67,7 +54,7 @@ function DeleteExercise({ exerciseId, onSuccess }) {
         className="md:flex items-center text-red-500 hover:text-red-700"
         aria-label="Delete exercise"
       >
-        <FaTrash />
+        <FaTrash className="w-8 h-8 sm:w-4 sm:h-4" />
         <div className="hidden md:flex">Delete</div>
       </button>
     </div>

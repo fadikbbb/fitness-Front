@@ -40,7 +40,6 @@ function EditUser({ user, onSuccess }) {
         setEditFormOpen(false);
         setMessage(null); // Clear the message
       }, 500);
-
     } catch (error) {
       setError(error.response?.data?.message || "An error occurred");
     } finally {
@@ -133,8 +132,8 @@ function EditUser({ user, onSuccess }) {
         className="md:flex items-center text-gray-500 hover:text-gray-700"
         aria-label="Delete user"
       >
-        <FaEdit />
-        <div className="hidden md:flex">edit</div>
+        <FaEdit className="w-8 h-8 sm:w-4 sm:h-4 " />
+        <div className="hidden md:flex">Edit</div>
       </button>
     </div>
   );

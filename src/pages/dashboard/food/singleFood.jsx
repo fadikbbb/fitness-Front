@@ -1,6 +1,6 @@
 import React from "react";
 import SideBar from "../../../components/dashboard/sidebar";
-import NavBar from "../../../components/header/navBar";
+import NavBar from "../../../components/home/navBar";
 import SingleFoodBody from "../../../components/dashboard/food/singleFoodBody";
 
 function SingleFood() {

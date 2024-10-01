@@ -24,7 +24,7 @@ function UserCard({ user, onDelete, onEdit }) {
 
   return (
     <div className="overflow-hidden lg:w-[calc(50%-2rem)] xl:w-[calc(40%-5rem)] md:w-[calc(75%-2rem)] w-full mx-auto m-2 ">
-      <div className="h-full flex flex-col justify-between   bg-white rounded-xl shadow-md sm:p-6 p-4 border border-gray-200 space-y-6">
+      <div className="h-full flex flex-col justify-between bg-white rounded-xl sm:p-6 p-4 border border-gray-200 space-y-6">
         {/* Profile Section */}
         <div className="flex flex-wrap justify-around items-center sm:space-x-4 ">
           <img
@@ -77,7 +77,7 @@ function UserCard({ user, onDelete, onEdit }) {
               to={`/dashboard/users/${user._id}`}
               className="flex items-center text-green-500 hover:text-green-700 space-x-1"
             >
-              <FaEye />
+              <FaEye className="w-8 h-8 sm:w-4 sm:h-4 " />
               <span className="hidden md:inline">View</span>
             </Link>
           </div>

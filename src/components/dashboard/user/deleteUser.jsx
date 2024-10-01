@@ -68,7 +68,7 @@ function DeleteFood({ userId, onSuccess }) {
         className="md:flex items-center text-red-500 hover:text-red-700"
         aria-label="Delete food"
       >
-        <FaTrash />
+        <FaTrash className="w-8 h-8 sm:w-4 sm:h-4 " />
         <div className="hidden md:flex">Delete</div>
       </button>
     </div>

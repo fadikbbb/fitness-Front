@@ -1,4 +1,4 @@
-import NavBar from "../../../components/header/navBar";
+import NavBar from "../../../components/home/navBar";
 import SideBar from "../../../components/dashboard/sidebar";
 import FoodBody from "../../../components/dashboard/food/foodBody";
 function Food() {

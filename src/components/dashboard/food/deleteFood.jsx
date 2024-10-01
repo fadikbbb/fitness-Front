@@ -1,34 +1,22 @@
 import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
-import apiClient from "../../../utils/axiosConfig";
+import useDeleteFood from "../../../hooks/foods/useDeleteFood";
 
 function DeleteFood({ foodId, onSuccess }) {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false); 
-
+  const { error, loading, message, deleteFood } = useDeleteFood();
   const handleDelete = () => {
     setDeleteConfirmOpen(true);
   };
-
+  
   const handleConfirmDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await apiClient.delete(`/foods/${foodId}`);
-      const data = response.data;
-      setMessage(data.message);
-      setError(null);
+    await deleteFood(foodId);
+    if (!error) {
       onSuccess();
-    } catch (error) {
-      setError(error.response?.data?.message || "An error occurred");
-      setMessage(null);
-    } finally {
-      setIsDeleting(false);
-      setDeleteConfirmOpen(false);
     }
+    setDeleteConfirmOpen(false);
   };
-
+  
   return (
     <div>
       {isDeleteConfirmOpen && (
@@ -48,9 +36,9 @@ function DeleteFood({ foodId, onSuccess }) {
             <button
               onClick={handleConfirmDelete}
               className="bg-red-500 text-white py-2 px-4 rounded-md mt-4"
-              disabled={isDeleting} 
+              disabled={loading}
             >
-              {isDeleting ? "Deleting..." : "Confirm"}
+              {loading ? "Deleting..." : "Confirm"}
             </button>
             <button
               onClick={() => setDeleteConfirmOpen(false)}
@@ -67,7 +55,7 @@ function DeleteFood({ foodId, onSuccess }) {
         className="md:flex items-center text-red-500 hover:text-red-700"
         aria-label="Delete food"
       >
-        <FaTrash />
+        <FaTrash className="w-8 h-8 sm:w-4 sm:h-4" />
         <div className="hidden md:flex">Delete</div>
       </button>
     </div>

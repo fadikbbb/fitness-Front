@@ -1,4 +1,4 @@
-import NavBar from "../components/header/navBar";
+import NavBar from "../components/home/navBar";
 import { Link } from "react-router-dom";
 function AllTraining() {
   const training = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

@@ -4,7 +4,6 @@ import store from "../store/store";
 import { removeToken } from "../store/authSlice";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
-
 const apiClient = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
@@ -35,7 +34,6 @@ apiClient.interceptors.request.use(
     } else {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from "../../components/header/navBar";
+import NavBar from "../../components/home/navBar";
 import ProfileBody from "../../components/profile/profile-body";
 function Profile() {
   return (

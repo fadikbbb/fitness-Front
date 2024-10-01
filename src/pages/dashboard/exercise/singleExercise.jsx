@@ -1,5 +1,5 @@
 import SingleExerciseBody from "../../../components/dashboard/exercise/singleExerciseBody";
-import Navbar from "../../../components/header/navBar";
+import Navbar from "../../../components/home/navBar";
 import SideBar from "../../../components/dashboard/sidebar";
 
 function SingleExercise() {

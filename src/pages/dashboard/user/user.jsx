@@ -1,6 +1,6 @@
 import React from "react";
 import SideBar from "../../../components/dashboard/sidebar";
-import Navbar from "../../../components/header/navBar";
+import Navbar from "../../../components/home/navBar";
 import UserBody from "../../../components/dashboard/user/userBody";
 function User() {
   return (
@@ -8,7 +8,7 @@ function User() {
       <Navbar />
       <div className="flex">
         <SideBar />
-        <div  className="w-[80%] p-3 bg-background overflow-y-auto">
+        <div  className="w-[80%] bg-background overflow-y-auto">
         <UserBody />
         </div>
       </div>
