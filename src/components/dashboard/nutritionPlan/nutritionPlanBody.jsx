@@ -21,11 +21,11 @@ function NutritionPlanBody() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full ">
       {isLoading ? (
         <p className="text-lg text-gray-700">Loading nutrition plan...</p>
       ) : (
-        <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-8">
+        <div className="w-full h-full bg-white shadow-lg rounded-lg p-8">
           <AddNutrition handleRefresh={handleRefresh} />
           <DisplayMeals
             nutritionPlan={nutritionPlan}
@@ -39,11 +39,7 @@ function NutritionPlanBody() {
           {message}
         </div>
       )}
-      {error && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-md">
-          {error}
-        </div>
-      )}
+     
     </div>
   );
 }

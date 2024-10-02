@@ -7,10 +7,11 @@ const useAddToWorkout = ({ handleRefresh, setShowModal }) => {
 
     const addToWorkout = async (exerciseDetails) => {
         try {
-            const response = await apiClient.post(`/workout-plans/${userId}`, {
+             await apiClient.post(`/workout-plans/${userId}`, {
                 day: exerciseDetails.day,
                 exercises: exerciseDetails.exercises,
             });
+            setError("");
             handleRefresh();
             setShowModal(false)
         } catch (err) {

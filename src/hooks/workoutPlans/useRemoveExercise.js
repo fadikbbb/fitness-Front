@@ -6,7 +6,6 @@ const useRemoveExercise = ({ handleRefresh }) => {
     const { userId } = useParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const removeExercise = async (planId, exerciseId, day) => {
         console.log(planId, exerciseId, day)
         setLoading(true);

@@ -7,16 +7,16 @@ function AddFoodToNutritionPlan({ handleRefresh }) {
     useAddFoodToNutritionPlan(handleRefresh);
 
   return (
-    <div>
-      {error && <p className="text-red-500">{error}</p>}
+    <div className="w-full h-full bg-white text-center">
+     
       <button
         onClick={toggleModal}
-        className="bg-blue-500 text-white p-2 rounded-md mb-4"
+        className="bg-blue-500 hover:bg-blue-600 duration-300 text-white p-2 rounded-md mb-4"
       >
         Add meals to Nutrition Plan
       </button>
       {showModal && (
-        <FoodModal onClose={toggleModal} onAdd={handleAddToNutritionPlan} />
+        <FoodModal onClose={toggleModal} addError={error} onAdd={handleAddToNutritionPlan} />
       )}
     </div>
   );

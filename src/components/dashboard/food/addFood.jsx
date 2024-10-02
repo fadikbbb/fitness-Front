@@ -13,6 +13,7 @@ const AddFood = ({ onAdd, foodCategories }) => {
     handleAddSubmit,
     setError,
     setMessage,
+    setFormErrors,
   } = useAddFood(onAdd);
 
   const handleOpen = () => {
@@ -31,13 +32,14 @@ const AddFood = ({ onAdd, foodCategories }) => {
         <FaPlus className="w-6 h-6 sm:w-4 sm:h-4" />
       </button>
       {addFormOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg max-w-sm text-center">
+        <div className="fixed  inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white overflow-auto max-h-screen p-6 rounded shadow-lg max-w-sm text-center">
             <h2 className="text-lg font-bold mb-4">Add food</h2>
             <FoodForm
               foodCategories={foodCategories}
               handleAddSubmit={handleAddSubmit}
               formErrors={formErrors}
+              setFormErrors={setFormErrors}
               isAdding={isAdding}
               setAddFormOpen={setAddFormOpen}
               setGlobalError={setError}

@@ -9,26 +9,26 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                 <ul>
                     {workoutPlan.days.map((dayPlan) => (
                         <li key={dayPlan.day} className="mb-6">
-                            <h2 className="text-xl font-semibold text-indigo-600">
+                            <h2 className="text-2xl text-center  font-semibold text-text">
                                 Day {dayPlan.day}
                             </h2>
                             <ul className="mt-3">
                                 {dayPlan.exercises.map((exercise) => (
                                     <li
                                         key={exercise._id}
-                                        className="bg-gray-50 p-4 mb-4 rounded-md shadow"
+                                        className="bg-gray-50 p-4 mb-4 rounded-md shadow-md"
                                     >
-                                        <div className="flex justify-between items-center">
-                                            <div className="text-lg font-medium text-gray-800">
-                                                {exercise.exerciseId.name}
-                                            </div>
+                                        <div className="flex flex-col gap-2 md:flex-row  justify-between items-center">
                                             <img
                                                 src={exercise.exerciseId.image}
                                                 alt={`${exercise.exerciseId.name} exercise`}
                                                 className="w-16 h-16 rounded"
                                             />
+                                            <div className="text-lg font-medium text-gray-800">
+                                                {exercise.exerciseId.name}
+                                            </div>
                                             <>
-                                                <div className="flex space-x-6">
+                                                <div className="flex text-center flex-wrap items-center justify-center gap-2">
                                                     <span className="text-sm text-gray-600">
                                                         Sets: {exercise.sets}
                                                     </span>
@@ -38,6 +38,13 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                                                     <span className="text-sm text-gray-600">
                                                         Rest Duration: {exercise.restDuration}
                                                     </span>
+                                                    {exercise.note &&
+                                                        <span className="text-sm text-gray-600">
+                                                        Note: {exercise.note}
+                                                    </span>
+                                                    }
+                                                </div>
+                                                <div className="flex gap-2 w-full md:w-fit justify-around">
                                                     <EditExerciseInWorkoutPlan
                                                         handleRefresh={handleRefresh}
                                                         exercise={exercise}

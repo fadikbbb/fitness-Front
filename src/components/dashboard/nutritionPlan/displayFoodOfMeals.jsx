@@ -17,7 +17,7 @@ function DisplayFoodOfMeals({ meal, handleRefresh }) {
             </p>
           </div>
 
-          <div className="flex space-x-4">
+          <div className="flex flex-wrap">
             <EditFoodInMeals
               {...{
                 handleRefresh,

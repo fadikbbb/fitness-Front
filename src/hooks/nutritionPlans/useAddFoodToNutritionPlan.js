@@ -18,6 +18,7 @@ const useAddFoodToNutritionPlan = (handleRefresh) => {
             handleRefresh(response.data.nutritionPlan);
             setMessage(response.data.message);
             setShowModal(false);
+            toggleModal();
         } catch (error) {
             setError(
                 error.response?.data?.message ||

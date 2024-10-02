@@ -2,7 +2,7 @@ import { useState } from "react";
 import apiClient from "../../utils/axiosConfig";
 import { useParams } from "react-router-dom"
 
-const useEditExercise = (handleRefresh) => {
+const useEditExercise = ({handleRefresh,setIsOpen}) => {
     const { userId } = useParams();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -23,6 +23,7 @@ const useEditExercise = (handleRefresh) => {
                     note: editForm.note,
                 }
             );
+            setIsOpen(false);
             handleRefresh();
             return response.data;
         } catch (error) {

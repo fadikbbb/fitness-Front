@@ -23,7 +23,7 @@ function EditFood({ food, onSuccess, foodCategories }) {
     <div>
       {isEditFormOpen && (
         <div className="bg-black bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg text-center">
+          <div className="bg-white max-h-screen overflow-auto p-6 rounded shadow-lg w-full max-w-lg text-center">
             <h2 className="text-lg font-bold mb-4">Edit Food</h2>
             <FoodForm
               foodCategories={foodCategories}

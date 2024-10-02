@@ -22,33 +22,45 @@ function EditMeal({ meal, nutritionPlan, handleRefresh }) {
 
   return (
     <>
+    <div 
+      onClick={() => setIsOpen(!isOpen)}
+    className="ml-2 flex items-center text-blue-500 hover:text-blue-700 transition-colors duration-200">
       <FaEdit
-        onClick={() => setIsOpen(!isOpen)}
-        className="inline-block ml-2 text-primary cursor-pointer hover:text-hover transition-colors duration-200"
-      />
+        className="h-6 w-6 "
+        />
+      <h3 className="md:flex hidden ml-2">Edit</h3>
+        </div>
       {isOpen && (
-        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed z-50 inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
+
+         
+            <h2 className="text-2xl font-semibold text-blue-500 text-center mb-4">
+              Edit Meal 
+            </h2>
           <form
-            className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full space-y-6"
+            className=""
             onSubmit={handleSubmit(onSubmit)}
           >
-            <h2 className="text-2xl font-semibold text-text text-center mb-4">
-              Edit Meal Name
-            </h2>
+            <div className="my-4"> 
+
+            <label className="text-xs text-blue-400 font-medium">Meal Name</label>
+
             <input
-              className="w-full p-3 border text-text border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full p-3 border text-text border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               {...register("mealName", { required: "Meal name is required" })} // Register the input
               placeholder="Enter meal name"
-            />
+              />
+              </div>
             <div className="flex justify-between">
               <button
-                className="w-full bg-button text-white py-2 px-4 rounded-lg hover:bg-buttonHover transition duration-200"
+                className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
                 type="submit"
               >
                 Save
               </button>
               <button
-                className="w-full bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-200 ml-4"
+                className="w-full bg-gray-100 text-text border-[1px] border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-200 transition duration-200 ml-4"
                 type="button"
                 onClick={() => setIsOpen(false)}
               >
@@ -56,7 +68,7 @@ function EditMeal({ meal, nutritionPlan, handleRefresh }) {
               </button>
             </div>
           </form>
-        </div>
+        </div> </div>
       )}
     </>
   );

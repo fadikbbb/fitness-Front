@@ -15,17 +15,17 @@ function WorkoutPlanBody() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-100 py-10">
+    <div className="min-h-screen w-full flex flex-col items-center bg-gray-100 p-4">
       {isLoading ? (
         <p className="text-lg text-gray-700">Loading...</p>
       ) : (
-        <div className="w-full max-w-3xl bg-white shadow-md rounded-lg p-6">
-          <AddExerciseToWorkoutPlan handleRefresh={handleRefresh} />
-          <h1 className="text-3xl font-bold mb-6 text-center">
+        <div className="w-full bg-white shadow-md rounded-lg p-6">
+          <h1 className="text-3xl font-bold mb-6 text-center text-text">
             {workoutPlan?.userId?.firstName
               ? `Workout Plan for ${workoutPlan.userId.firstName} ${workoutPlan.userId.lastName}`
               : "Workout Plan"}
           </h1>
+          <AddExerciseToWorkoutPlan handleRefresh={handleRefresh} />
           {workoutPlan ? (
             <DisplayWorkoutPlan
               workoutPlan={workoutPlan}
