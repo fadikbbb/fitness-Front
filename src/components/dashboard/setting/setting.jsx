@@ -61,8 +61,11 @@ const Setting = () => {
     formData.append("instagram", data.instagram);
     formData.append("linkedin", data.linkedin);
 
-    if (data.image && data.image[0]) {
-      formData.append("image", data.image[0]);
+    if (data.heroImage && data.heroImage[0]) {
+      formData.append("heroImage", data.heroImage[0]);
+    }
+    if (data.logo && data.logo[0]) {
+      formData.append("logo", data.logo[0]);
     }
 
     try {
@@ -73,6 +76,7 @@ const Setting = () => {
       setMessage(response.data.message);
       reset();
     } catch (error) {
+      console.log(error)
       if (error.response.data.message) {
         setGlobalError(error.response.data.message);
       } else if (error.response.data.errors) {
@@ -164,20 +168,40 @@ const Setting = () => {
 
         <div>
           <label
-            htmlFor="image"
+            htmlFor="heroImage"
             className="block text-sm font-medium text-gray-700"
           >
             Hero Image
           </label>
           <input
-            id="image"
+            id="heroImage"
             type="file"
-            {...register("image")}
+            {...register("heroImage")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             accept="image/*"
           />
-          {errors.image && (
-            <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
+          {errors.heroImage && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.heroImage.message}
+            </p>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="logo"
+            className="block text-sm font-medium text-gray-700"
+          >
+            logo
+          </label>
+          <input
+            id="logo"
+            type="file"
+            {...register("logo")}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            accept="image/*"
+          />
+          {errors.logo && (
+            <p className="text-red-500 text-sm mt-1">{errors.logo.message}</p>
           )}
         </div>
 
