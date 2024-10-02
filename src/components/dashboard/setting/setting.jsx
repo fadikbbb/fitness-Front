@@ -68,6 +68,11 @@ const Setting = () => {
       formData.append("logo", data.logo[0]);
     }
 
+    if (data.heroVideo && data.heroVideo[0]) {
+      console.log(data.heroVideo[0]);
+      formData.append("heroVideo", data.heroVideo[0]);
+    }
+
     try {
       const response = await apiClient.patch(
         "/contents/update-content",
@@ -76,7 +81,7 @@ const Setting = () => {
       setMessage(response.data.message);
       reset();
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (error.response.data.message) {
         setGlobalError(error.response.data.message);
       } else if (error.response.data.errors) {
@@ -183,6 +188,26 @@ const Setting = () => {
           {errors.heroImage && (
             <p className="text-red-500 text-sm mt-1">
               {errors.heroImage.message}
+            </p>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="heroVideo"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Hero Video
+          </label>
+          <input
+            id="heroVideo"
+            type="file"
+            {...register("heroVideo")}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            accept="video/*"
+          />
+          {errors.heroVideo && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.heroVideo.message}
             </p>
           )}
         </div>
