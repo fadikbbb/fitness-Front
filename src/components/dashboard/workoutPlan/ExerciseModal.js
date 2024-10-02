@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { IoFilterOutline } from "react-icons/io5";
 
 function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
     const [selectedExercises, setSelectedExercises] = useState(new Set());
-    const { register, handleSubmit, reset, setError, formState: { errors } } = useForm({
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
         defaultValues: {
-            selectedExercises: [],
+            selectedExercises: [
+                {
+                    sets: 0,
+                    reps: 0,
+                    restDuration: 0,
+                    note: "",
+                }
+            ],
         },
     });
 
@@ -15,6 +21,10 @@ function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
             const newSelections = new Set(prev);
             if (newSelections.has(exerciseId)) {
                 newSelections.delete(exerciseId);
+                errors["reps-" + exerciseId] = undefined;
+                errors["sets-" + exerciseId] = undefined;
+                errors["restDuration-" + exerciseId] = undefined;
+                errors["note-" + exerciseId] = undefined;
             } else {
                 newSelections.add(exerciseId);
             }
@@ -36,8 +46,6 @@ function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
                 exercises: exerciseData,
                 day: data.day,
             });
-            reset(); // Clear form after submission
-            setSelectedExercises(new Set()); // Clear selected exercises
         }
     };
 
@@ -48,7 +56,7 @@ function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
             ) : exercises.length === 0 ? (
                 <p>No exercises found</p>
             ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 h-fit">
                     <select
                         id="day"
                         {...register("day", { required: "Please select a day." })}
@@ -66,86 +74,58 @@ function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
                     {exercises.map((exercise) => {
                         const isSelected = selectedExercises.has(exercise._id);
                         return (
-                            <div
+                            <label
+                                htmlFor={exercise._id}
                                 key={exercise._id}
-                                className="flex justify-between items-center min-h-[110px] p-2 border border-gray-300 rounded-md"
+                                className={`relative flex flex-col overflow-hidden justify-between items-center p-2 border ${isSelected ? "border-blue-300 shadow-md shadow-blue-300" : "border-gray-300"} rounded-md`}
                             >
-                                <div className="flex items-center w-1/2 justify-between">
-                                    <input
-                                        type="checkbox"
-                                        checked={isSelected}
-                                        onChange={() => handleSelect(exercise._id)}
-                                        className="scaled-input h-6 w-6 border border-gray-300 rounded-md shadow-sm mt-1"
-                                    />
-                                    <p className="text-gray-700 w-full text-center">{exercise.name}</p>
-                                </div>
+                                <div className={`absolute left-0 top-0 z-[0] w-full transition-all duration-300 bg-blue-300 ${isSelected ? " min-h-[300px] w-full" : "min-h-0 max-h-0 "} rounded-md`}></div>
+                                <input
+                                    id={exercise._id}
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleSelect(exercise._id)}
+                                    className="hidden"
+                                />
+                                <p className="text-gray-700 w-full text-center z-10">{exercise.name}</p>
+                                <div className={`${!isSelected ? "max-h-0" : "max-h-[100px]"}  duration-300`}>
+                                    <div className={`flex  gap-2 w-full  h-full transition-all duration-300 `}>
+                                        {['sets', 'reps', 'restDuration'].map((field) => (
+                                            <div key={field} className={`w-full`}>
 
-                                <div
-                                    className={`flex flex-wrap gap-2 w-full h-full duration-500 ${!isSelected ? "max-w-0" : "max-w-full"}`}
-                                >
-                                    <div className="w-[calc(100%/2-5px)] h-1/2">
-                                        <input
-                                            type="number"
-                                            disabled={!isSelected}
-                                            placeholder="Sets"
-                                            {...register(`sets-${exercise._id}`, {
-                                                valueAsNumber: true,
-                                                required: isSelected && "Please enter sets.",
-                                            })}
-                                            className={`${!isSelected ? "shadow-none" : "shadow-lg"} w-full h-1/2 border-gray-300 focus:border-gray-100 focus-visible:outline-none rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary`}
-                                            aria-label={`Sets for ${exercise.name}`}
-                                        />
-                                        {errors[`sets-${exercise._id}`] && (
-                                            <p className={`w-full h-1/2 text-red-500 text-[10px] ${isSelected?" block ":" hidden "}`}>{errors[`sets-${exercise._id}`]?.message}</p>
-                                        )}
+                                                <input
+                                                    type="number"
+                                                    disabled={!isSelected}
+                                                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                                                    {...register(`${field}-${exercise._id}`, {
+                                                        valueAsNumber: true,
+                                                        required: isSelected && `Please enter ${field}.`,
+                                                        min: {
+                                                            value: isSelected ? 1 : undefined,
+                                                            message: `${field.charAt(0).toUpperCase() + field.slice(1)} must be at least 1`,
+                                                        },
+                                                    })}
+                                                    className={`z-10 relative py-4 ${!isSelected ? "shadow-none" : "shadow-lg border-2"} ${errors[`${field}-${exercise._id}`] ? "border-red-500" : "border-gray-300"} text-xs w-full h-1/2 rounded-md`}
+                                                    aria-label={`${field.charAt(0).toUpperCase() + field.slice(1)} for ${exercise.name}`}
+                                                />
+                                                {errors[`${field}-${exercise._id}`] && (
+                                                    <p className={`text-red-500 text-[10px] relative z-10`}>{errors[`${field}-${exercise._id}`]?.message}</p>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
-
-                                    <div className="w-[calc(100%/2-5px)] h-1/2">
-                                        <input
-                                            type="number"
-                                            disabled={!isSelected}
-                                            placeholder="Reps"
-                                            {...register(`reps-${exercise._id}`, {
-                                                valueAsNumber: true,
-                                                required: isSelected && "Please enter reps.",
-                                            })}
-                                            className={`${!isSelected ? "shadow-none" : "shadow-lg"} w-full h-1/2 border-gray-300 focus:border-gray-100 focus-visible:outline-none rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary`}
-                                            aria-label={`Reps for ${exercise.name}`}
-                                        />
-                                        {errors[`reps-${exercise._id}`] && (
-                                            <p className={`w-full h-1/2 text-red-500 text-[10px] ${isSelected?"block":"hidden"}`}>{errors[`reps-${exercise._id}`]?.message}</p>
-                                        )}
-                                    </div>
-
-                                    <div className="w-[calc(100%/2-5px)] h-1/2">
-                                        <input
-                                            type="number"
-                                            disabled={!isSelected}
-                                            placeholder="Rest Duration"
-                                            {...register(`restDuration-${exercise._id}`, {
-                                                valueAsNumber: true,
-                                                required: isSelected && "Please enter rest duration.",
-                                            })}
-                                            className={`${!isSelected ? "shadow-none" : "shadow-lg"} w-full h-1/2 border-gray-300 focus:border-gray-100 focus-visible:outline-none rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary`}
-                                            aria-label={`Rest Duration for ${exercise.name}`}
-                                        />
-                                        {errors[`restDuration-${exercise._id}`] && (
-                                            <p className={`w-full h-1/2 text-red-500 text-[10px] ${isSelected?"block":"hidden"}`}>{errors[`restDuration-${exercise._id}`]?.message}</p>
-                                        )}
-                                    </div>
-
-                                    <div className="w-[calc(100%/2-5px)] h-1/2">
+                                    <div className="w-full">
                                         <input
                                             type="text"
                                             disabled={!isSelected}
                                             placeholder="Note"
                                             {...register(`note-${exercise._id}`)}
-                                            className={`${!isSelected ? "shadow-none" : "shadow-lg"} w-full h-1/2 border-gray-300 focus:border-gray-100 focus-visible:outline-none rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary`}
+                                            className={`z-10 relative p-2  text-xs w-full h-1/2 rounded-md ${!isSelected ? "shadow-none" : "border-gray-300 focus:border-gray-100 focus-visible:outline-none focus:outline-none focus:ring-2 focus:ring-primary shadow-lg border-2"}`}
                                             aria-label={`Note for ${exercise.name}`}
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            </label>
                         );
                     })}
 

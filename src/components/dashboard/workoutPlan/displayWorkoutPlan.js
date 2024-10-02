@@ -16,7 +16,7 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                                 {dayPlan.exercises.map((exercise) => (
                                     <li
                                         key={exercise._id}
-                                        className="bg-gray-50 p-4 mb-4 rounded-md shadow-md"
+                                        className="bg-gray-50  mb-4 rounded-md shadow-md"
                                     >
                                         <div className="flex flex-col gap-2 md:flex-row  justify-between items-center">
                                             <img
