@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoFilterOutline } from "react-icons/io5";
 import useFoodsFetching from "../../../hooks/foods/useFoodsFetching";
-import { set } from "mongoose";
 
 function FoodModal({ onClose, onAdd, addError }) {
     const [page, setPage] = useState(1);
