@@ -129,10 +129,10 @@ function EditUser({ user, onSuccess }) {
 
       <button
         onClick={() => setEditFormOpen(true)}
-        className="md:flex items-center text-gray-500 hover:text-gray-700"
+        className="md:flex items-center duration-300  text-blue-500 hover:text-blue-700"
         aria-label="Delete user"
       >
-        <FaEdit className="w-8 h-8 sm:w-4 sm:h-4 " />
+        <FaEdit className="w-4 h-4 md:hidden flex" />
         <div className="hidden md:flex">Edit</div>
       </button>
     </div>

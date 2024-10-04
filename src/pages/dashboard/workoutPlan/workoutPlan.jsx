@@ -4,7 +4,7 @@ import SideBar from "../../../components/dashboard/sidebar";
 import Navbar from "../../../components/home/navBar";
 function Workout() {
   return (
-    <div className=" bg-gray-100">
+    <div className="flex flex-col min-h-screen container mx-auto">
       <Navbar />
       <div className="flex">
         <SideBar />

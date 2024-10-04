@@ -6,10 +6,10 @@ import { useParams } from "react-router-dom";
 const ProfileForm = () => {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false); // Manage loading state
+  const [isLoading, setIsLoading] = useState(false);
   const [globalError, setGlobalError] = useState(null);
-  const [message, setMessage] = useState(null); // For success messages
- 
+  const [successMessage, setSuccessMessage] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -20,37 +20,23 @@ const ProfileForm = () => {
 
   useEffect(() => {
     if (!userId) return;
-    const fetchUserData = async () => {
-      setLoading(true);
-      try {
-        const response = await apiClient.get(`/users/${userId}`, {});
-        const userData = response.data.user;
-        setUser(userData);
 
-        // Set form values with the fetched user data
-        setValue("firstName", userData.firstName);
-        setValue("lastName", userData.lastName);
-        setValue("email", userData.email);
-        setValue("gender", userData.gender);
-        setValue("weight", userData.weight);
-        setValue("height", userData.height);
-        setValue(
-          "dateOfBirth",
-          userData.dateOfBirth
-            ? new Date(userData.dateOfBirth).toISOString().split("T")[0]
-            : ""
-        );
-        setValue("profileImage", userData.profileImage || "");
+    const fetchUserData = async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await apiClient.get(`/users/${userId}`);
+
+        setUser(data.user);
         setGlobalError(null);
       } catch (error) {
         setGlobalError(error.response?.data?.error || "Error fetching data");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchUserData();
-  }, [ userId, setValue]);
+  }, [userId]);
 
   const onSubmit = async (data) => {
     if (!userId) {
@@ -58,9 +44,9 @@ const ProfileForm = () => {
     }
 
     const updatedData = {
-      ...(data.email && { email: data.email }),
       ...(data.firstName && { firstName: data.firstName }),
       ...(data.lastName && { lastName: data.lastName }),
+      ...(data.email && { email: data.email }),
       ...(data.gender && { gender: data.gender }),
       ...(data.weight && { weight: data.weight }),
       ...(data.height && { height: data.height }),
@@ -68,18 +54,17 @@ const ProfileForm = () => {
       ...(data.profileImage && { profileImage: data.profileImage }),
     };
 
-    setLoading(true);
+    setIsLoading(true);
     try {
-      const response = await apiClient.patch(
+      const { data: response } = await apiClient.patch(
         `/users/${userId}`,
         updatedData
       );
-      setMessage(response.data.message);
+      setSuccessMessage(response.message);
       setGlobalError("");
     } catch (error) {
-      setMessage("");
+      setSuccessMessage("");
       if (error.response && error.response.data && error.response.data.errors) {
-        // Handle backend validation errors
         error.response.data.errors.forEach((err) => {
           setError(err.path, {
             type: "manual",
@@ -90,9 +75,22 @@ const ProfileForm = () => {
         setGlobalError(error.response.data?.error || "Error updating profile");
       }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      setValue("firstName", user.firstName);
+      setValue("lastName", user.lastName);
+      setValue("email", user.email);
+      setValue("gender", user.gender);
+      setValue("weight", user.weight);
+      setValue("height", user.height);
+      setValue("dateOfBirth", user.dateOfBirth);
+      setValue("profileImage", user.profileImage);
+    }
+  }, [user, setValue]);
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
@@ -105,18 +103,9 @@ const ProfileForm = () => {
         setValue("profileImage", file.name);
       } catch (error) {
         setGlobalError("Error uploading profile image");
-        console.error("Error uploading profile image:", error);
       }
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <FaSpinner className="w-8 h-8 text-blue-500 animate-spin" />
-      </div>
-    ); // Spinner while loading
-  }
 
   return (
     <form
@@ -124,7 +113,10 @@ const ProfileForm = () => {
       className="space-y-6 max-w-lg mx-auto bg-white p-8 shadow-lg rounded-lg"
     >
       <div>
-        <label htmlFor="firstName" className="block font-medium text-gray-700">
+        <label
+          htmlFor="firstName"
+          className="block font-medium text-gray-700"
+        >
           First Name
         </label>
         <input
@@ -139,7 +131,10 @@ const ProfileForm = () => {
         )}
       </div>
       <div>
-        <label htmlFor="lastName" className="block font-medium text-gray-700">
+        <label
+          htmlFor="lastName"
+          className="block font-medium text-gray-700"
+        >
           Last Name
         </label>
         <input
@@ -148,11 +143,16 @@ const ProfileForm = () => {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
         {errors.lastName && (
-          <p className="mt-1 text-sm text-red-600">{errors.lastName.message}</p>
+          <p className="mt-1 text-sm text-red-600">
+            {errors.lastName.message}
+          </p>
         )}
       </div>
       <div>
-        <label htmlFor="email" className="block font-medium text-gray-700">
+        <label
+          htmlFor="email"
+          className="block font-medium text-gray-700"
+        >
           Email
         </label>
         <input
@@ -167,10 +167,12 @@ const ProfileForm = () => {
             },
           })}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          readOnly // Makes email field visible but non-editable
+          readOnly
         />
         {errors.email && (
-          <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          <p className="mt-1 text-sm text-red-600">
+            {errors.email.message}
+          </p>
         )}
       </div>
       <div>
@@ -189,7 +191,10 @@ const ProfileForm = () => {
         </select>
       </div>
       <div>
-        <label htmlFor="weight" className="block font-medium text-gray-700">
+        <label
+          htmlFor="weight"
+          className="block font-medium text-gray-700"
+        >
           Weight (kg)
         </label>
         <input
@@ -200,7 +205,10 @@ const ProfileForm = () => {
         />
       </div>
       <div>
-        <label htmlFor="height" className="block font-medium text-gray-700">
+        <label
+          htmlFor="height"
+          className="block font-medium text-gray-700"
+        >
           Height (cm)
         </label>
         <input
@@ -245,21 +253,19 @@ const ProfileForm = () => {
         )}
       </div>
       {globalError && <p className="text-red-500">{globalError}</p>}
-      {message && <p className="text-green-500">{message}</p>}
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
       <button
         type="submit"
         className="relative w-full px-4 py-2 bg-indigo-600 text-white font-medium text-sm leading-tight rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        disabled={loading}
+        disabled={isLoading}
       >
-        {loading && (
+        {isLoading && (
           <FaSpinner className="absolute inset-0 m-auto w-5 h-5 text-white animate-spin" />
         )}
-        <span className={loading ? "opacity-0" : ""}>
-          {loading ? "Updating..." : "Update Profile"}
+        <span className={isLoading ? "opacity-0" : ""}>
+          {isLoading ? "Updating..." : "Update Profile"}
         </span>
       </button>
     </form>
   );
-};
-
-export default ProfileForm;
+};export default ProfileForm;

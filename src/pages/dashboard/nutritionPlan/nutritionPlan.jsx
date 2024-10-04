@@ -4,7 +4,7 @@ import Navbar from "../../../components/home/navBar";
 
 function NutritionPlan() {
   return (
-    <div className=" bg-gray-100">
+    <div className="flex flex-col min-h-screen container mx-auto">
       <Navbar />
       <div className="flex">
         <SideBar />

@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 import EditUser from "./editUser";
 import { FaEye } from "react-icons/fa";
 import DeleteUser from "./deleteUser";
-import {IoFitnessOutline } from "react-icons/io5";
-import {IoIosFitness } from "react-icons/io";
+import { IoFitnessOutline } from "react-icons/io5";
+import { IoIosFitness } from "react-icons/io";
 import apiClient from "../../../utils/axiosConfig";
+import ReCharge from "./reCharge";
 import { useState } from "react";
 function UserCard({ user, onDelete, onEdit }) {
   const [error, setError] = useState(null);
@@ -16,12 +17,12 @@ function UserCard({ user, onDelete, onEdit }) {
     } catch (error) {
       console.log(error);
       setError(error.response?.data?.message || "An error occurred");
-    setTimeout(() => {
-      setError(null);
-    }, 2000);
+      setTimeout(() => {
+        setError(null);
+      }, 2000);
     }
   };
-
+console.log(user.isActive)
   return (
     <div className="overflow-hidden lg:w-[calc(50%-2rem)] xl:w-[calc(40%-5rem)] md:w-[calc(75%-2rem)] w-full mx-auto m-2 ">
       <div className="h-full flex flex-col justify-between bg-white rounded-xl sm:p-6 p-4 border border-gray-200 space-y-6">
@@ -38,11 +39,10 @@ function UserCard({ user, onDelete, onEdit }) {
             </h2>
             <p className="text-gray-500 text-sm">{user.email}</p>
             <p
-              className={`text-sm font-medium ${
-                user.subscriptionStatus === "premium"
-                  ? "text-yellow-500"
-                  : "text-gray-500"
-              }`}
+              className={`text-sm font-medium ${user.subscriptionStatus === "premium"
+                ? "text-yellow-500"
+                : "text-gray-500"
+                }`}
             >
               {user.subscriptionStatus}
             </p>
@@ -75,9 +75,9 @@ function UserCard({ user, onDelete, onEdit }) {
             <EditUser user={user} onSuccess={onEdit} />
             <Link
               to={`/dashboard/users/${user._id}`}
-              className="flex items-center text-green-500 hover:text-green-700 space-x-1"
+              className="flex duration-300 items-center text-green-500 hover:text-green-700 space-x-1"
             >
-              <FaEye className="w-8 h-8 sm:w-4 sm:h-4 " />
+              <FaEye className="w-4 h-4 md:hidden flex" />
               <span className="hidden md:inline">View</span>
             </Link>
           </div>
@@ -86,7 +86,7 @@ function UserCard({ user, onDelete, onEdit }) {
 
           {/* Active/Inactive Toggle */}
           <div className="flex items-center space-x-4">
-            <label className="relative inline-block min-w-12 h-6">
+            <label className="relative inline-block min-w-36 h-7">
               <input
                 type="checkbox"
                 onChange={() => updateUser(!user.isActive)}
@@ -94,22 +94,30 @@ function UserCard({ user, onDelete, onEdit }) {
                 className="opacity-0 w-0 h-0 peer focus:ring-2 focus:ring-red-300 peer-checked:focus:ring-green-300"
               />
               <span
-                className="slider absolute cursor-pointer inset-0
-              bg-red-500 rounded-full transition-all duration-300
-              before:absolute before:content-[''] before:h-4 before:w-4
-              before:left-1 before:bottom-1 before:bg-white before:rounded-full
-              before:transition-all before:duration-300 peer-checked:bg-green-500
-              peer-checked:before:translate-x-6"
-              ></span>
+                className={`slider selection:bg-transparent  flex items-center justify-around absolute cursor-pointer
+                inset-0 bg-gray-300 rounded-full transition-all
+                before:content-[''] 
+                duration-300 before:z-10 ${user.isActive ? "before:bg-green-500 before:translate-x-full" : "before:bg-red-500 translate-x-0"}
+                before:rounded-full before:absolute
+                before:inset-0 
+                before:left-0 rounded-xl before:top-0
+                before:h-full before:transition-all before:duration-300
+                 before:w-1/2
+             `}
+              >
+
+                <span
+                  className={`text-sm font-medium z-10 w-fit text-white`}
+                >
+                  block
+                </span>
+                <span className={`text-sm font-medium z-10 w-fit text-white`}>
+                  unblock
+                </span>
+              </span>
             </label>
-            <div
-              className={`text-sm font-medium ${
-                user.isActive ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              {user.isActive ? "Active" : "Inactive"}
-            </div>
-            {error && <div className="text-red-500">{error}</div>}
+            {error && <div className="text-red-500 text-xs">{error}</div>}
+            <ReCharge />
           </div>
         </div>
       </div>

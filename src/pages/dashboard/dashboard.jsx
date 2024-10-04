@@ -3,6 +3,7 @@ import SideBar from "../../components/dashboard/sidebar";
 import Navbar from "../../components/home/navBar";
 import apiClient from "../../utils/axiosConfig";
 import { useSelector } from "react-redux";
+import LineChart from "../../components/dashboard/lineChart";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -29,50 +30,15 @@ function Dashboard() {
   }, [userId]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen container mx-auto">
       <Navbar />
       <div className="flex flex-1">
         <SideBar />
-        <div className="flex-1 p-6 bg-background dark:bg-darkBackground overflow-y-auto ">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            {loading ? (
-              <div className="text-center">
-                <p className="text-muted dark:text-darkMuted">
-                  Loading user data...
-                </p>
-              </div>
-            ) : error ? (
-              <div className="text-danger text-center">
-                <p>{error}</p>
-              </div>
-            ) : (
-              <>
-                <h2 className="text-xl font-bold text-primary dark:text-accent">
-                  Welcome, {user?.firstName || "Admin"} {user?.lastName || ""}!
-                </h2>
-                <p className="mt-2 text-text dark:text-darkText">
-                  We are thrilled to have you here! As an admin, you hold the
-                  key to our fitness community's success. You have the authority
-                  to manage exercises, oversee food entries, and handle user
-                  accounts, all of which are vital for creating an optimal
-                  fitness experience for everyone involved.
-                </p>
-                <p className="mt-2 text-text dark:text-darkText">
-                  Your insights and actions directly impact the engagement and
-                  satisfaction of our users. Whether you are adding new
-                  workouts, updating dietary options, or providing support to
-                  our community, your contributions make a real difference.
-                </p>
-                <p className="mt-4 text-muted dark:text-darkMuted">
-                  <span className="font-semibold text-text dark:text-darkText">
-                    Let’s get started!
-                  </span>
-                  Use the sidebar to navigate to the various sections and take
-                  control of the dashboard. Your journey towards enhancing our
-                  fitness offerings begins now!
-                </p>
-              </>
-            )}
+        <div className="flex-1 p-6 bg-background  overflow-y-auto ">
+          <div className="bg-white  p-6 rounded-lg shadow-md">
+            <div className="text-center">
+              <LineChart />
+            </div>
           </div>
         </div>
       </div>

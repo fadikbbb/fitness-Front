@@ -3,7 +3,7 @@ import SideBar from "../../../components/dashboard/sidebar";
 import FoodBody from "../../../components/dashboard/food/foodBody";
 function Food() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen container mx-auto">
       <NavBar />
       <div className="flex">
         <SideBar />

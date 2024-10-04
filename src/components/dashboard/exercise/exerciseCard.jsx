@@ -29,9 +29,9 @@ function ExerciseCard({ exercise, onDelete, onEdit, categories }) {
           <DeleteExercise exerciseId={exercise._id} onSuccess={onDelete} />
           <Link
             to={`/dashboard/single-exercise/${exercise._id}`}
-            className="md:flex items-center text-green-500 hover:text-green-700"
+            className="md:flex items-center p-2 text-white rounded-lg bg-green-500 hover:bg-green-700"
           >
-            <FaEye className="w-8 h-8 sm:w-4 sm:h-4" />
+            <FaEye className="w-4 h-4 md:hidden flex" />
             <div className="hidden md:flex">View</div>
           </Link>
         </div>

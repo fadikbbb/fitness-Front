@@ -1,6 +1,7 @@
 import React from "react";
 import EditExerciseInWorkoutPlan from "./editExerciseInWorkoutPlan";
 import RemoveExerciseInWorkoutPlan from "./removeExerciseInWorkoutPlan";
+import DeleteDayOfExercises from "./deleteDayOfExercises";
 
 function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
     return (
@@ -9,56 +10,77 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                 <ul>
                     {workoutPlan.days.map((dayPlan) => (
                         <li key={dayPlan.day} className="mb-6">
-                            <h2 className="text-2xl text-center  font-semibold text-text">
-                                Day {dayPlan.day}
-                            </h2>
+                            <div className="flex justify-between items-center mb-3">
+                                <h2 className="text-2xl text-center font-semibold text-text">
+                                    Day {dayPlan.day}
+                                </h2>
+                                <DeleteDayOfExercises
+                                    handleRefresh={handleRefresh}
+                                    planId={workoutPlan._id}
+                                    day={dayPlan.day}
+                                />
+                            </div>
+                            {/* Exercise List */}
                             <ul className="mt-3">
                                 {dayPlan.exercises.map((exercise) => (
                                     <li
                                         key={exercise._id}
-                                        className="bg-gray-50  mb-4 rounded-md shadow-md"
+                                        className="bg-gray-50 mb-4 rounded-md shadow-md p-4 hover:bg-gray-100 transition"
                                     >
-                                        <div className="flex flex-col gap-2 md:flex-row  justify-between items-center">
-                                            <img
-                                                src={exercise.exerciseId.image}
-                                                alt={`${exercise.exerciseId.name} exercise`}
-                                                className="w-16 h-16 rounded"
-                                            />
-                                            <div className="text-lg font-medium text-gray-800">
-                                                {exercise.exerciseId.name}
+                                        <div className="flex flex-col gap-4 md:flex-row justify-between items-start md:items-center">
+                                            <div className="flex flex-col gap-4 md:flex-row justify-center items-center w-full">
+                                                {/* Left Section: Image and Exercise Name */}
+                                                <div className="flex items-center justify-center flex-col md:flex-row flex-wrap gap-4 w-full md:w-auto">
+                                                        <img
+                                                            src={exercise.exerciseId.image}
+                                                            alt={`${exercise.exerciseId.name} exercise`}
+                                                            className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary"
+                                                        />
+                                                        <div className="text-sm font-bold text-primary mt-2 md:mt-0">
+                                                            {exercise.exerciseId.name}
+                                                    </div>
+                                                </div>
+
+                                                {/* Right Section: Sets, Reps, Rest, and Note */}
+                                                <div className="flex flex-row flex-wrap text-left gap-2 w-full md:w-auto">
+                                                    {/* Sets */}
+                                                    <span className="text-sm text-gray-600">
+                                                        <small className="font-bold text-primary">Sets:</small> {exercise.sets}
+                                                    </span>
+                                                    {/* Reps */}
+                                                    <span className="text-sm text-gray-600">
+                                                        <small className="font-bold text-primary">Reps:</small> {exercise.reps}
+                                                    </span>
+                                                    {/* Rest Duration */}
+                                                    <span className="text-sm text-gray-600">
+                                                        <small className="font-bold text-primary">Rest Duration:</small>{" "}
+                                                        {exercise.restDuration}
+                                                    </span>
+
+                                                    {/* Note (optional) */}
+                                                    {exercise.note && (
+                                                        <div className="text-sm text-gray-600">
+                                                            <small className="font-bold text-primary">Note:</small> {exercise.note}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <>
-                                                <div className="flex text-center flex-wrap items-center justify-center gap-2">
-                                                    <span className="text-sm text-gray-600">
-                                                        Sets: {exercise.sets}
-                                                    </span>
-                                                    <span className="text-sm text-gray-600">
-                                                        Reps: {exercise.reps}
-                                                    </span>
-                                                    <span className="text-sm text-gray-600">
-                                                        Rest Duration: {exercise.restDuration}
-                                                    </span>
-                                                    {exercise.note &&
-                                                        <span className="text-sm text-gray-600">
-                                                        Note: {exercise.note}
-                                                    </span>
-                                                    }
-                                                </div>
-                                                <div className="flex gap-2 w-full md:w-fit justify-around">
-                                                    <EditExerciseInWorkoutPlan
-                                                        handleRefresh={handleRefresh}
-                                                        exercise={exercise}
-                                                        planId={workoutPlan._id}
-                                                        day={dayPlan.day}
-                                                    />
-                                                    <RemoveExerciseInWorkoutPlan
-                                                        handleRefresh={handleRefresh}
-                                                        exerciseId={exercise.exerciseId._id}
-                                                        day={dayPlan.day}
-                                                        planId={workoutPlan._id}
-                                                    />
-                                                </div>
-                                            </>
+
+                                            {/* Action Buttons */}
+                                            <div className="flex gap-2 w-full md:w-fit justify-around">
+                                                <EditExerciseInWorkoutPlan
+                                                    handleRefresh={handleRefresh}
+                                                    exercise={exercise}
+                                                    planId={workoutPlan._id}
+                                                    day={dayPlan.day}
+                                                />
+                                                <RemoveExerciseInWorkoutPlan
+                                                    handleRefresh={handleRefresh}
+                                                    exerciseId={exercise.exerciseId._id}
+                                                    day={dayPlan.day}
+                                                    planId={workoutPlan._id}
+                                                />
+                                            </div>
                                         </div>
                                     </li>
                                 ))}

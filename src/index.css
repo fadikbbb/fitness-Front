@@ -42,3 +42,6 @@
   border-radius: 5px;
   margin-top: 10px;
 }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

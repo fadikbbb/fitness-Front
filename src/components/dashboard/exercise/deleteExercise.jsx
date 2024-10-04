@@ -51,10 +51,10 @@ function DeleteExercise({ exerciseId, onSuccess }) {
 
       <button
         onClick={handleDelete}
-        className="md:flex items-center text-red-500 hover:text-red-700"
+        className="md:flex items-center text-white p-2 rounded-md bg-red-500 hover:bg-red-700"
         aria-label="Delete exercise"
       >
-        <FaTrash className="w-8 h-8 sm:w-4 sm:h-4" />
+        <FaTrash className="w-4 h-4 flex md:hidden" />
         <div className="hidden md:flex">Delete</div>
       </button>
     </div>

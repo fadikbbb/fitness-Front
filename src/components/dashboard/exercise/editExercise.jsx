@@ -44,9 +44,9 @@ function EditExercise({ categories, exercise, onSuccess }) {
       )}
       <button
         onClick={() => setEditFormOpen(true)}
-        className="md:flex items-center text-blue-500 hover:text-blue-700"
+        className="md:flex items-center p-2 text-white rounded-lg bg-blue-500 hover:bg-blue-700"
       >
-        <FaEdit className="w-8 h-8 sm:w-4 sm:h-4" />
+        <FaEdit className="w-4 h-4 md:hidden flex" />
         <div className="hidden md:flex">Edit</div>
       </button>
     </div>

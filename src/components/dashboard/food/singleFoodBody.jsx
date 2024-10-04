@@ -49,7 +49,10 @@ function SingleFoodBody() {
         <div className="p-6 pt-12 text-center">
           <h2
             className="text-2xl md:text-4xl lg:text-6xl  font-bold uppercase tracking-wide"
-            style={{ color: fallbackColor(9, "#000") }}
+            style={{
+              textShadow: `1px 3px 5px ${colors[5] || "#ccc"}`,
+              color: fallbackColor(9, "#000"),
+            }}
           >
             {foodData?.name}
           </h2>

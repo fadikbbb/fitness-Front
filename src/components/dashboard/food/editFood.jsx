@@ -44,10 +44,10 @@ function EditFood({ food, onSuccess, foodCategories }) {
 
       <button
         onClick={() => setEditFormOpen(true)}
-        className="md:flex items-center text-blue-500 hover:text-blue-700"
+        className="md:flex items-center text-white p-2 rounded-lg bg-blue-500 hover:bg-blue-700"
         aria-label="Edit food"
       >
-        <FaEdit className="w-8 h-8 sm:w-4 sm:h-4" />
+        <FaEdit className="w-4 h-4 flex md:hidden"/>
         <div className="hidden md:flex">Edit</div>
       </button>
     </div>

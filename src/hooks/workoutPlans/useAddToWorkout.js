@@ -19,7 +19,7 @@ const useAddToWorkout = ({ handleRefresh, setShowModal }) => {
         }
     };
 
-    return { addToWorkout, error };
+    return { addToWorkout,setError, error };
 };
 
 export default useAddToWorkout;

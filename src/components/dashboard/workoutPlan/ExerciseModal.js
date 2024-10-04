@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
+function ExerciseModal({  onAdd, error, exercises, loading }) {
     const [selectedExercises, setSelectedExercises] = useState(new Set());
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         defaultValues: {
@@ -77,9 +77,9 @@ function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
                             <label
                                 htmlFor={exercise._id}
                                 key={exercise._id}
-                                className={`relative flex flex-col overflow-hidden justify-between items-center p-2 border ${isSelected ? "border-blue-300 shadow-md shadow-blue-300" : "border-gray-300"} rounded-md`}
+                                className={`relative flex flex-col overflow-hidden justify-between items-center p-2 border ${isSelected ? "border-primary shadow-md shadow-primary" : "border-gray-300"} rounded-md`}
                             >
-                                <div className={`absolute left-0 top-0 z-[0] w-full transition-all duration-300 bg-blue-300 ${isSelected ? " min-h-[300px] w-full" : "min-h-0 max-h-0 "} rounded-md`}></div>
+                                <div className={`absolute left-0 top-0 z-[0] w-full transition-all duration-300 bg-background ${isSelected ? " min-h-[300px] w-full" : "min-h-0 max-h-0 "} rounded-md`}></div>
                                 <input
                                     id={exercise._id}
                                     type="checkbox"
@@ -88,7 +88,7 @@ function ExerciseModal({ onClose, onAdd, error, exercises, loading }) {
                                     className="hidden"
                                 />
                                 <p className="text-gray-700 w-full text-center z-10">{exercise.name}</p>
-                                <div className={`${!isSelected ? "max-h-0" : "max-h-[100px]"}  duration-300`}>
+                                <div className={`${!isSelected ? "max-h-0" : "max-h-[100px]"} overflow-hidden w-full  duration-300`}>
                                     <div className={`flex  gap-2 w-full  h-full transition-all duration-300 `}>
                                         {['sets', 'reps', 'restDuration'].map((field) => (
                                             <div key={field} className={`w-full`}>

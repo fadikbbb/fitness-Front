@@ -10,7 +10,7 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
-  const { addToWorkout, error } = useAddToWorkout({
+  const { addToWorkout, error, setError } = useAddToWorkout({
     handleRefresh,
     setShowModal,
   });
@@ -75,7 +75,10 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
               Add Exercise for Workout Plan
             </h1>
             <button
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setError(null);
+                setShowModal(false);
+              }}
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
               aria-label="Close"
             >
@@ -94,7 +97,9 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
             <div
               className={`items-start flex flex-col md:flex-row bg-white rounded-md 
       transition-all duration-500 ease-in-out ${
-        isOpen ? "md:min-w-full md:max-w-full md:h-fit max-h-full" : "max-h-[60px] w-full md:min-w-[90px] md:max-w-[92px]"
+        isOpen
+          ? "md:min-w-full md:max-w-full md:h-fit max-h-full"
+          : "max-h-[60px] w-full md:min-w-[90px] md:max-w-[92px]"
       }`}
             >
               <button
@@ -172,7 +177,7 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
               setTotalPages={setTotalPages}
               page={page}
               exercises={exercises}
-               loading={loading}
+              loading={loading}
             />
 
             <div className="flex justify-center mt-6">
@@ -180,7 +185,9 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1}
                 className={`px-4 py-2 border rounded-md mr-2 ${
-                  page === 1 ? "cursor-not-allowed opacity-50" : "bg-button hover:bg-buttonHover text-white"
+                  page === 1
+                    ? "cursor-not-allowed opacity-50"
+                    : "bg-button hover:bg-buttonHover text-white"
                 }`}
               >
                 Previous
@@ -192,7 +199,9 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages}
                 className={`px-4 py-2 border rounded-md ml-2 ${
-                  page === totalPages ? "cursor-not-allowed opacity-50" : "bg-button hover:bg-buttonHover text-white"
+                  page === totalPages
+                    ? "cursor-not-allowed opacity-50"
+                    : "bg-button hover:bg-buttonHover text-white"
                 }`}
               >
                 Next

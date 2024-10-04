@@ -87,7 +87,8 @@ const AddUser = ({ onAdd }) => {
         onClick={handleOpen}
         className=" bg-button hover:bg-buttonHover text-white flex gap-2 items-center px-4 py-2 rounded-lg"
       >
-        <div className="hidden md:flex"> Add user</div> <FaPlus className="w-6 h-6 sm:w-4 sm:h-4 "/>
+        <div className="hidden md:flex"> Add user</div>
+         <FaPlus className="w-4 h-4 md:hidden flex "/>
       </button>
       {addFormOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
