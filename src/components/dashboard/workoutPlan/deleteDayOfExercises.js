@@ -13,8 +13,10 @@ function DeleteDayOfExercises({ handleRefresh, planId, day }) {
                 className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded "
                 onClick={() => setDeleteConfirmOpen(true)}
             >
-                <FaTrash />
+                <FaTrash className="w-6 h-6 md:hidden" />
+                <div className="hidden md:block">
                 Delete
+                </div>
             </button>
             {isDeleteConfirmOpen && (
                 <div

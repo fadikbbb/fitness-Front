@@ -7,6 +7,7 @@ import { IoIosFitness } from "react-icons/io";
 import apiClient from "../../../utils/axiosConfig";
 import ReCharge from "./reCharge";
 import { useState } from "react";
+import { FaUser } from "react-icons/fa";
 function UserCard({ user, onDelete, onEdit }) {
   const [error, setError] = useState(null);
   const updateUser = async (isActive) => {
@@ -15,24 +16,26 @@ function UserCard({ user, onDelete, onEdit }) {
       onEdit(); // Refresh or update the UI after edit
       setError(null);
     } catch (error) {
-      console.log(error);
       setError(error.response?.data?.message || "An error occurred");
       setTimeout(() => {
         setError(null);
       }, 2000);
     }
   };
-console.log(user.isActive)
   return (
-    <div className="overflow-hidden lg:w-[calc(50%-2rem)] xl:w-[calc(40%-5rem)] md:w-[calc(75%-2rem)] w-full mx-auto m-2 ">
+    <div className="overflow-hidden lg:w-[calc(50%-2rem)] xl:w-[calc(33%-2rem)] md:w-[calc(75%-2rem)] w-full mx-auto m-2 ">
       <div className="h-full flex flex-col justify-between bg-white rounded-xl sm:p-6 p-4 border border-gray-200 space-y-6">
         {/* Profile Section */}
         <div className="flex flex-wrap justify-around items-center sm:space-x-4 ">
-          <img
-            src={user.profileImage}
-            alt={user.firstName}
-            className="min-w-16 h-16 object-cover rounded-full shadow"
-          />
+         {
+           user.image ?
+           <img
+           src={user.image}
+           alt={user.firstName}
+           className="min-w-16 h-16 object-cover rounded-full shadow"
+           />:
+           <FaUser className="rounded-full border-white border-2 w-10 h-10 p-1" />
+          }
           <div>
             <h2 className="text-2xl font-bold text-gray-800">
               {user.firstName} {user.lastName}
@@ -117,7 +120,7 @@ console.log(user.isActive)
               </span>
             </label>
             {error && <div className="text-red-500 text-xs">{error}</div>}
-            <ReCharge />
+            <ReCharge userId={user._id} />
           </div>
         </div>
       </div>

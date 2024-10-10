@@ -74,16 +74,7 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
             <h1 className="text-3xl font-bold mb-4 text-text text-center">
               Add Exercise for Workout Plan
             </h1>
-            <button
-              onClick={() => {
-                setError(null);
-                setShowModal(false);
-              }}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              aria-label="Close"
-            >
-              <span className="text-2xl hover:text-red-500">&times;</span>
-            </button>
+            
 
             <div className="flex items-center mb-4">
               <input
@@ -170,6 +161,7 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
             </div>
 
             <ExerciseModal
+            setError={setError}
               onClose={() => setShowModal(false)}
               onAdd={handleAddToWorkout}
               error={error}

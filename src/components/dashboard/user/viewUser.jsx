@@ -32,7 +32,7 @@ function ViewUser() {
               className="p-4 bg-white rounded-lg shadow-md border border-gray-200"
             >
               <img
-                src={user.profileImage}
+                src={user.image}
                 alt={user.firstName}
                 className="w-16 h-16 rounded-full"
               />

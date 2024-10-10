@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import apiClient from "../../utils/axiosConfig";
 import { clearAuthState } from "../../store/authSlice";
 import { useDispatch } from "react-redux";
+import { FaArrowRight } from "react-icons/fa";
 function ChangePassword() {
   const dispatch = useDispatch();
   const {
@@ -19,10 +20,7 @@ function ChangePassword() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await apiClient.patch(
-        `/users/update-password`,
-        data
-      );
+      const response = await apiClient.patch(`/users/update-password`, data);
       setError(response?.data?.message);
       dispatch(clearAuthState());
       navigate("/auth/login");
@@ -37,7 +35,7 @@ function ChangePassword() {
   };
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex justify-center items-center mt-4">
       {/* Button to show the popup */}
       <button
         onClick={() => setShowPopup(true)}
@@ -50,6 +48,12 @@ function ChangePassword() {
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+          <div
+          className="flex items-center justify-end cursor-pointer mb-4" 
+          onClick={() => setShowPopup(false)}>
+            {/* arrow use icons from react */}
+            <FaArrowRight className="w-4 h-4 text-gray-300 duration-300 hover:text-gray-600" />
+          </div>
             <h1 className="text-2xl font-bold mb-6 text-gray-800">
               Change Password
             </h1>
@@ -130,12 +134,6 @@ function ChangePassword() {
                 {loading ? "Changing..." : "Change Password"}
               </button>
             </form>
-            <button
-              onClick={() => setShowPopup(false)}
-              className="mt-4 w-full px-4 py-2 bg-gray-300 text-gray-700 font-semibold rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300"
-            >
-              Close
-            </button>
           </div>
         </div>
       )}

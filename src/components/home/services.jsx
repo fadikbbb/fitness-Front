@@ -1,9 +1,9 @@
 function Services() {
   return (
-    <div className="bg-white shadow-lg rounded-lg">
-      <h2 className="text-4xl font-bold p-4 text-center">Services</h2>
-      <div className="w-full h-full flex flex-col gap-y-[80px]  p-8">
-        <div className="shadow-xl p-4 rounded-md w-full flex md:flex-row flex-col-reverse">
+    <div className="bg-white  my-4 ">
+      <h2 className="text-4xl font-bold p-4  text-center">Services</h2>
+      <div className="w-full h-full flex flex-col gap-y-[80px]  py-8 px-2">
+        <div className="shadow-xl p-4  rounded-md w-full flex md:flex-row flex-col-reverse">
           <div className="w-full md:w-1/2">
       
             <h2 className="text-3xl text-center">

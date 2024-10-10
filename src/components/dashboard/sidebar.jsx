@@ -5,13 +5,12 @@ import {
   IoPersonOutline,
   IoSettingsOutline,
 } from "react-icons/io5";
-import Logout from "../auth/logout";
 import { useSelector } from "react-redux";
 import { GiMuscularTorso } from "react-icons/gi";
-import useContentsHook from "../../hooks/contents";
+import useContentsHook from "../../hooks/settings/useFetchContent";
 function SideBar() {
   const token = useSelector((state) => state.auth.token);
-  const {logo}=useContentsHook()
+  const { hero, loading, error } = useContentsHook();
   const location = useLocation();
   const currentPath = location.pathname;
   const isActive = (path) =>
@@ -23,15 +22,12 @@ function SideBar() {
     <div className="w-[20%] h-screen overflow-hidden sticky z-40 top-0 bg-hover text-white flex flex-col justify-between ">
       <ul className="flex flex-col space-y-4 my-2">
         <div className="w-full border-b border-primary flex flex-row items-center justify-center md:justify-between">
-          <img
-            className=" min-w-fit h-[60px] p-2"
-            src={logo}
-            alt=""
-          />
-          <Link  className="w-full md:text-md font-bold hidden md:block duration-300 hover:text-primary " to="/dashboard">
-          <h3>
-            Fitness Dashboard
-          </h3>
+          <img className=" min-w-fit h-[60px] p-2" src={hero.logo} alt="" />
+          <Link
+            className="w-full md:text-md font-bold hidden md:block duration-300 hover:text-primary "
+            to="/dashboard"
+          >
+            <h3>Fitness Dashboard</h3>
           </Link>
         </div>
         <li>
@@ -83,12 +79,6 @@ function SideBar() {
               Settings
             </span>
           </Link>
-        </li>
-        <li className="md:flex hidden items-center md:justify-between justify-center p-2 md:p-4">
-          <Logout token={token} textLogout="Logout" />
-        </li>
-        <li className="md:hidden flex items-center md:justify-between justify-center p-2 md:p-4">
-          <Logout token={token} textLogout="" />
         </li>
       </ul>
     </div>

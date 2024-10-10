@@ -18,7 +18,8 @@ const useEditExercise = ({ handleRefresh, setIsOpen }) => {
                 )}`,
                 {
                     sets: editForm.sets,
-                    reps: editForm.reps,
+                    minReps: editForm.minReps,
+                    maxReps: editForm.maxReps,
                     restDuration: editForm.restDuration,
                     note: editForm.note,
                 }

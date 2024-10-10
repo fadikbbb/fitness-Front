@@ -187,7 +187,7 @@ function FoodModal({ onClose, onAdd, addError }) {
                                         <div className={`flex flex-col w-full duration-500 ${!isSelected ? " max-w-0 " : "max-w-full "} `}>
                                             <input
                                                 type="number"
-                                                placeholder="Quantity"
+                                                placeholder="Quantity (g)"
                                                 disabled={!isSelected}
                                                 {...register(`quantity-${food._id}`, {
                                                     required: isSelected ? "Quantity is required" : false,

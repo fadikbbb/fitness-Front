@@ -13,6 +13,7 @@ const useAddFood = (onAdd) => {
     const handleAddSubmit = async (data) => {
         const formData = new FormData();
         Object.keys(data).forEach((key) => {
+            console.log(key, data[key]);
             if (key === "image") {
                 if (data.image.length > 0) {
                     formData.append(key, data.image[0]);
@@ -54,7 +55,7 @@ const useAddFood = (onAdd) => {
         setError,
         setMessage,
         setFormErrors,
-        
+
     };
 };
 

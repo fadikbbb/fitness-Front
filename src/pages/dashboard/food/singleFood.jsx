@@ -5,7 +5,7 @@ import SingleFoodBody from "../../../components/dashboard/food/singleFoodBody";
 
 function SingleFood() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 container mx-auto">
       <NavBar />
       <div className="flex">
         <SideBar />

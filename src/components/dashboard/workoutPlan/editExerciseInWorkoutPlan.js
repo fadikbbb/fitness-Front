@@ -9,7 +9,8 @@ function EditExerciseInWorkoutPlan({handleRefresh,exercise, day, planId }) {
     const { register, handleSubmit } = useForm({
         defaultValues: {
             sets: exercise.sets || 0,
-            reps: exercise.reps || 0,
+            minReps: exercise.minReps || 0,
+            maxReps: exercise.maxReps || 0,
             restDuration: exercise.restDuration || 0,
             note: exercise.note || "",
         },
@@ -22,7 +23,7 @@ function EditExerciseInWorkoutPlan({handleRefresh,exercise, day, planId }) {
     return (
         <div>
             <button onClick={() => setIsOpen(true)} className="m-2 flex items-center text-blue-500 hover:text-blue-700">
-                <FaEdit className="h-6 w-6" />
+                <FaEdit className="h-6 w-6 md:hidden" />
                 <span className="md:flex hidden">edit</span>
             </button>
             {isOpen && (
@@ -42,11 +43,20 @@ function EditExerciseInWorkoutPlan({handleRefresh,exercise, day, planId }) {
                                 />
                             </label>
                             <label className="block mb-4">
-                                Reps:
+                                minReps:
                                 <input
-                                    placeholder="Reps"
+                                    placeholder="minReps"
                                     type="number"
-                                    {...register("reps", { required: true, min: 0 })}
+                                    {...register("minReps", { required: true, min: 0 })}
+                                    className="border p-1 w-full"
+                                />
+                            </label>
+                            <label className="block mb-4">
+                                maxReps:
+                                <input
+                                    placeholder="maxReps"
+                                    type="number"
+                                    {...register("maxReps", { required: true, min: 0 })}
                                     className="border p-1 w-full"
                                 />
                             </label>

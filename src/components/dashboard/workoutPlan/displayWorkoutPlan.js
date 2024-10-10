@@ -28,9 +28,9 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                                         className="bg-gray-50 mb-4 rounded-md shadow-md p-4 hover:bg-gray-100 transition"
                                     >
                                         <div className="flex flex-col gap-4 md:flex-row justify-between items-start md:items-center">
-                                            <div className="flex flex-col gap-4 md:flex-row justify-center items-center w-full">
+                                            <div className="flex flex-col gap-4 md:flex-row justify-between items-center w-full">
                                                 {/* Left Section: Image and Exercise Name */}
-                                                <div className="flex items-center justify-center flex-col md:flex-row flex-wrap gap-4 w-full md:w-auto">
+                                                <div className="flex items-center justify-center flex-col md:flex-row flex-wrap gap-4 w-full md:w-1/2">
                                                         <img
                                                             src={exercise.exerciseId.image}
                                                             alt={`${exercise.exerciseId.name} exercise`}
@@ -42,14 +42,14 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                                                 </div>
 
                                                 {/* Right Section: Sets, Reps, Rest, and Note */}
-                                                <div className="flex flex-row flex-wrap text-left gap-2 w-full md:w-auto">
+                                                <div className="flex flex-row flex-wrap justify-center text-left gap-2 w-full md:w-1/2">
                                                     {/* Sets */}
                                                     <span className="text-sm text-gray-600">
                                                         <small className="font-bold text-primary">Sets:</small> {exercise.sets}
                                                     </span>
                                                     {/* Reps */}
                                                     <span className="text-sm text-gray-600">
-                                                        <small className="font-bold text-primary">Reps:</small> {exercise.reps}
+                                                        <small className="font-bold text-primary">Reps:</small> {exercise.minReps} - {exercise.maxReps}
                                                     </span>
                                                     {/* Rest Duration */}
                                                     <span className="text-sm text-gray-600">

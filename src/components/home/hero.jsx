@@ -1,8 +1,8 @@
-import useContentsHook from "../../hooks/contents";
+import useContentsHook from "../../hooks/settings/useFetchContent";
 
 function Hero() {
-  const { heroTitle, heroSubtitle, heroImage, heroVideo, loading, error } =
-    useContentsHook();
+  const {data,hero, loading, error} =
+  useContentsHook();
 
   if (loading) {
     return <div className="text-center text-lg">Loading...</div>;
@@ -18,16 +18,16 @@ function Hero() {
         <div className="bg-gradient-to-t from-black to-transparent absolute top-0 left-0 z-30 w-full h-full"></div>
         
         <div className="relative w-full h-full left-0 overflow-hidden">
-          {heroImage && (
+          {hero.heroImage && (
             <img
               className="absolute top-0 left-0 h-full md:w-full object-cover"
-              src={heroImage}
+              src={hero.heroImage}
               alt="Hero"
             />
           )}
-          {heroVideo && (
+          {hero.heroVideo && (
             <video
-              src={heroVideo}
+              src={hero.heroVideo}
               autoPlay
               loop
               muted
@@ -39,10 +39,10 @@ function Hero() {
       </div>
         <div className=" w-full text-center z-30 p-8 flex flex-col items-center justify-center ">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight text-white">
-            {heroTitle}
+            {hero.heroTitle}
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-300">
-            {heroSubtitle}
+            {hero.heroDescription}
           </p>
         </div>
     </section>

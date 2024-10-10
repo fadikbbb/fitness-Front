@@ -22,6 +22,9 @@ const useAddExercise = (onAdd) => {
             formData.append("description", data.description);
             formData.append("category", data.category);
             formData.append("restDuration", data.restDuration);
+            formData.append("sets", data.sets);
+            formData.append("maxReps", data.maxReps);
+            formData.append("minReps", data.minReps);
             formData.append("intensity", data.intensity);
 
             if (data.image && data.image[0]) {

@@ -27,8 +27,8 @@ const AddExercise = ({ onAdd, categories }) => {
         <FaPlus className="w-4 h-4 md:hidden flex" />
       </button>
       {addFormOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+        <div className="fixed  inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white overflow-auto max-h-screen p-6 rounded shadow-lg max-w-sm text-center">
             <h2 className="text-lg font-bold mb-4 text-primary">
               Add Exercise
             </h2>

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {jwtDecode} from "jwt-decode"; 
+import { clearCookies } from "../utils/authUtils";
 
 // Retrieve token from localStorage
 const token = localStorage.getItem("authToken");
@@ -54,6 +55,7 @@ const authSlice = createSlice({
             state.userRole = null;
             state.userId = null;
             localStorage.removeItem("authToken");
+            clearCookies();
         },
     },
 });

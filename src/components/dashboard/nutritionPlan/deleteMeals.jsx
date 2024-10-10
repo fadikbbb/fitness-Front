@@ -19,7 +19,7 @@ function DeleteMeals({ meal, nutritionPlan, handleRefresh }) {
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Delete Meal"
       >
-        <FaTrash className="w-6 h-6" />
+        <FaTrash className="w-6 h-6 md:hidden block " />
         <span className="md:flex hidden ml-2">Delete Meal</span>
       </button>
       {isOpen && (

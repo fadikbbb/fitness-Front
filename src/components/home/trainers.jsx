@@ -43,7 +43,7 @@ function Trainers() {
   };
 
   return (
-    <div className="w-full h-full bg-white text-center relative">
+    <div className="w-full h-full  text-center relative">
       <div className="w-full flex flex-col justify-center py-10">
         <h1 className="text-4xl font-bold mb-8">Our Trainers</h1>
 

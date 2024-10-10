@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import useUserFetching from "../../../hooks/users/useUserFetching";
+import useUserFetching from "../../../hooks/users/useUserFetching"; // Updated import
 import apiClient from "../../../utils/axiosConfig";
+
 function ReCharge({ userId }) {
     const dispatch = useDispatch();
     const [error, setError] = useState(null);
@@ -15,14 +16,18 @@ function ReCharge({ userId }) {
     const [rechargeMessage, setRechargeMessage] = useState(null);
     const [rechargeIsLoading, setRechargeIsLoading] = useState(false);
     const [rechargeChanges, setRechargeChanges] = useState(false);
-    const { user } = useUserFetching({ userId, rechargeChanges, setRechargeIsLoading, setRechargeError, setRechargeMessage });
+
+    // Updated usage of the hook
+    const { user, isLoading } = useUserFetching(userId);
+
     const handleRecharge = async () => {
         setRechargeFormOpen(true);
     };
+
     const handleConfirmRecharge = async () => {
         setIsRecharging(true);
         try {
-            const response = await apiClient.patch(`/users/${userId}/recharge`, { amount: rechargeAmount })
+            const response = await apiClient.patch(`/users/${userId}/recharge`, { amount: rechargeAmount });
             setMessage(response.data.message);
             setError(null);
             setTimeout(() => {
@@ -35,13 +40,13 @@ function ReCharge({ userId }) {
                 setRechargeChanges(!rechargeChanges);
             }, 500);
         } catch (error) {
-            console.log(error);
             setError(error.response?.data?.message || "An error occurred");
             setMessage(null);
         } finally {
             setIsRecharging(false);
         }
     };
+
     const handleCancelRecharge = () => {
         setRechargeFormOpen(false);
         setRechargeAmount(0);
@@ -50,6 +55,7 @@ function ReCharge({ userId }) {
         setRechargeMessage(null);
         setIsRecharging(false);
     };
+
     return (
         <div>
             <button className="btn btn-primary" onClick={handleRecharge}>

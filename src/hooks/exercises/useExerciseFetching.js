@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import apiClient from "../../utils/axiosConfig";
-
-export default function useFoodFetching() {
+export default function useExerciseFetching() {
     const [exercise, setExercise] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
     const { exerciseId } = useParams();
-
     useEffect(() => {
         const fetchExercise = async () => {
             try {
+                console.log(exerciseId);
                 const response = await apiClient.get(`/exercises/${exerciseId}`);
                 setExercise(response.data.exercise);
             } catch (error) {
@@ -20,7 +18,6 @@ export default function useFoodFetching() {
                 setLoading(false);
             }
         };
-
         fetchExercise();
     }, [exerciseId]);
 

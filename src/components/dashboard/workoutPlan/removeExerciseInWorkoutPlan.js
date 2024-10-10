@@ -54,7 +54,7 @@ function RemoveExerciseInWorkoutPlan({ planId, day, exerciseId, handleRefresh })
         onClick={() => setIsOpen(true)}
         className="m-2 flex items-center text-red-600 hover:text-red-800 transition-colors duration-200"
       >
-        <FaTrash className="h-6 w-6 " />
+        <FaTrash className="h-6 w-6 md:hidden" />
         <span className="md:flex hidden ml-2">Delete</span>
       </button>
     </>

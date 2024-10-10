@@ -75,7 +75,7 @@ function EditFoodInMeals({ meal, food, handleRefresh }) {
         onClick={() => setIsOpen(true)}
         className="m-2 flex items-center text-blue-500 hover:text-blue-700 transition-colors duration-200"
       >
-        <FaEdit className="h-5 w-5 " />
+        <FaEdit className="h-5 w-5 md:hidden block" />
      <span className="md:flex hidden ml-2">Edit</span>
       </button>
     </>

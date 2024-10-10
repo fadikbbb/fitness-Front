@@ -163,12 +163,13 @@ function FoodForm({
 
             <div className="flex flex-col items-start">
                 <label htmlFor="weight" className="mr-2">
-                    Serving Size:
+                    Weight:
                 </label>
                 <input
                     type="number"
                     step={0.1}
                     id="weight"
+                    
                     {...register("weight")}
                     className={`p-2 border
                          rounded-md w-full 

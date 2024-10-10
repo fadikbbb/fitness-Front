@@ -39,6 +39,9 @@ function ExerciseForm({
       video: exercise?.video,
       category: exercise?.category,
       restDuration: exercise?.restDuration,
+      sets: exercise?.sets,
+      minReps: exercise?.minReps,
+      maxReps: exercise?.maxReps,
       intensity: exercise?.intensity,
     },
   });
@@ -162,20 +165,69 @@ function ExerciseForm({
           <small className="text-red-500">{errors.intensity.message}</small>
         )}
       </div>
-      <div className="flex flex-col items-start">
-        <label htmlFor="restDuration" className="block mb-1 text-left">
-          Rest Duration (in minutes):
-        </label>
-        <input
-          type="number"
-          id="restDuration"
-          {...register("restDuration")}
-          className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.restDuration ? "border-red-500" : "border-gray-300"
-            }`}
-        />
-        {errors.restDuration && (
-          <small className="text-red-500">{errors.restDuration.message}</small>
-        )}
+      <div className="flex flex-wrap gap-4">
+        <div className="flex flex-col justify-between text-sm items-center w-[calc(50%-1rem)]">
+          <label htmlFor="restDuration" className="block mb-1 text-left">
+            Rest Duration (in minutes):
+          </label>
+          <input
+            type="number"
+            id="restDuration"
+            {...register("restDuration")
+
+            }
+            className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.restDuration ? "border-red-500" : "border-gray-300"
+              }`}
+          />
+          {errors.restDuration && (
+            <small className="text-red-500">{errors.restDuration.message}</small>
+          )}
+        </div>
+        <div className="flex flex-col justify-between text-sm items-center w-[calc(50%-1rem)]">
+          <label htmlFor="maxReps" className="block mb-1 text-left">
+            max reps:
+          </label>
+          <input
+            type="number"
+            id="maxReps"
+            {...register("maxReps")}
+            className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.maxReps ? "border-red-500" : "border-gray-300"
+              }`}
+          />
+          {errors.maxReps && (
+            <small className="text-red-500">{errors.maxReps.message}</small>
+          )}
+        </div>
+        <div className="flex flex-col justify-between text-sm items-center w-[calc(50%-1rem)]">
+          <label htmlFor="minReps" className="block mb-1 text-left">
+            min reps:
+          </label>
+          <input
+            type="number"
+            id="minReps"
+            {...register("minReps")}
+            className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.minReps ? "border-red-500" : "border-gray-300"
+              }`}
+          />
+          {errors.minReps && (
+            <small className="text-red-500">{errors.minReps.message}</small>
+          )}
+        </div>
+        <div className="flex flex-col justify-between text-sm items-center w-[calc(50%-1rem)]">
+          <label htmlFor="sets" className="block mb-1 text-left">
+            sets:
+          </label>
+          <input
+            type="number"
+            id="sets"
+            {...register("sets")}
+            className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.sets ? "border-red-500" : "border-gray-300"
+              }`}
+          />
+          {errors.sets && (
+            <small className="text-red-500">{errors.sets.message}</small>
+          )}
+        </div>
       </div>
       <div className="flex justify-center">
         {exercise ? (

@@ -8,16 +8,25 @@ import Footer from "../components/home/footer";
 function Home() {
   return (
     <div>
+      <NavBar exception={true} />
       <div className=" container mx-auto">
-        <NavBar exception={true} />
         <Hero />
       </div>
-      <div className="bg-gray-100 w-full h-full">
+      <div className="bg-white w-full h-full">
         <div className="container mx-auto">
           <Services />
+        </div>
+        <div className="bg-gray-100 w-full h-full ">
+         <div className="container mx-auto">
+
           <Trainers />
+         </div>
+        </div>
+        <div className="bg-white w-full h-full">
+          <div className="container mx-auto">
           <About />
           <Footer />
+          </div>
         </div>
       </div>
     </div>

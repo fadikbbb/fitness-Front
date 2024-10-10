@@ -15,17 +15,18 @@ import Login from "./components/auth/login";
 import VerifyCode from "./components/auth/VerifyCode";
 import PasswordResetRequest from "./components/auth/PasswordResetRequest";
 import ResetPassword from "./components/auth/ResetPassword";
-import Profile from "./pages/profile/profile";
 import NotFound from "./pages/notfound";
-import AllTraining from "./pages/training";
-import AccountDetails from "./pages/profile/accountDetails";
+import AccountDetails from "./pages/userView/profile/accountDetails";
 import Dashboard from "./pages/dashboard/dashboard";
 import Exercise from "./pages/dashboard/exercise/exercise";
 import SingleExercise from "./pages/dashboard/exercise/singleExercise";
+import SingleTraining from "./pages/userView/training/singleTrainings";
 import Food from "./pages/dashboard/food/food";
 import SingleFood from "./pages/dashboard/food/singleFood";
 import User from "./pages/dashboard/user/user";
 import Workout from "./pages/dashboard/workoutPlan/workoutPlan";
+import ViewWorkout from "./pages/userView/workoutPlan";
+import ViewNutrition from "./pages/userView/nutrition";
 import ViewUser from "./components/dashboard/user/viewUser";
 import NutritionPlan from "./pages/dashboard/nutritionPlan/nutritionPlan";
 import SettingPage from "./pages/dashboard/setting/setting";
@@ -36,18 +37,13 @@ function App() {
         <div >
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/training" element={<AllTraining />} />
-
+            <Route path="/workout-plan/:userId/exercises/:exerciseId"
+              element={<IsAuthenticated element={<SingleTraining />} />} />
             <Route
-              path="/profile"
-              element={<IsAuthenticated element={<Profile />} />}
+              path="/profile/edit-profile/:id" element={<IsAuthenticated element={<AccountDetails />} />}
             />
-            <Route
-              path="/profile/edit-profile/:id"
-              element={<IsAuthenticated element={<AccountDetails />} />}
-            />
-
-
+            <Route path="/workout-plan/:userId" element={<IsAuthenticated element={<ViewWorkout />} />} />
+            <Route path="/nutrition-plan/:userId" element={<IsAuthenticated element={<ViewNutrition />} />} />
             <Route path="/dashboard/exercise" element=
               {<IsAuthenticated element=
                 {<IsAuthorization element=

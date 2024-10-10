@@ -4,7 +4,7 @@ import SideBar from "../../../components/dashboard/sidebar";
 
 function SingleExercise() {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen container mx-auto">
       <Navbar />
       <div className="flex space-x-4">
         <SideBar />

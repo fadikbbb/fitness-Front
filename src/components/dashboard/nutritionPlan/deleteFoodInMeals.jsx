@@ -54,7 +54,7 @@ function DeleteFoodInMeals({ meal, food, handleRefresh }) {
         onClick={() => setIsOpen(true)}
         className="m-2 flex items-center text-red-600 hover:text-red-800 transition-colors duration-200"
       >
-        <FaTrash className="h-5 w-5 " />
+        <FaTrash className="h-5 w-5 md:hidden block" />
         <span className="md:flex hidden ml-2">Delete</span>
       </button>
     </>

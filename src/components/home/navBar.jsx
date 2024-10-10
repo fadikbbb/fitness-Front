@@ -1,17 +1,28 @@
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { IoPersonOutline } from "react-icons/io5";
-import useContentsHook from "../../hooks/contents";
-
-function NavBar({ exception }) {
-  const { logo } = useContentsHook();
-  const userRole = useSelector((state) => state.auth.userRole);
+import { FaUser } from "react-icons/fa";
+import useContentsHook from "../../hooks/settings/useFetchContent";
+import Logout from "../auth/logout";
+import Profile from "../profile/profile";
+import useUserFetching from "../../hooks/users/useUserFetching";
+export default function NavBarWithProfile({ exception }) {
+  const [isOpenProfile, setIsOpenProfile] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const { userRole, token, userId } = useSelector((state) => state.auth);
+  const { user } = useUserFetching(userId);
+  const {hero, loading, error} = useContentsHook()
   return (
     <header className="w-full h-[72px]">
       <div className={`${exception ? "fixed top-0" : ""} w-full z-50`}>
-        <nav className={`container flex items-center justify-between ${exception?"backdrop-blur-md bg-[rgba(0,0,0,0.5)]":"bg-primary"} text-white p-4`}>
-          <div className="min-w-[40px] w-[40px] h-[40px] overflow-hidden">
-            <img src={logo} alt="" />
+        <nav
+          className={`container mx-auto relative flex items-center justify-between ${
+            exception ? "backdrop-blur-md bg-[rgba(0,0,0,0.5)]" : "bg-primary"
+          } text-white p-4`}
+        >
+          {/* Logo */}
+          <div className="min-w-[40px] max-w-[40px] max-h-[40px] min-h-[40px] object-cover object-center">
+            <img src={hero.logo} alt="Logo" />
           </div>
           <ul className="flex items-center space-x-4">
             <li>
@@ -22,39 +33,6 @@ function NavBar({ exception }) {
                 Home
               </Link>
             </li>
-            <li>
-              <Link
-                to="/about"
-                className="hover:text-green-500 duration-300 md:text-base text-xs"
-              >
-                About
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/contact"
-                className="hover:text-green-500 duration-300 md:text-base text-xs"
-              >
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/trainers"
-                className="hover:text-green-500 duration-300 md:text-base text-xs"
-              >
-                trainers
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/services"
-                className="hover:text-green-500 duration-300 md:text-base text-xs"
-              >
-                services
-              </Link>
-            </li>
-
             {userRole === "admin" && (
               <li>
                 <Link
@@ -67,7 +45,22 @@ function NavBar({ exception }) {
             )}
           </ul>
           <ul className="flex space-x-4 items-center">
-            {!userRole && (
+            {userRole ? (
+              <li
+                onClick={() => setIsOpenProfile(!isOpenProfile)}
+                className="hover:text-green-500 cursor-pointer  md:text-base text-xs"
+              >
+                {user.image ? (
+                  <img
+                    src={user?.image}
+                    className="min-w-[40px] max-w-[40px] max-h-[40px] min-h-[40px] rounded-full object-cover object-center"
+                    alt="profile"
+                  />
+                ) : (
+                  <FaUser className="rounded-full border-white duration-300 hover:border-green-500 border-2 w-[40px] h-[40px] p-1" />
+                )}
+              </li>
+            ) : (
               <>
                 <li>
                   <Link
@@ -87,20 +80,24 @@ function NavBar({ exception }) {
                 </li>
               </>
             )}
-            {userRole && (
-              <li>
-                <Link
-                  to="/profile"
-                  className="hover:text-green-500 duration-300 md:text-base text-xs"
-                >
-                  <IoPersonOutline />
-                </Link>
-              </li>
-            )}
           </ul>
+
+          {/* Profile Dropdown */}
+          <Profile
+            setIsLogoutModalOpen={setIsLogoutModalOpen}
+            setIsOpenProfile={setIsOpenProfile}
+            isOpenProfile={isOpenProfile}
+            exception={exception}
+          />
         </nav>
       </div>
+
+      {/* Logout Modal */}
+      <Logout
+        token={token}
+        isLogoutModalOpen={isLogoutModalOpen}
+        setIsLogoutModalOpen={setIsLogoutModalOpen}
+      />
     </header>
   );
 }
-export default NavBar;
