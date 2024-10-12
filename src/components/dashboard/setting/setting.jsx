@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import SocialMediaForm from "./socialMediaForm";
 import HeroForm from "./heroForm";
-import ServicesForm from "./servicesForm";
-import AboutUsForm from "./AboutUsForm";
+import ServicesForm from "./services/servicesForm";
+import AboutUsForm from "./aboutUs/aboutUsForm";
 const Setting = () => {
   const [activeComponent, setActiveComponent] = useState("heroForm");
 
@@ -43,14 +43,12 @@ const Setting = () => {
           </li>
         </ul>
       </nav>
-      <main>
+      <main className="w-full p-4 flex flex-col justify-between">
         {activeComponent === "heroForm" && <HeroForm />}
         {activeComponent === "socialMediaForm" && <SocialMediaForm />}
         {activeComponent === "servicesForm" && <ServicesForm />}
         {activeComponent === "aboutUsForm" && <AboutUsForm />}
       </main>
-
-      <div></div>
     </div>
   );
 };

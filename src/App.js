@@ -20,13 +20,14 @@ import AccountDetails from "./pages/userView/profile/accountDetails";
 import Dashboard from "./pages/dashboard/dashboard";
 import Exercise from "./pages/dashboard/exercise/exercise";
 import SingleExercise from "./pages/dashboard/exercise/singleExercise";
-import SingleTraining from "./pages/userView/training/singleTrainings";
+import SingleExerciseView from "./pages/userView/workoutPlan/singleExercise";
+import SingleFoodView from "./pages/userView/nutritionPlan/singleFood";
 import Food from "./pages/dashboard/food/food";
 import SingleFood from "./pages/dashboard/food/singleFood";
 import User from "./pages/dashboard/user/user";
 import Workout from "./pages/dashboard/workoutPlan/workoutPlan";
-import ViewWorkout from "./pages/userView/workoutPlan";
-import ViewNutrition from "./pages/userView/nutrition";
+import ViewWorkout from "./pages/userView/userWorkoutPlan";
+import ViewNutrition from "./pages/userView/userNutritionPlan";
 import ViewUser from "./components/dashboard/user/viewUser";
 import NutritionPlan from "./pages/dashboard/nutritionPlan/nutritionPlan";
 import SettingPage from "./pages/dashboard/setting/setting";
@@ -38,7 +39,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/workout-plan/:userId/exercises/:exerciseId"
-              element={<IsAuthenticated element={<SingleTraining />} />} />
+              element={<IsAuthenticated element={<SingleExerciseView />} />} />
+
+            <Route path="/nutrition-plan/:userId/food/:foodId"
+              element={<IsAuthenticated element={<SingleFoodView />} />} />
+
             <Route
               path="/profile/edit-profile/:id" element={<IsAuthenticated element={<AccountDetails />} />}
             />

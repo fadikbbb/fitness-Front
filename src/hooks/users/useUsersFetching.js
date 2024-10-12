@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
 import apiClient from "../../utils/axiosConfig";
 
-const useFetchUsers = (page, formValues) => {
+const useFetchUsers = ({ page, limit, search, role, subscription, changes, setChanges, setTotalPages }) => {
     const [users, setUsers] = useState([]);
-    const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [thereIsChange, setThereIsChange] = useState(false);
 
     useEffect(() => {
         const fetchUser = async () => {
             setLoading(true);
             try {
                 const response = await apiClient.get(
-                    `/users?page=${page}&limit=${formValues.limit}${formValues.search ? `&search=${formValues.search}` : ""
-                    }${formValues.role ? `&role=${formValues.role}` : ""}${formValues.subscription
-                        ? `&subscriptionStatus=${formValues.subscription}`
+                    `/users?page=${page}&limit=${limit}${search ? `&search=${search}` : ""
+                    }${role ? `&role=${role}` : ""}${subscription
+                        ? `&subscriptionStatus=${subscription}`
                         : ""
                     }`
                 );
+
                 setUsers(response.data.users);
-                setTotalPages(Math.ceil(response.data.totalUsers / formValues.limit));
-                setThereIsChange(false); // Reset change state if necessary
+                setTotalPages(Math.ceil(response.data.totalUsers / limit));
+                setChanges(false);
                 setError(null);
             } catch (error) {
                 setError(error.response?.data?.message);
@@ -31,9 +30,13 @@ const useFetchUsers = (page, formValues) => {
         };
 
         fetchUser();
-    }, [page, formValues, thereIsChange]);
+    }, [page, limit, search, role, subscription, changes]);
 
-    return { users, totalPages, loading, error, setThereIsChange }; // Return the state and setter
+    return {
+        users,
+        loading,
+        error,
+    };
 };
 
 export default useFetchUsers;

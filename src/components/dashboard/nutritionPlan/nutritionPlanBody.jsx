@@ -4,17 +4,14 @@ import DisplayMeals from "./displayMeals";
 import useNutritionPlanFetching from "../../../hooks/nutritionPlans/useNutritionPlanFetching";
 
 function NutritionPlanBody() {
-  const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [changes, setChanges] = useState(false);
 
-  const { nutritionPlan } = useNutritionPlanFetching({
-    changes,
-    setIsLoading,
-    setError,
-    setMessage,
-  });
+  const { nutritionPlan, error, isLoading, message } = useNutritionPlanFetching(
+    {
+      changes,
+      setChanges,
+    }
+  );
 
   const handleRefresh = () => {
     setChanges(!changes);
@@ -39,7 +36,6 @@ function NutritionPlanBody() {
           {message}
         </div>
       )}
-     
     </div>
   );
 }

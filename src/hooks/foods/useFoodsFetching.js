@@ -3,7 +3,6 @@ import apiClient from "../../utils/axiosConfig";
 export default function useFoodsFetching({ limit, page, 
     setTotalPages, search, category, changes, setChanges }) {
     const [foods, setFoods] = useState([]);
-    
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -31,5 +30,5 @@ export default function useFoodsFetching({ limit, page,
         fetchFoods();
     }, [page, category, limit, search, changes]);
 
-    return { foods,setTotalPages, loading, error };
+    return { foods, loading, error };
 }

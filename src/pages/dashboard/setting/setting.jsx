@@ -8,7 +8,9 @@ function SettingPage() {
       <Navbar />
       <div className="flex">
         <SideBar />
-        <Setting />
+        <div className="w-[80%] bg-background overflow-y-auto">
+          <Setting />
+        </div>
       </div>
     </div>
   );

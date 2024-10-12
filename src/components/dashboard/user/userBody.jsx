@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import apiClient from "../../../utils/axiosConfig";
 import useUsersFetching from "../../../hooks/users/useUsersFetching";
 import AddUser from "./addUser";
 import UserCard from "./userCard";
-
 import { IoFilterOutline } from "react-icons/io5";
+
 function UserBody() {
-  const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [thereIsChange, setThereIsChange] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
+  const [changes, setChanges] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const { register, handleSubmit, watch } = useForm({
+  const { register, watch } = useForm({
     defaultValues: {
       search: "",
       role: "",
@@ -26,67 +21,32 @@ function UserBody() {
   });
 
   const formValues = watch();
-
-  const {
-    users: fetchedUsers,
-    loading: fetchingUsers,
-    error: fetchingError,
-  } = useUsersFetching({
+  const { users, loading, error } = useUsersFetching({
+    setTotalPages,
     page,
     limit: formValues.limit,
     search: formValues.search,
     role: formValues.role,
     subscription: formValues.subscription,
-    setUsers,
-    setTotalPages,
-    setLoading,
-    setError,
-    setThereIsChange,
+    changes,
+    setChanges,
   });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await apiClient.get(
-          `/users?page=${page}&limit=${formValues.limit}${
-            formValues.search ? `&search=${formValues.search}` : ""
-          }${formValues.role ? `&role=${formValues.role}` : ""}${
-            formValues.subscription
-              ? `&subscriptionStatus=${formValues.subscription}`
-              : ""
-          }`
-        );
-        setUsers(response.data.users);
-        setTotalPages(Math.ceil(response.data.totalUsers / formValues.limit));
-        setThereIsChange(false);
-        setError(null);
-      } catch (error) {
-        setError(error.response?.data?.message);
-      } finally {
-        setLoading(false);
+    if (page > totalPages) {
+      if (totalPages > 0) {
+        setPage(totalPages);
+      } else {
+        setPage(1);
+        setTotalPages(1);
       }
-    };
-    fetchUser();
-  }, [
-    page,
-    formValues.limit,
-    formValues.search,
-    formValues.role,
-    formValues.subscription,
-    thereIsChange,
-  ]);
+    }
+  }, [totalPages, page]);
 
   const handlePageChange = (newPage) => setPage(newPage);
   const handleRefresh = () => {
-    setThereIsChange(!thereIsChange);
+    setChanges(!changes);
   };
-
-  // Adjust page if it exceeds totalPages
-  useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [totalPages, page]);
 
   return (
     <main className="w-full p-4 flex flex-col justify-between h-full">

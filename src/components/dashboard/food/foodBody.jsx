@@ -21,11 +21,10 @@ function FoodBody() {
 
   const { foods, loading, error } = useFoodsFetching({
     limit: formValues.limit,
-    setPage,
-    setTotalPages,
-    page,
     search: formValues.search,
     category: formValues.category,
+    setTotalPages,
+    page,
     changes,
     setChanges,
   });
@@ -44,7 +43,7 @@ function FoodBody() {
   const handleRefresh = () => {
     setChanges(!changes);
   };
-  
+
   useEffect(() => {
     if (page > totalPages) {
       if (totalPages > 0) {
@@ -55,7 +54,7 @@ function FoodBody() {
       }
     }
   }, [totalPages, page]);
-  
+
   const handlePageChange = (newPage) => setPage(newPage);
 
   return (
@@ -106,7 +105,9 @@ function FoodBody() {
                 {...register("category")}
                 className="w-full md:w-[calc(100%/2 - 5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                <option value="" disabled selected>Select a category</option>
+                <option value="" disabled selected>
+                  Select a category
+                </option>
                 {foodCategories.map((category) => (
                   <option key={category} value={category}>
                     {category}

@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   IoFastFoodOutline,
   IoPersonOutline,
   IoSettingsOutline,
 } from "react-icons/io5";
-import { useSelector } from "react-redux";
 import { GiMuscularTorso } from "react-icons/gi";
-import useContentsHook from "../../hooks/settings/useFetchContent";
+import useContentsHook from "../../hooks/settings/useFetchContents";
 function SideBar() {
-  const token = useSelector((state) => state.auth.token);
-  const { hero, loading, error } = useContentsHook();
+  const { hero, viewHero } = useContentsHook(); // Destructure viewHero from the hook
+
+  // Trigger viewHero when the component mounts
+  useEffect(() => {
+    viewHero();
+  }, []);
   const location = useLocation();
   const currentPath = location.pathname;
   const isActive = (path) =>
@@ -68,14 +71,16 @@ function SideBar() {
           </Link>
         </li>
       </ul>
-      <ul className="border-t border-primary ">
+      <ul className="flex flex-col border-t border-primary">
         <li>
           <Link
             to="/dashboard/setting"
-            className="flex items-center md:justify-between justify-center p-2 md:p-4"
+            className={`flex items-center md:justify-between justify-center p-2 md:p-4 my-2 ${isActive(
+              "/dashboard/setting"
+            )}`}
           >
             <IoSettingsOutline className="md:w-6 md:h-6 w-8 h-8" />
-            <span className="text-base font-medium  md:block hidden">
+            <span className="text-base font-medium md:block hidden">
               Settings
             </span>
           </Link>

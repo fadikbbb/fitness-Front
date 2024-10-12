@@ -28,13 +28,16 @@ const AddUser = ({ onAdd }) => {
       dateOfBirth: "",
       subscriptionStatus: "free",
       role: "user",
-      profileImage: "",
+      image: "",
     },
   });
   const onSubmit = async (data) => {
     try {
       Object.keys(data).forEach((key) => {
-        if (data[key] === "profileImage") {
+        
+        console.log(key, data[key]);
+        if (data[key] === "image") {
+          console.log(key, data[key]);
           if (data[key].length > 0) {
             data[key] = data[key][0];
           }
@@ -48,7 +51,7 @@ const AddUser = ({ onAdd }) => {
         } else {
           data[key] = null;
         }
-      });
+      });console.log(data);
       
       setIsSubmitting(true);
       const response = await apiClient.post("/users", data);
@@ -165,17 +168,17 @@ const AddUser = ({ onAdd }) => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="profileImage" className="mr-2">
+                <label htmlFor="image" className="mr-2">
                   profile image URL:
                 </label>
                 <input
                   type="file"
-                  id="profileImage"
-                  {...register("profileImage")}
+                  id="image"
+                  {...register("image")}
                   className="p-2 border border-gray-300 rounded-md"
                 />
-                {formErrors.profileImage && (
-                  <p className="text-red-500">{formErrors.profileImage}</p>
+                {formErrors.image && (
+                  <p className="text-red-500">{formErrors.image}</p>
                 )}
               </div>
               <div className="mb-4">

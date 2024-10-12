@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import apiClient from "../../utils/axiosConfig";
 import { useParams } from "react-router-dom";
-export default function useNutritionPlanFetching({ changes, setChanges, setIsLoading, setError, setMessage }) {
+export default function useNutritionPlanFetching({ changes, setChanges }) {
     const { userId } = useParams();
     const [nutritionPlan, setNutritionPlan] = useState(null);
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [message, setMessage] = useState(null);
 
     const fetchNutritionPlan = async () => {
         try {
@@ -24,6 +27,6 @@ export default function useNutritionPlanFetching({ changes, setChanges, setIsLoa
         fetchNutritionPlan();
     }, [userId, changes]);
 
-    return { nutritionPlan };
+    return { nutritionPlan, error, isLoading, message };
 }
 

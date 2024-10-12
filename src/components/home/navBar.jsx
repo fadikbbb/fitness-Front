@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import {HashLink} from 'react-router-hash-link';
 import { FaUser } from "react-icons/fa";
-import useContentsHook from "../../hooks/settings/useFetchContent";
+import useContentsHook from "../../hooks/settings/useFetchContents";
 import Logout from "../auth/logout";
 import Profile from "../profile/profile";
 import useUserFetching from "../../hooks/users/useUserFetching";
@@ -10,10 +11,14 @@ export default function NavBarWithProfile({ exception }) {
   const [isOpenProfile, setIsOpenProfile] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const { userRole, token, userId } = useSelector((state) => state.auth);
-  const { user } = useUserFetching(userId);
-  const {hero, loading, error} = useContentsHook()
+  const { user } = useUserFetching(userId); const { hero,  viewHero } = useContentsHook(); // Destructure viewHero from the hook
+
+  // Trigger viewHero when the component mounts
+  useEffect(() => {
+    viewHero();
+  }, []);
   return (
-    <header className="w-full h-[72px]">
+    <header  className="w-full h-[72px]">
       <div className={`${exception ? "fixed top-0" : ""} w-full z-50`}>
         <nav
           className={`container mx-auto relative flex items-center justify-between ${
@@ -26,12 +31,28 @@ export default function NavBarWithProfile({ exception }) {
           </div>
           <ul className="flex items-center space-x-4">
             <li>
-              <Link
-                to="/"
+              <HashLink
+                to="/#home"
                 className="hover:text-green-500 duration-300 md:text-base text-xs"
               >
                 Home
-              </Link>
+              </HashLink>
+            </li>
+            <li>
+              <HashLink
+                to="/#about"
+                className="hover:text-green-500 duration-300 md:text-base text-xs"
+              >
+                about
+              </HashLink>
+            </li>
+            <li>
+              <HashLink
+                to="/#services"
+                className="hover:text-green-500 duration-300 md:text-base text-xs"
+              >
+                services
+              </HashLink>
             </li>
             {userRole === "admin" && (
               <li>

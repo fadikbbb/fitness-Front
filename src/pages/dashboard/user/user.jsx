@@ -8,8 +8,8 @@ function User() {
       <Navbar />
       <div className="flex">
         <SideBar />
-        <div  className="w-[80%] bg-background overflow-y-auto">
-        <UserBody />
+        <div className="w-[80%] bg-background overflow-y-auto">
+          <UserBody />
         </div>
       </div>
     </div>

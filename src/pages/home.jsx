@@ -7,7 +7,7 @@ import About from "../components/home/about";
 import Footer from "../components/home/footer";
 function Home() {
   return (
-    <div>
+    <div >
       <NavBar exception={true} />
       <div className=" container mx-auto">
         <Hero />

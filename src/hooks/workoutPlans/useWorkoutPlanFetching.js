@@ -1,8 +1,8 @@
-import { useSelector } from "react-redux";
 import { useState, useEffect } from 'react';
 import apiClient from '../../utils/axiosConfig';
 import { useParams } from "react-router-dom";
 import useUserFetching from "../users/useUserFetching";
+
 const useWorkoutPlan = ({ changes, setChanges }) => {
     const { userId } = useParams();
     const [workoutPlan, setWorkoutPlan] = useState(null);
