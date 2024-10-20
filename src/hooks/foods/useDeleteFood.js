@@ -1,26 +1,28 @@
 import { useState } from "react";
 import apiClient from "../../utils/axiosConfig";
 
-const useDeleteFood = () => {
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState(null);
+const useDeleteFood = ({ onDelete, setDeleteConfirmOpen }) => {
+    const [deleteFoodError, setDeleteFoodError] = useState(null);
+    const [deleteFoodLoading, setDeleteFoodLoading] = useState(false);
+    const [deleteFoodMessage, setDeleteFoodMessage] = useState(null);
 
     const deleteFood = async (foodId) => {
         try {
-            setLoading(true);
+            setDeleteFoodLoading(true);
             const response = await apiClient.delete(`/foods/${foodId}`);
             const data = response.data;
-            setMessage(data.message || "Food deleted successfully.");
-            setError(null);
+            setDeleteFoodMessage(data.message || "Food deleted successfully.");
+            setDeleteFoodError(null);
+            onDelete()
+            setDeleteConfirmOpen(false)
         } catch (error) {
-            setError(error.response?.data?.message || "An error occurred");
+            setDeleteFoodError(error.response?.data?.message || "An error occurred");
         } finally {
-            setLoading(false);
+            setDeleteFoodLoading(false);
         }
     };
 
-    return { error, loading, message, deleteFood };
+    return { deleteFoodError, deleteFoodLoading, deleteFoodMessage, deleteFood };
 };
 
 export default useDeleteFood;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoFilterOutline } from "react-icons/io5";
 import useFoodsFetching from "../../../hooks/foods/useFoodsFetching";
-
+import { useSelector } from 'react-redux'
 function FoodModal({ onClose, onAdd, addError }) {
     const [page, setPage] = useState(1);
     const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +10,7 @@ function FoodModal({ onClose, onAdd, addError }) {
     const [selectedFoods, setSelectedFoods] = useState(new Set());
 
     const { register, handleSubmit,
+        setError,
         reset, watch, formState: { errors } } = useForm({
             defaultValues: {
                 search: "",
@@ -21,7 +22,7 @@ function FoodModal({ onClose, onAdd, addError }) {
 
     const formValues = watch();
 
-    const { foods, loading, error } = useFoodsFetching({
+    const { foods, foodFetchingLoading, foodFetchingError } = useFoodsFetching({
         limit: formValues.limit,
         setPage,
         setTotalPages,
@@ -57,9 +58,7 @@ function FoodModal({ onClose, onAdd, addError }) {
         }
     };
 
-    const foodCategories = [
-        "Fruit", "Meat", "Nuts", "Fish", "Grain", "Dairy", "Snack", "Vegetable"
-    ];
+    const foodCategories = useSelector((state) => state.food.foodCategories);
 
     useEffect(() => {
         if (page > totalPages) {
@@ -74,14 +73,6 @@ function FoodModal({ onClose, onAdd, addError }) {
         <div className=" fixed  z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white overflow-auto p-6 rounded-lg shadow-lg w-11/12 md:w-2/3 lg:w-1/2 relative max-h-screen ">
                 <h1 className="text-3xl text-center my-2 font-bold text-text">Add Meal to Nutrition Plan</h1>
-                <button
-                    onClick={onClose}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-                    aria-label="Close Modal"
-                >
-                    <span className="text-3xl hover:text-red-500">&times;</span>
-                </button>
-
                 <div className="flex flex-row sm:space-y-0 items-center justify-between mb-4">
                     <input
                         type="text"
@@ -123,9 +114,10 @@ function FoodModal({ onClose, onAdd, addError }) {
                         >
                             <select
                                 {...register("category")}
+                                defaultValue=""
                                 className="w-full md:w-[calc(100%/2 - 5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
                             >
-                                <option value="" disabled selected>Select a category</option>
+                                <option value="" disabled>Select a category</option>
                                 {foodCategories.map((category) => (
                                     <option key={category} value={category}>
                                         {category}
@@ -136,6 +128,7 @@ function FoodModal({ onClose, onAdd, addError }) {
 
                             <select
                                 {...register("limit")}
+                                defaultValue="5"
                                 className="w-full md:w-[calc(100%/2 - 5px)] p-2 border border-gray-300 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary"
                             >
                                 <option value="5">5</option>
@@ -157,7 +150,7 @@ function FoodModal({ onClose, onAdd, addError }) {
                     {errors.nameMeal && <p className="text-red-500">{errors.nameMeal.message}</p>}
 
                     <div className="mt-4">
-                        {loading ? (
+                        {foodFetchingLoading ? (
                             <p>Loading...</p>
                         ) : foods.length === 0 ? (
                             <p>No foods found</p>
@@ -194,9 +187,9 @@ function FoodModal({ onClose, onAdd, addError }) {
                                                     valueAsNumber: true,
                                                     min: { value: isSelected ? 1 : undefined, message: "Quantity must be at least 1" },
                                                 })}
-                                                className={`${!isSelected ? "  shadow-none" : " shadow-lg"} 
-                                         w-full h-8  border-gray-300 focus:border-gray-100 focus-visible:outline-none 
-                                         rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary`}
+                                                className={`${!isSelected ? "shadow-none" : " shadow-lg"} 
+                                                    w-full h-8  border-gray-300 focus:border-gray-100 focus-visible:outline-none 
+                                                    rounded-md shadow focus:outline-none focus:ring-2 focus:ring-primary`}
                                             />
                                             {errors[`quantity-${food._id}`] && (
                                                 <p className={` text-xs min-w-full text- ${!isSelected ? "   h-0" : " h-full"} duration-300 h-0 overflow-hidden transition duration-600 text-red-500 `}>
@@ -208,37 +201,48 @@ function FoodModal({ onClose, onAdd, addError }) {
                                 )
                             })
                         )}
+                        {foodFetchingError && <p className="text-red-500">{foodFetchingError}</p>}
                         {addError && <p className="text-red-500 ">{addError}</p>}
                     </div>
-
-                    <button
-                        type="submit"
-                        className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 mt-4 ${selectedFoods.size === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        disabled={selectedFoods.size === 0}
-                    >
-                        Add Meal
-                    </button>
-
-                    <div className="flex justify-center mt-6">
+                    <div className="flex gap-2 items-center my-4">
                         <button
-                            onClick={() => handlePageChange(page - 1)}
-                            disabled={page === 1}
-                            className={`px-4 py-2 border rounded-md mr-2 ${page === 1 ? "cursor-not-allowed opacity-50" : "bg-button hover:bg-buttonHover text-white"}`}
+                            type="submit"
+                            className={`w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300  ${selectedFoods.size === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={selectedFoods.size === 0}
                         >
-                            Previous
+                            Add Meal
                         </button>
-                        <span className="px-4 py-2">
-                            Page {page} of {totalPages}
-                        </span>
                         <button
-                            onClick={() => handlePageChange(page + 1)}
-                            disabled={page === totalPages || foods.length === 0}
-                            className={`px-4 py-2 border rounded-md ml-2 ${page === totalPages ? "cursor-not-allowed opacity-50" : "bg-button hover:bg-buttonHover text-white"}`}
+                            type="button"
+                            className="w-fit h-fit inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500  "
+                            onClick={() => {
+                                setError("");
+                                onClose();
+                            }}
                         >
-                            Next
+                            Close
                         </button>
                     </div>
                 </form>
+                <div className="flex justify-center mt-6">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 1}
+                        className={`px-4 py-2 border rounded-md mr-2 ${page === 1 ? "cursor-not-allowed opacity-50" : "bg-button hover:bg-buttonHover text-white"}`}
+                    >
+                        Previous
+                    </button>
+                    <span className="px-4 py-2">
+                        {page}
+                    </span>
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === totalPages || foods.length === 0}
+                        className={`px-4 py-2 border rounded-md ml-2 ${page === totalPages ? "cursor-not-allowed opacity-50" : "bg-button hover:bg-buttonHover text-white"}`}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );

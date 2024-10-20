@@ -11,11 +11,11 @@ export default function Logout({ isLogoutModalOpen, setIsLogoutModalOpen }) {
     try {
       if (token) {
         await apiClient.post("/auth/logout", {}, {
-          headers: { Authorization: `Bearer ${token}` },  // Pass token to logout
-          withCredentials: true,  // If using cookies
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true, 
         });
-        dispatch(clearAuthState());  // Clear auth state after logout
-        setIsLogoutModalOpen(false);  // Close the logout modal
+        dispatch(clearAuthState()); 
+        setIsLogoutModalOpen(false);
         console.log("Logged out successfully");
       }
     } catch (error) {

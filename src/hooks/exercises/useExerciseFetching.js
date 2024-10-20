@@ -9,9 +9,9 @@ export default function useExerciseFetching() {
     useEffect(() => {
         const fetchExercise = async () => {
             try {
-                console.log(exerciseId);
                 const response = await apiClient.get(`/exercises/${exerciseId}`);
                 setExercise(response.data.exercise);
+                
             } catch (error) {
                 setError(error.response?.data?.message || "Failed to fetch exercise");
             } finally {

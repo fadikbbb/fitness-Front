@@ -8,14 +8,14 @@ const AddExercise = ({ onAdd, categories }) => {
 
   const {
     isAdding,
-    error,
-    message,
+    addExerciseError,
+    addExerciseMessage,
     formErrors,
     handleAddSubmit,
-    setError,
+    setAddExerciseError,
     setFormErrors,
-    setMessage,
-  } = useAddExercise(onAdd);
+    setAddExerciseMessage,
+  } = useAddExercise({ onAdd, setAddFormOpen });
 
   return (
     <div className="w-[30%] flex justify-end items-center">
@@ -39,11 +39,11 @@ const AddExercise = ({ onAdd, categories }) => {
               categories={categories}
               formErrors={formErrors}
               setFormErrors={setFormErrors}
-              setMessage={setMessage}
-              setGlobalError={setError}
+              globalError={addExerciseError}
+              globalMessage={addExerciseMessage}
+              setGlobalMessage={setAddExerciseMessage}
+              setGlobalError={setAddExerciseError}
             />
-            {message && <p className="text-green-500 mb-4">{message}</p>}
-            {error && <p className="text-red-500 my-4">{error}</p>}
           </div>
         </div>
       )}

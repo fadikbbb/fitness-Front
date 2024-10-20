@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useUpdateContent from "../../../../hooks/settings/useUpdateContents";
+import useUpdateContent from "../../../../hooks/settings/useUpdateSettings";
 
-export function EditAboutUs({ id, currentData, handleRefresh }) {
+export function EditAboutUs({ id, currentData, setError }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { updateAbout, loading, error } = useUpdateContent({ handleRefresh });
+  const { updateAbout, loading, error } = useUpdateContent(setError);
 
   // useForm hook
   const {
@@ -65,11 +65,35 @@ export function EditAboutUs({ id, currentData, handleRefresh }) {
                 </label>
                 <input
                   type="file"
+                  accept="image/*"
                   className="block w-full p-2 border border-gray-300 rounded-md"
-                  {...register("image")}
+                  {...register("image", {
+                    validate: {
+                      requiredFile: (value) => {
+                        if (!value[0]) return true; // Allow no file if it's optional
+                        const fileType = value[0].type;
+                        const validTypes = [
+                          "image/jpeg",
+                          "image/jpg",
+                          "image/png",
+                          "image/gif",
+                          "image/bmp",
+                          "image/webp",
+                        ];
+                        if (!validTypes.includes(fileType))
+                          return "Only JPG, JPEG, PNG, GIF, and WEBP image formats are allowed.";
+                        return true;
+                      },
+                      maxSize: (value) => {
+                        if (value[0] && value[0].size > 2 * 1024 * 1024)
+                          return "File size must be less than 2MB";
+                        return true;
+                      },
+                    },
+                  })}
                 />
                 {errors.image && (
-                  <span className="text-red-500">This field is required</span>
+                  <span className="text-red-500">{errors.image.message}</span>
                 )}
               </div>
 
@@ -81,10 +105,12 @@ export function EditAboutUs({ id, currentData, handleRefresh }) {
                 <input
                   type="text"
                   className="block w-full p-2 border border-gray-300 rounded-md"
-                  {...register("title", { required: true })}
+                  {...register("title", { 
+                    required: "Service title is required",
+                   })}
                 />
                 {errors.title && (
-                  <span className="text-red-500">This field is required</span>
+                  <span className="text-red-500">{errors.title.message}</span>
                 )}
               </div>
 
@@ -96,10 +122,11 @@ export function EditAboutUs({ id, currentData, handleRefresh }) {
                 <input
                   type="text"
                   className="block w-full p-2 border border-gray-300 rounded-md"
-                  {...register("description", { required: true })}
+                  {...register("description", { 
+                    required: "Service description is required",})}
                 />
                 {errors.description && (
-                  <span className="text-red-500">This field is required</span>
+                  <span className="text-red-500">{errors.description.message}</span>
                 )}
               </div>
 

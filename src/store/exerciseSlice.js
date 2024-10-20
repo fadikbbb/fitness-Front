@@ -4,7 +4,19 @@ const exerciseSlice = createSlice({
     name: "exercises",
     initialState: {
         exercises: [],
+        exerciseCategories: [
+            "strength",
+            "cardio",
+            "flexibility",
+            "balance",
+            "endurance",
+            "team_sports",
+            "combat_sports",
+            "agility",
+            "recreational",
+        ],
     },
+    
     reducers: {
         setExercises: (state, action) => {
             state.exercises = action.payload;

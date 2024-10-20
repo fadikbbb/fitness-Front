@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUserId, setUserRole, setToken } from "../../store/authSlice";
-
 import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
@@ -76,6 +75,7 @@ const VerifyCode = () => {
           setTimeout(() => {
             navigate("/");
           }, 1000);
+         
         } catch (error) {
           console.error("Error decoding token:", error);
         }

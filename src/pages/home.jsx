@@ -7,7 +7,7 @@ import About from "../components/home/about";
 import Footer from "../components/home/footer";
 function Home() {
   return (
-    <div >
+    <div className="relative overflow-y-hidden">
       <NavBar exception={true} />
       <div className=" container mx-auto">
         <Hero />
@@ -17,15 +17,14 @@ function Home() {
           <Services />
         </div>
         <div className="bg-gray-100 w-full h-full ">
-         <div className="container mx-auto">
-
-          <Trainers />
-         </div>
+          <div className="container mx-auto">
+            <Trainers />
+          </div>
         </div>
         <div className="bg-white w-full h-full">
           <div className="container mx-auto">
-          <About />
-          <Footer />
+            <About />
+            <Footer />
           </div>
         </div>
       </div>

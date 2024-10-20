@@ -2,18 +2,21 @@ import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import useDeleteExercise from "../../../hooks/exercises/useDeleteExercise";
 
-function DeleteExercise({ exerciseId, onSuccess }) {
+function DeleteExercise({ exerciseId, onDelete }) {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const { error, loading, message, deleteExercise } = useDeleteExercise(); // Use the hook
+  const {
+    deleteExercise,
+    deleteExerciseError,
+    deletingExerciseLoading,
+    deletingMessage,
+  } = useDeleteExercise({ onDelete ,isDeleteConfirmOpen});
+
   const handleDelete = () => {
     setDeleteConfirmOpen(true);
   };
+
   const handleConfirmDelete = async () => {
     await deleteExercise(exerciseId);
-    if (!error) {
-      onSuccess();
-    }
-    setDeleteConfirmOpen(false);
   };
 
   return (
@@ -30,14 +33,18 @@ function DeleteExercise({ exerciseId, onSuccess }) {
               Confirm Deletion
             </h2>
             <p>Are you sure you want to delete this exercise?</p>
-            {message && <p className="text-green-500 mb-4">{message}</p>}
-            {error && <p className="text-red-500 mb-4">{error}</p>}
+            {deletingMessage && (
+              <p className="text-green-500 mb-4">{deletingMessage}</p>
+            )}
+            {deleteExerciseError && (
+              <p className="text-red-500 mb-4">{deleteExerciseError}</p>
+            )}
             <button
               onClick={handleConfirmDelete}
               className="bg-red-500 text-white py-2 px-4 rounded-md mt-4"
-              disabled={loading}
+              disabled={deletingExerciseLoading}
             >
-              {loading ? "Deleting..." : "Confirm"}
+              {deletingExerciseLoading ? "Deleting..." : "Confirm"}
             </button>
             <button
               onClick={() => setDeleteConfirmOpen(false)}

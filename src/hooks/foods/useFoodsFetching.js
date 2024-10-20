@@ -1,34 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import apiClient from "../../utils/axiosConfig";
-export default function useFoodsFetching({ limit, page, 
-    setTotalPages, search, category, changes, setChanges }) {
-    const [foods, setFoods] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+import useDebounce from "../useDebounce";
 
-    const fetchFoods = async () => {
-        setLoading(true);
+export default function useFoodsFetching({ limit, page, setTotalPages, search, category, changes, setChanges }) {
+    const [foods, setFoods] = useState([]);
+    const [foodFetchingLoading, setFoodFetchingLoading] = useState(false);
+    const [foodFetchingError, setFoodFetchingError] = useState(null);
+    const debouncedSearch = useDebounce(search, 500);
+
+    // Memoize the fetchFoods function to avoid recreation on every render
+    const fetchFoods = useCallback(async () => {
+        setFoodFetchingLoading(true);
         try {
             const response = await apiClient.get(
-                `/foods?page=${page}&limit=${limit}${search ? `&search=${search}` : ""
-                }${category ? `&category=${category}` : ""}`
+                `/foods?page=${page}&limit=${limit}${debouncedSearch ? `&search=${debouncedSearch}` : ""}${category ? `&category=${category}` : ""}`
             );
             setFoods(response.data.foods);
             setTotalPages(Math.ceil(response.data.totalFoods / limit));
             if (changes) {
                 setChanges(false);
             }
-            setError(null);
+            setFoodFetchingError(null);
         } catch (error) {
-            setError(error.response?.data?.message);
+            setFoodFetchingError(error.response?.data?.message);
         } finally {
-            setLoading(false);
+            setFoodFetchingLoading(false);
         }
-    };
+    }, [page, limit, debouncedSearch, category, changes, setChanges, setTotalPages]);
 
     useEffect(() => {
         fetchFoods();
-    }, [page, category, limit, search, changes]);
+    }, [fetchFoods]);
 
-    return { foods, loading, error };
+    return { foods, foodFetchingLoading, foodFetchingError };
 }

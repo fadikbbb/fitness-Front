@@ -1,7 +1,7 @@
 import React from "react";
-import useDeleteContents from "../../../../hooks/settings/useDeleteContents";
+import useDeleteContents from "../../../../hooks/settings/useDeleteSettings";
 import { FaTrash } from "react-icons/fa";
-export function DeleteAboutUs({ id, handleRefresh }) {
+export function DeleteAboutUs({ id }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const { handleDeleteAbout, deleteMessage, deleteError, isDeleting } =
     useDeleteContents();
@@ -9,7 +9,6 @@ export function DeleteAboutUs({ id, handleRefresh }) {
   const handleDelete = async () => {
     await handleDeleteAbout(id);
     if (!deleteError) {
-      handleRefresh();
       setIsOpen(false); 
     }
   };

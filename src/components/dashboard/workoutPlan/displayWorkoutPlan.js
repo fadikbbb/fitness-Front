@@ -31,13 +31,13 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                                             <div className="flex flex-col gap-4 md:flex-row justify-between items-center w-full">
                                                 {/* Left Section: Image and Exercise Name */}
                                                 <div className="flex items-center justify-center flex-col md:flex-row flex-wrap gap-4 w-full md:w-1/2">
-                                                        <img
-                                                            src={exercise.exerciseId.image}
-                                                            alt={`${exercise.exerciseId.name} exercise`}
-                                                            className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary"
-                                                        />
-                                                        <div className="text-sm font-bold text-primary mt-2 md:mt-0">
-                                                            {exercise.exerciseId.name}
+                                                    <img
+                                                        src={exercise.exerciseId.image}
+                                                        alt={`${exercise.exerciseId.name} exercise`}
+                                                        className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary"
+                                                    />
+                                                    <div className="text-sm font-bold text-primary mt-2 md:mt-0">
+                                                        {exercise.exerciseId.name}
                                                     </div>
                                                 </div>
 
@@ -89,7 +89,7 @@ function DisplayWorkoutPlan({ workoutPlan, handleRefresh }) {
                     ))}
                 </ul>
             ) : (
-                <p className="text-gray-500 text-lg">No exercises added yet</p>
+                <p className="text-red-500 text-lg text-center">No exercises added yet</p>
             )}
         </div>
     );

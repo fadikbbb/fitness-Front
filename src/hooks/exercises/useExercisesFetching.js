@@ -1,36 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import apiClient from "../../utils/axiosConfig";
-
-export default function useExercisesFetching({ limit, page,
-    setTotalPages, search, category, intensity, changes, setChanges }) {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+import useDebounce from "../useDebounce";
+export default function useExercisesFetching({
+    limit,
+    search,
+    category,
+    intensity,
+    changes,
+    setChanges,
+    page,
+    setTotalPages
+}) {
+    const [exercisesLoading, setExercisesLoading] = useState(true);
+    const [exercisesFetchingError, setExercisesFetchingError] = useState(null);
     const [exercises, setExercises] = useState([]);
+    const debouncedSearch = useDebounce(search, 500);
 
-    const fetchExercises = async () => {
-        setLoading(true);
+    // Memoize the fetch function to avoid recreation on every render
+    const fetchExercises = useCallback(async () => {
+        setExercisesLoading(true);
         try {
             const response = await apiClient(
-                `/exercises?page=${page}&limit=${limit}${search ? `&search=${search}` : ""
-                }${category ? `&category=${category}` : ""}${intensity ? `&intensity=${intensity}` : ""
-                }`
+                `/exercises?page=${page}&limit=${limit}${debouncedSearch ? `&search=${debouncedSearch}` : ""}${category ? `&category=${category}` : ""}${intensity ? `&intensity=${intensity}` : ""}`
             );
             setExercises(response.data.exercises);
             setTotalPages(Math.ceil(response.data.totalExercises / limit));
-            setError(null);
+            setExercisesFetchingError(null);
             if (changes) {
                 setChanges(false);
             }
         } catch (error) {
-            setError(error.response?.data?.message || "Failed to fetch exercises");
+            setExercisesFetchingError(error.response?.data?.message || "Failed to fetch exercises");
         } finally {
-            setLoading(false);
+            setExercisesLoading(false);
         }
-    };
+    }, [page, limit, debouncedSearch, category, intensity, changes, setChanges, setTotalPages]);
 
     useEffect(() => {
         fetchExercises();
-    }, [page, category, limit, search, intensity, changes]);
+    }, [fetchExercises]);
 
-    return { loading, error, exercises, page };
+    return { exercisesLoading, exercisesFetchingError, exercises, page };
 }

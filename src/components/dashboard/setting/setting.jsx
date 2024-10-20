@@ -1,56 +1,76 @@
 import React, { useState } from "react";
-import SocialMediaForm from "./socialMediaForm";
-import HeroForm from "./heroForm";
+import { Cog, Share2, Layout, Info } from "lucide-react";
+import SocialMediaForm from "./socialMedia/socialMediaForm";
+import HeroForm from "./hero/hero";
 import ServicesForm from "./services/servicesForm";
 import AboutUsForm from "./aboutUs/aboutUsForm";
-const Setting = () => {
+import { GiMuscularTorso } from "react-icons/gi";
+import TrainerForm from "./trainer/trainerForm";
+const NavItem = ({ icon, label, isActive, onClick }) => (
+  <button
+    className={`flex items-center justify-between w-full px-4 py-2 rounded-lg transition-all duration-200 ${
+      isActive ? "bg-primary shadow-md" : "hover:bg-hover hover:text-white"
+    }`}
+    onClick={onClick}
+  >
+    <div className="flex items-center space-x-3">
+      {icon}
+      <span className="font-medium">{label}</span>
+    </div>
+  </button>
+);
+
+export default function SettingsPage() {
   const [activeComponent, setActiveComponent] = useState("heroForm");
 
+  const navItems = [
+    { id: "heroForm", label: "Hero", icon: <Layout size={16} /> },
+    {
+      id: "socialMediaForm",
+      label: "Social Media",
+      icon: <Share2 size={16} />,
+    },
+    { id: "servicesForm", label: "Services", icon: <Cog size={16} /> },
+    { id: "aboutUsForm", label: "About Us", icon: <Info size={16} /> },
+    { id: "trainerForm", label: "trainer", icon: <GiMuscularTorso size={16} /> },
+  ];
+
   return (
-    <div className="w-full p-8">
-      <h1 className="text-2xl font-bold mb-6">Page Settings</h1>
-      <nav className="settingNav mb-6">
-        <ul className="space-x-2 flex cursor-pointer">
-          <li
-            className={`${activeComponent === "heroForm" ? "font-bold" : ""}`}
-            onClick={() => setActiveComponent("heroForm")}
-          >
-            Hero
-          </li>
-          <li
-            className={`${
-              activeComponent === "socialMediaForm" ? "font-bold" : ""
-            }`}
-            onClick={() => setActiveComponent("socialMediaForm")}
-          >
-            Social Media
-          </li>
-          <li
-            className={`${
-              activeComponent === "servicesForm" ? "font-bold" : ""
-            }`}
-            onClick={() => setActiveComponent("servicesForm")}
-          >
-            Services
-          </li>
-          <li
-            className={`${
-              activeComponent === "aboutUsForm" ? "font-bold" : ""
-            }`}
-            onClick={() => setActiveComponent("aboutUsForm")}
-          >
-            About Us
-          </li>
-        </ul>
-      </nav>
-      <main className="w-full p-4 flex flex-col justify-between">
-        {activeComponent === "heroForm" && <HeroForm />}
-        {activeComponent === "socialMediaForm" && <SocialMediaForm />}
-        {activeComponent === "servicesForm" && <ServicesForm />}
-        {activeComponent === "aboutUsForm" && <AboutUsForm />}
-      </main>
+    <div className="min-h-screen">
+      <div className="mx-auto p-2">
+        <div className="flex flex-wrap items-start mb-4 md:flex md:justify-between">
+          <h1 className="text-2xl font-bold text-secondary underline-offset-4 underline mb-4">
+            Settings
+          </h1>
+          <nav className="flex text-sm text-secondary flex-col space-y-2 md:flex-row md:space-x-2 w-full">
+            {navItems.map((item) => (
+              <NavItem
+                key={item.id}
+                icon={item.icon}
+                label={item.label}
+                isActive={activeComponent === item.id}
+                onClick={() => setActiveComponent(item.id)}
+              />
+            ))}
+          </nav>
+        </div>
+        <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
+          <div>
+            <main className="p-6 md:p-8">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+                {navItems.find((item) => item.id === activeComponent)?.label}
+              </h2>
+              <div>
+                {activeComponent === "heroForm" && <HeroForm />}
+                {activeComponent === "socialMediaForm" && <SocialMediaForm />}
+                {activeComponent === "servicesForm" && <ServicesForm />}
+                {activeComponent === "aboutUsForm" && <AboutUsForm />}
+                {activeComponent === "trainerForm" && <TrainerForm />}
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Setting;
+}

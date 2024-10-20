@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-function ExerciseModal({ onAdd,onClose, error, setError, exercises, loading }) {
+function ExerciseModal({ onAdd, onClose, error, setError, exercises, loading }) {
     const [selectedExercises, setSelectedExercises] = useState(new Set());
-    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             selectedExercises: [
                 {
@@ -95,7 +95,6 @@ function ExerciseModal({ onAdd,onClose, error, setError, exercises, loading }) {
                                     <div className={`flex  gap-2 w-full  h-full transition-all duration-300 `}>
                                         {['sets', 'minReps', 'maxReps'].map((field) => (
                                             <div key={field} className={`w-full`}>
-
                                                 <input
                                                     type="number"
                                                     disabled={!isSelected}
@@ -107,6 +106,12 @@ function ExerciseModal({ onAdd,onClose, error, setError, exercises, loading }) {
                                                             value: isSelected ? 1 : undefined,
                                                             message: `${field.charAt(0).toUpperCase() + field.slice(1)} must be at least 1`,
                                                         },
+                                                        max: {
+                                                            value: field === "sets" ? 20 : 200,
+                                                            message: field === "sets"
+                                                                ? "Sets must be less than 20"
+                                                                : "Reps must be less than 200",
+                                                        },
                                                     })}
                                                     className={`z-10 relative py-4 ${!isSelected ? "shadow-none" : "shadow-lg border-2"} ${errors[`${field}-${exercise._id}`] ? "border-red-500" : "border-gray-300"} text-xs w-full h-1/2 rounded-md`}
                                                     aria-label={`${field.charAt(0).toUpperCase() + field.slice(1)} for ${exercise.name}`}
@@ -116,6 +121,7 @@ function ExerciseModal({ onAdd,onClose, error, setError, exercises, loading }) {
                                                 )}
                                             </div>
                                         ))}
+
                                     </div>
                                     <div className="flex gap-2 w-full h-full">
                                         <div className="w-1/2 h-full">
@@ -134,6 +140,9 @@ function ExerciseModal({ onAdd,onClose, error, setError, exercises, loading }) {
                                                 className={`z-10 relative p-2  text-xs w-full h-1/2 rounded-md ${!isSelected ? "shadow-none" : "border-gray-300 focus:border-gray-100 focus-visible:outline-none focus:outline-none focus:ring-2 focus:ring-primary shadow-lg border-2"}`}
                                                 aria-label={`restDuration for ${exercise.name}`}
                                             />
+                                            {errors[`restDuration-${exercise._id}`] && (
+                                                <p className={`text-red-500 text-[10px] relative z-10`}>{errors[`restDuration-${exercise._id}`]?.message}</p>
+                                            )}
                                         </div>
                                         <div className="w-1/2 h-full">
                                             <input
@@ -157,20 +166,21 @@ function ExerciseModal({ onAdd,onClose, error, setError, exercises, loading }) {
                         <button
                             disabled={selectedExercises.size === 0}
                             type="submit"
-                            className={`bg-blue-500 ${selectedExercises.size === 0 ? "cursor-not-allowed opacity-50" : ""} flex justify-center items-center text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 `}
+                            className={`bg-blue-500 ${selectedExercises.size === 0 ? "cursor-not-allowed opacity-50" : ""} flex justify-center items-center text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 w-full`}
                         >
                             {loading ? "Adding..." : "Add Exercises"}
                         </button>
                         <button
+                            type="button"
+                            className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500  "
                             onClick={() => {
                                 setError(null);
                                 onClose();
                             }}
-                            className=" text-gray-500 hover:text-gray-700"
-                            aria-label="Close"
                         >
-                            <span className="text-lg">close</span>
+                            Close
                         </button>
+
                     </div>
                 </form>
             )}

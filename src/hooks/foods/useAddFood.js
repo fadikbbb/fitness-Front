@@ -3,11 +3,11 @@ import { useDispatch } from "react-redux";
 import apiClient from "../../utils/axiosConfig";
 import { addFood } from "../../store/foodSlice";
 
-const useAddFood = (onAdd) => {
+const useAddFood = ({onAdd, setAddFormOpen}) => {
     const [isAdding, setIsAdding] = useState(false);
     const [formErrors, setFormErrors] = useState({});
-    const [error, setError] = useState(null);
-    const [message, setMessage] = useState(null);
+    const [addFoodError, setAddFoodError] = useState(null);
+    const [addFoodMessage, setAddFoodMessage] = useState(null);
     const dispatch = useDispatch();
 
     const handleAddSubmit = async (data) => {
@@ -27,20 +27,23 @@ const useAddFood = (onAdd) => {
             setIsAdding(true);
             const response = await apiClient.post("/foods", formData);
             dispatch(addFood(response.data.food));
-            setMessage(response.data.message);
-            setError(null);
+            setAddFoodMessage(response.data.message);
+            setAddFoodError(null);
             setTimeout(() => {
+                setFormErrors({});
+                setAddFoodMessage(null);
+                setAddFormOpen(false);
                 onAdd();
-            }, 500);
+            }, 1000);
         } catch (error) {
             if (error.response && error.response.data.message) {
-                setError(error.response.data.message);
+                setAddFoodError(error.response.data.message);
             } else if (error.response && error.response.data.errors) {
                 setFormErrors(error.response.data.errors);
             } else {
-                setError("An unexpected error occurred.");
+                setAddFoodError("An unexpected error occurred.");
             }
-            setMessage(null);
+            setAddFoodMessage(null);
         } finally {
             setIsAdding(false);
         }
@@ -49,11 +52,11 @@ const useAddFood = (onAdd) => {
     return {
         isAdding,
         formErrors,
-        error,
-        message,
+        addFoodError,
+        addFoodMessage,
         handleAddSubmit,
-        setError,
-        setMessage,
+        setAddFoodError,
+        setAddFoodMessage,
         setFormErrors,
 
     };

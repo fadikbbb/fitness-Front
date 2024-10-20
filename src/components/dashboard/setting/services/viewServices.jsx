@@ -1,14 +1,15 @@
 import { DeleteService } from "./deleteService";
 import { EditService } from "./editService";
-import React from "react";
-
-export function TableServices({ services, handleRefresh }) {
+import React, { memo } from "react";
+import { useSelector } from "react-redux";
+export const TableServices = memo(({ setError }) => {
+  const { services, error } = useSelector((state) => state.settings);
   if (!services || services.length === 0) {
     return <p>No services available.</p>; // Handle empty state
   }
-
   return (
     <div className="space-y-4">
+      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       {services.map((service) => (
         <div
           key={service._id}
@@ -27,15 +28,15 @@ export function TableServices({ services, handleRefresh }) {
           </div>
           <div className="flex space-x-2">
             <EditService
+              setError={setError}
               id={service._id}
               currentData={service}
-              handleRefresh={handleRefresh}
             />
-            <DeleteService id={service._id} handleRefresh={handleRefresh} />{" "}
+            <DeleteService id={service._id} />{" "}
             {/* Pass handleRefresh to DeleteService */}
           </div>
         </div>
       ))}
     </div>
   );
-}
+});

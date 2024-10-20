@@ -1,26 +1,28 @@
 import { useState } from "react";
 import apiClient from "../../utils/axiosConfig";
 
-const useDeleteExercise = () => {
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState(null);
+const useDeleteExercise = ({ onDelete, isDeleteConfirmOpen }) => {
+    const [deleteExerciseError, setDeleteExerciseError] = useState(null);
+    const [deletingExerciseLoading, setDeletingExerciseLoading] = useState(false);
+    const [deletingMessage, setDeletingMessage] = useState(null);
 
     const deleteExercise = async (exerciseId) => {
         try {
-            setLoading(true);
+            setDeletingExerciseLoading(true);
             const response = await apiClient.delete(`/exercises/${exerciseId}`);
             const data = response.data;
-            setMessage(data.message || "Exercise deleted successfully.");
-            setError(null);
+            setDeletingMessage(data.message || "Exercise deleted successfully.");
+            setDeleteExerciseError(null);
+            onDelete();
+            isDeleteConfirmOpen(false);
         } catch (error) {
-            setError(error.response?.data?.message || "An error occurred");
+            setDeleteExerciseError(error.response?.data?.message || "An error occurred");
         } finally {
-            setLoading(false);
+            setDeletingExerciseLoading(false);
         }
     };
 
-    return { error, loading, message, deleteExercise };
+    return { deleteExercise, deleteExerciseError, deletingExerciseLoading, deletingMessage };
 };
 
 export default useDeleteExercise;

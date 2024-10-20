@@ -59,21 +59,33 @@ function RequestPasswordReset() {
           Reset Password
         </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            {...register("email", { required: "Email is required" })}
-            className={`w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            }`}
-          />
-          {errors.email && (
-            <p className="text-red-600">{errors.email.message}</p>
-          )}
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email" // Add unique id
+              name="email" // Add unique name
+              placeholder="Enter your email"
+              {...register("email", { required: "Email is required" })}
+              className={`w-full p-3 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {errors.email && (
+              <p className="text-red-600">{errors.email.message}</p>
+            )}
+          </div>
+
           {message && (
             <p className="mt-4 text-green-600 text-center">{message}</p>
           )}
           {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
+
           <button
             type="submit"
             className={`w-full py-3 rounded-md text-white flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary ${
@@ -91,7 +103,6 @@ function RequestPasswordReset() {
       </div>
     </div>
   );
-  
 }
 
 export default RequestPasswordReset;

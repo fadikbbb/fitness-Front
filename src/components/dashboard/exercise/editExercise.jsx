@@ -3,18 +3,18 @@ import { FaEdit } from "react-icons/fa";
 import useEditExercise from "../../../hooks/exercises/useEditExercise";
 import ExerciseForm from "./exerciseForm";
 
-function EditExercise({ categories, exercise, onSuccess }) {
+function EditExercise({ categories, exercise, onEdit }) {
   const [isEditFormOpen, setEditFormOpen] = useState(false);
   const {
-    error,
-    message,
     isEditing,
     formErrors,
     setFormErrors,
-    setError,
-    setMessage,
     editExercise,
-  } = useEditExercise({setEditFormOpen, onSuccess});
+    setEditExerciseError,
+    editExerciseError,
+    setEditExerciseMessage,
+    editExerciseMessage,
+  } = useEditExercise({ setEditFormOpen, onEdit });
 
   const handleEditSubmit = async (data) => {
     await editExercise(exercise._id, data);
@@ -34,11 +34,11 @@ function EditExercise({ categories, exercise, onSuccess }) {
               exercise={exercise}
               formErrors={formErrors}
               setFormErrors={setFormErrors}
-              setGlobalError={setError}
-              setMessage={setMessage}
+              globalError={editExerciseError}
+              globalMessage={editExerciseMessage}
+              setGlobalMessage={setEditExerciseMessage}
+              setGlobalError={setEditExerciseError}
             />
-            {message && <p className="text-green-500 mb-4">{message}</p>}
-            {error && <p className="text-red-500 mb-4">{error}</p>}
           </div>
         </div>
       )}

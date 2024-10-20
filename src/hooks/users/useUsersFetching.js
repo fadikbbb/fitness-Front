@@ -1,41 +1,37 @@
 import { useEffect, useState } from "react";
 import apiClient from "../../utils/axiosConfig";
+import useDebounce from "../useDebounce";
 
-const useFetchUsers = ({ page, limit, search, role, subscription, changes, setChanges, setTotalPages }) => {
+const useFetchUsers = ({ page, limit, search, isActive, subscription, changes, setChanges, setTotalPages }) => {
     const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [usersFetchingLoading, setUsersFetchingLoading] = useState(true);
+    const [usersFetchingError, setUsersFetchingError] = useState(null);
+    const debouncedSearch = useDebounce(search, 500);
 
     useEffect(() => {
         const fetchUser = async () => {
-            setLoading(true);
+            setUsersFetchingLoading(true);
             try {
                 const response = await apiClient.get(
-                    `/users?page=${page}&limit=${limit}${search ? `&search=${search}` : ""
-                    }${role ? `&role=${role}` : ""}${subscription
-                        ? `&subscriptionStatus=${subscription}`
-                        : ""
-                    }`
+                    `/users?page=${page}&limit=${limit}${debouncedSearch ? `&search=${debouncedSearch}` : ""}${isActive ? `&isActive=${isActive}` : ""}${subscription ? `&subscriptionStatus=${subscription}` : ""}`
                 );
-
                 setUsers(response.data.users);
                 setTotalPages(Math.ceil(response.data.totalUsers / limit));
                 setChanges(false);
-                setError(null);
+                setUsersFetchingError(null);
             } catch (error) {
-                setError(error.response?.data?.message);
+                setUsersFetchingError(error.response?.data?.message);
             } finally {
-                setLoading(false);
+                setUsersFetchingLoading(false);
             }
         };
-
         fetchUser();
-    }, [page, limit, search, role, subscription, changes]);
+    }, [page, limit, debouncedSearch, isActive, subscription, changes, setTotalPages, setChanges]);
 
     return {
         users,
-        loading,
-        error,
+        usersFetchingLoading,
+        usersFetchingError,
     };
 };
 

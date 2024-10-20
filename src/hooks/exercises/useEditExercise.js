@@ -1,9 +1,9 @@
 import { useState } from "react";
 import apiClient from "../../utils/axiosConfig";
 
-const useEditExercise = ({ setEditFormOpen, onSuccess }) => {
-    const [error, setError] = useState(null);
-    const [message, setMessage] = useState(null);
+const useEditExercise = ({ setEditFormOpen, onEdit }) => {
+    const [editExerciseError, setEditExerciseError] = useState(null);
+    const [editExerciseMessage, setEditExerciseMessage] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formErrors, setFormErrors] = useState([]);
 
@@ -27,31 +27,40 @@ const useEditExercise = ({ setEditFormOpen, onSuccess }) => {
 
         setIsEditing(true);
         try {
-            setError(null);
-            setMessage(null);
+            setEditExerciseError(null);
+            setEditExerciseMessage(null);
             setFormErrors([]);
             const response = await apiClient.patch(`/exercises/${exerciseId}`, formData);
-            setMessage(response.data.message);
-            setError(null);
+            setEditExerciseMessage(response.data.message);
+            setEditExerciseError(null);
             setTimeout(() => {
                 setEditFormOpen(false)
-                onSuccess()
+                onEdit()
             }, 500);
         } catch (error) {
             if (error.response && error.response.data.message) {
-                setError(error.response.data.message);
+                setEditExerciseError(error.response.data.message);
             } else if (error.response && error.response.data.errors) {
                 setFormErrors(error.response.data.errors);
             } else {
-                setError("An error occurred");
+                setEditExerciseError("An error occurred");
             }
-            setMessage(null);
+            setEditExerciseMessage(null);
         } finally {
             setIsEditing(false);
         }
     };
 
-    return { error, message, isEditing, formErrors, setFormErrors, setError, setMessage, editExercise };
+    return {
+        editExerciseError,
+        editExerciseMessage,
+        isEditing,
+        formErrors,
+        setFormErrors,
+        setEditExerciseError,
+        setEditExerciseMessage,
+        editExercise
+    };
 };
 
 export default useEditExercise;

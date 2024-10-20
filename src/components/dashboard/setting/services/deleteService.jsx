@@ -1,15 +1,15 @@
 import React from "react";
-import useDeleteContents from "../../../../hooks/settings/useDeleteContents";
+import useDeleteContents from "../../../../hooks/settings/useDeleteSettings";
 import { FaTrash } from "react-icons/fa";
-export function DeleteService({ id, handleRefresh }) {
+export function DeleteService({ id }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const { handleDeleteServices, deleteMessage, deleteError, isDeleting } = useDeleteContents();
 
   const handleDelete = async () => {
     await handleDeleteServices(id);
     if (!deleteError) {
-      handleRefresh(); // Call the refresh function to update the list
-      setIsOpen(false); // Close modal on successful delete
+     
+      setIsOpen(false); 
     }
   };
 

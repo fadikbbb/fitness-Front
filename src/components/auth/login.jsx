@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaSpinner,FaEnvelope,FaLock } from "react-icons/fa";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+
 const Login = () => {
   const {
     register,
@@ -33,14 +34,13 @@ const Login = () => {
     if (email) {
       setValue("email", email);
     }
-
     if (password) {
       setValue("password", password);
     }
   }, [email, password, setValue]);
 
   const onSubmit = async (data) => {
-    setLoading(true); // Start loading animation
+    setLoading(true);
     try {
       const response = await axios.post(`${BASE_URL}/auth/login`, {
         ...data,
@@ -77,7 +77,6 @@ const Login = () => {
     navigate("/");
   };
 
-  // Navigate to password reset request page with email state
   const goToPasswordResetRequest = () => {
     navigate("/auth/reset-password-request", {
       state: { email: document.getElementById("email").value },
@@ -85,44 +84,44 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold text-center text-primary">Login</h2>
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg">
+        <h2 className="text-3xl font-bold text-center text-primary">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <label
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className=" mb-2 text-sm font-bold text-gray-700 flex items-center"
               htmlFor="email"
             >
-              Email
+              <FaEnvelope className="mr-2" /> Email
             </label>
             <input
               id="email"
               type="email"
               {...register("email", { required: "Email is required" })}
-              className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
+              autoComplete="email"
+              className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.email.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
             )}
           </div>
           <div className="mb-4 relative">
             <label
-              className="block mb-2 text-sm font-bold text-gray-700"
+              className=" mb-2 text-sm font-bold text-gray-700 flex items-center"
               htmlFor="password"
             >
-              Password
+              <FaLock className="mr-2" /> Password
             </label>
             <div className="relative">
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 {...register("password", { required: "Password is required" })}
-                className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
+                autoComplete="current-password"
+                className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -135,16 +134,14 @@ const Login = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.password.message}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
             )}
           </div>
           <button
             type="submit"
-            className={`w-full px-4 py-2 text-white rounded-md hover:bg-buttonHover transition-transform transform flex items-center justify-center ${
-              loading ? "bg-button" : "bg-button"
-            } ${loading ? "animate-pulse" : ""}`}
+            className={`w-full px-4 py-2 text-white rounded-md bg-blue-600 hover:bg-blue-700 transition-transform transform flex items-center justify-center ${
+              loading ? "animate-pulse" : ""
+            }`}
             disabled={loading}
           >
             {loading && <FaSpinner className="animate-spin mr-2" />}
@@ -161,7 +158,7 @@ const Login = () => {
           <button
             type="button"
             onClick={goToHome}
-            className="px-4 py-2 text-white bg-button text-center rounded-md hover:bg-buttonHover"
+            className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
           >
             Back
           </button>

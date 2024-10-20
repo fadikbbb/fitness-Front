@@ -1,9 +1,9 @@
 import { useState } from "react";
 import apiClient from "../../utils/axiosConfig";
 
-const useEditFood = ({ onSuccess, setEditFormOpen }) => {
-    const [error, setError] = useState(null);
-    const [message, setMessage] = useState(null);
+const useEditFood = ({ onEdit, setEditFormOpen }) => {
+    const [editFoodError, setEditFoodError] = useState(null);
+    const [editFoodMessage, setEditFoodMessage] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formErrors, setFormErrors] = useState([]);
 
@@ -20,30 +20,30 @@ const useEditFood = ({ onSuccess, setEditFormOpen }) => {
         });
         setIsEditing(true);
         try {
-            setError(null);
-            setMessage(null);
+            setEditFoodError(null);
+            setEditFoodMessage(null);
             setFormErrors([]);
             const response = await apiClient.patch(`/foods/${foodId}`, formData);
-            setMessage(response.data.message);
+            setEditFoodMessage(response.data.message);
             setTimeout(() => {
                 setEditFormOpen(false)
-                onSuccess()
+                onEdit()
             }, 500);
         } catch (error) {
             if (error.response && error.response.data.message) {
-                setError(error.response.data.message);
+                setEditFoodError(error.response.data.message);
             } else if (error.response && error.response.data.errors) {
                 setFormErrors(error.response.data.errors);
             } else {
-                setError("An error occurred");
+                setEditFoodError("An error occurred");
             }
-            setMessage(null);
+            setEditFoodMessage(null);
         } finally {
             setIsEditing(false);
         }
     };
 
-    return { error, message, isEditing, formErrors, setFormErrors, setError, setMessage, editFood };
+    return { editFoodError, editFoodMessage, isEditing, formErrors, setFormErrors, setEditFoodError, setEditFoodMessage, editFood };
 };
 
 export default useEditFood;

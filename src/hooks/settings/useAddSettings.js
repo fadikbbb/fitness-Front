@@ -1,59 +1,73 @@
 import { useState } from 'react';
 import apiClient from '../../utils/axiosConfig';
+import { useDispatch } from 'react-redux';
+import { fetchAboutSettings, fetchServicesSettings, fetchTrainerSettings } from '../../store/settingsSlice';
 
 const useAddContentsHook = () => {
     const [isAdding, setIsAdding] = useState(false);
     const [addMessage, setAddMessage] = useState(null);
     const [addError, setAddError] = useState(null);
 
-    const handleAddAbout = async (data, handleRefresh) => {
+    const dispatch = useDispatch();
+
+    const handleAddAbout = async (data) => {
         const formData = new FormData();
         if (data.image && data.image[0]) {
             formData.append("image", data.image[0]);
         }
-
         formData.append("title", data.title);
         formData.append("description", data.description);
-
-        formData.forEach((value, key) => console.log(key, value));
-
         setIsAdding(true);
         setAddError(null);
         setAddMessage(null);
-
-
         try {
             await apiClient.post(`/settings/about`, formData);
             setAddMessage("About added successfully");
-            handleRefresh();
+            dispatch(fetchAboutSettings()); // Fetch only the about settings
         } catch (error) {
-            setAddError(error.response?.data?.message || "Failed to fetch about data");
+            setAddError(error.response?.data?.message);
         } finally {
             setIsAdding(false);
         }
     };
 
-    const handleAddServices = async (data, handleRefresh) => {
+    const handleAddServices = async (data) => {
         const formData = new FormData();
-
         if (data.image && data.image[0]) {
-            formData.append("image", data.image[0]); // Image file
+            formData.append("image", data.image[0]);
         }
         formData.append("title", data.title);
         formData.append("description", data.description);
-
         setIsAdding(true);
         setAddError(null);
         setAddMessage(null);
-
         try {
             await apiClient.post(`/settings/services`, formData);
             setAddMessage("Services added successfully");
-            handleRefresh();
-
+            dispatch(fetchServicesSettings()); // Fetch only the services settings
         } catch (error) {
-            setAddError(error.response?.data?.message || "Failed to add service");
-            return null; // Return null if there is an error
+            setAddError(error.response?.data?.message);
+        } finally {
+            setIsAdding(false);
+        }
+    };
+
+    const handleAddTrainer = async (data) => {
+        const formData = new FormData();
+        if (data.image && data.image[0]) {
+            formData.append("image", data.image[0]);
+        }
+        formData.append("title", data.title);
+        formData.append("description", data.description);
+        setIsAdding(true);
+        setAddError(null);
+        setAddMessage(null);
+        try {
+            await apiClient.post(`/settings/trainer`, formData);
+            setAddMessage("Trainer added successfully");
+            dispatch(fetchTrainerSettings()); // Fetch only the trainer settings
+        } catch (error) {
+            setAddError(error.response?.data?.message);
         } finally {
             setIsAdding(false);
         }
@@ -66,7 +80,9 @@ const useAddContentsHook = () => {
         addError,
         setAddError,
         handleAddAbout,
-        handleAddServices
+        handleAddServices,
+        handleAddTrainer
     };
 };
+
 export default useAddContentsHook;

@@ -1,13 +1,12 @@
+// src/store/authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import {jwtDecode} from "jwt-decode"; 
-import { clearCookies } from "../utils/authUtils";
+import { jwtDecode } from "jwt-decode";
+import { clearCookies } from "../utils/authUtils"; // Ensure this is not importing anything back
 
-// Retrieve token from localStorage
 const token = localStorage.getItem("authToken");
 let role = null;
 let userId = null;
 
-// Decode token and extract userId and role
 if (token) {
     try {
         const decodedToken = jwtDecode(token);
@@ -15,14 +14,13 @@ if (token) {
         role = decodedToken.role;
     } catch (error) {
         console.error("Invalid token:", error);
-        localStorage.removeItem("authToken"); // Remove the invalid token
+        localStorage.removeItem("authToken");
     }
 }
 
-// Initial state with decoded values if available
 const initialState = {
     token: token || null,
-    refreshToken: null, // Refresh token can be added later
+    refreshToken: null,
     userRole: role || null,
     userId: userId || null,
 };
@@ -37,7 +35,7 @@ const authSlice = createSlice({
         },
         removeToken(state) {
             state.token = null;
-            state.refreshToken = null; // Clear refreshToken as well
+            state.refreshToken = null;
             localStorage.removeItem("authToken");
         },
         setUserRole(state, action) {
@@ -60,12 +58,6 @@ const authSlice = createSlice({
     },
 });
 
-export const {
-    setToken,
-    removeToken,
-    setRefreshToken,
-    setUserRole,
-    setUserId,
-    clearAuthState,
-} = authSlice.actions;
+export const { setToken, removeToken, setRefreshToken, setUserRole, setUserId, clearAuthState } = authSlice.actions;
+
 export default authSlice.reducer;

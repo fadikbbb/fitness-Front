@@ -1,17 +1,16 @@
+import React, { memo } from "react";
+import { useSelector } from "react-redux";
 import { DeleteAboutUs } from "./deleteAboutUs";
 import { EditAboutUs } from "./editAboutUs";
-import React from "react";
-
-export function TableAboutUs({ aboutUs, handleRefresh, viewError }) {
-  if (!aboutUs || aboutUs.length === 0) {
+export const TableAboutUs = memo(({ setError }) => {
+  const { about, error } = useSelector((state) => state.settings);
+  if (!about || about.length === 0) {
     return <p>No About Us available.</p>;
   }
-  console.log(aboutUs);
-
   return (
     <div className="space-y-4">
-      {viewError && <p className="text-red-500 text-sm mt-1">{viewError}</p>}
-      {aboutUs.map((About) => (
+      {error && <p className="text-red-500 text-sm mt-1">error view:{error}</p>}
+      {about.map((About) => (
         <div key={About._id}>
           <div className="flex-shrink-0">
             <img
@@ -26,14 +25,14 @@ export function TableAboutUs({ aboutUs, handleRefresh, viewError }) {
           </div>
           <div className="flex space-x-2">
             <EditAboutUs
+              setError={setError}
               id={About._id}
               currentData={About}
-              handleRefresh={handleRefresh}
             />
-            <DeleteAboutUs id={About._id} handleRefresh={handleRefresh} />{" "}
+            <DeleteAboutUs id={About._id} />{" "}
           </div>
         </div>
       ))}
     </div>
   );
-}
+});

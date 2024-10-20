@@ -1,8 +1,7 @@
-import useWorkoutPlan from "../../hooks/workoutPlans/useWorkoutPlanFetching";
 import { useState } from "react";
-import NavBar from "../../components/home/navBar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import useWorkoutPlan from "../../../hooks/workoutPlans/useWorkoutPlanFetching";
 
 function ViewWorkOut() {
   const [changes, setChanges] = useState(false);
@@ -29,17 +28,15 @@ function ViewWorkOut() {
       setCurrentExerciseIndex((prev) => prev - 1);
     }
   };
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      <NavBar />
       <div className="flex-grow p-6 flex flex-col items-center bg-gray-100">
         {loading && (
           <div className="text-xl font-semibold text-primary">Loading...</div>
         )}
-
-        <h1 className="text-4xl font-bold text-primary mb-6">Workout Plan</h1>
-
+        <h1 className="text-4xl font-bold text-primary mb-6">
+          Your Workout Plan
+        </h1>
         {exercises.length > 0 ? (
           <>
             <h2 className="text-2xl font-bold text-primary mb-4 text-center">
@@ -61,7 +58,7 @@ function ViewWorkOut() {
             </div>
             <div className="relative w-full max-w-md bg-white shadow-xl rounded-lg p-8">
               <Link
-                to={`/workout-plan/${workoutPlan.userId._id}/exercises/${exercises[currentExerciseIndex].exerciseId._id}`}
+                to={`/user/workout-plan/${workoutPlan.userId._id}/exercises/${exercises[currentExerciseIndex].exerciseId._id}`}
                 state={{ exercise: exercises[currentExerciseIndex] }}
               >
                 <div className="flex flex-col items-center space-y-6 mb-4 border p-4 rounded-lg shadow-md bg-gray-50 w-full">
@@ -82,9 +79,9 @@ function ViewWorkOut() {
                     className="text-center"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }} // Add exit to text details
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
-                    key={currentExerciseIndex} // Key for changing content smoothly
+                    key={currentExerciseIndex}
                   >
                     <h3 className="text-lg font-semibold text-secondary">
                       {exercises[currentExerciseIndex].exerciseId.name}

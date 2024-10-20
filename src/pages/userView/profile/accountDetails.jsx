@@ -1,11 +1,6 @@
-import NavBar from "../../../components/home/navBar";
+import React from "react";
 import ProfileForm from "../../../components/profile/profile-form";
 function AccountDetails() {
-  return (
-    <div className="container mx-auto">
-      <NavBar />
-      <ProfileForm />
-    </div>
-  );
+  return <ProfileForm />;
 }
 export default AccountDetails;

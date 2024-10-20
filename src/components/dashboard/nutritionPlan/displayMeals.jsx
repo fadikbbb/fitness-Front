@@ -37,7 +37,7 @@ function DisplayMeals({ nutritionPlan, handleRefresh }) {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500 text-lg">No meals added yet</p>
+          <p className="text-red-500 text-lg text-center">No meals added yet</p>
         )}
       </div>
     </div>

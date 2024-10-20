@@ -3,23 +3,23 @@ import { FaPlus } from "react-icons/fa";
 import FoodForm from "./foodForm";
 import useAddFood from "../../../hooks/foods/useAddFood";
 
-const AddFood = ({ onAdd, foodCategories }) => {
+const AddFood = ({ onAdd }) => {
   const [addFormOpen, setAddFormOpen] = React.useState(false);
   const {
     isAdding,
     formErrors,
-    error,
-    message,
+    addFoodError,
+    addFoodMessage,
+    setAddFoodError,
+    setAddFoodMessage,
     handleAddSubmit,
-    setError,
-    setMessage,
     setFormErrors,
-  } = useAddFood(onAdd);
+  } = useAddFood({onAdd,setAddFormOpen});
 
   const handleOpen = () => {
+    setAddFoodError(null);
+    setAddFoodMessage(null);
     setAddFormOpen(true);
-    setError(null);
-    setMessage(null);
   };
 
   return (
@@ -36,17 +36,16 @@ const AddFood = ({ onAdd, foodCategories }) => {
           <div className="bg-white overflow-auto max-h-screen p-6 rounded shadow-lg max-w-sm text-center">
             <h2 className="text-lg font-bold mb-4">Add food</h2>
             <FoodForm
-              foodCategories={foodCategories}
               handleAddSubmit={handleAddSubmit}
-              formErrors={formErrors}
-              setFormErrors={setFormErrors}
-              isAdding={isAdding}
               setAddFormOpen={setAddFormOpen}
-              setGlobalError={setError}
-              setMessage={setMessage}
+              setFormErrors={setFormErrors}
+              formErrors={formErrors}
+              isAdding={isAdding}
+              setGlobalError={setAddFoodError}
+              setGlobalMessage={setAddFoodMessage}
+              globalError={addFoodError}
+              globalMessage={addFoodMessage}
             />
-            {error && <p className="text-red-500">{error}</p>}
-            {message && <p className="text-green-500">{message}</p>}
           </div>
         </div>
       )}

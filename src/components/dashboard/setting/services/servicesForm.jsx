@@ -1,24 +1,16 @@
 import { TableServices } from "./viewServices";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useContentsHook from "../../../../hooks/settings/useFetchContents";
-import useAddContentsHook from "../../../../hooks/settings/useAddContents";
+import useAddContentsHook from "../../../../hooks/settings/useAddSettings";
 
 function ServicesForm() {
-  const [servicesList, setServicesList] = useState([]);
-  const [changes, setChanges] = useState(false);
-
-  const handleRefresh = () => {
-    setChanges((prev) => !prev); // Toggle changes
-  };
-
   const {
     register,
     handleSubmit,
     reset,
     setError,
     clearErrors,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       image: "",
@@ -26,19 +18,6 @@ function ServicesForm() {
       description: "",
     },
   });
-
-  const { services, viewServices, viewError } = useContentsHook();
-
-  // Update useEffect to listen for changes
-  useEffect(() => {
-    viewServices({ changes, setChanges });
-  }, [changes]); // Now it depends on changes
-
-  useEffect(() => {
-    if (services) {
-      setServicesList(services);
-    }
-  }, [services]);
 
   const {
     handleAddServices,
@@ -48,8 +27,6 @@ function ServicesForm() {
     setAddMessage,
     setAddError,
   } = useAddContentsHook();
-
-
 
   // Reset form after submission
   useEffect(() => {
@@ -75,13 +52,12 @@ function ServicesForm() {
       return;
     }
 
-    await handleAddServices(data, handleRefresh); // Call handleRefresh on success
+    await handleAddServices(data);
   };
 
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        {/* Image Input */}
         <div>
           <label
             htmlFor="image"
@@ -93,7 +69,28 @@ function ServicesForm() {
             id="image"
             type="file"
             {...register("image", {
-              required: "Service image is required",
+              required: "Image is required",
+              validate: {
+                requiredFile: (value) => {
+                  const fileType = value[0].type;
+                  const validTypes = [
+                    "image/jpeg",
+                    "image/jpg",
+                    "image/png",
+                    "image/gif",
+                    "image/bmp",
+                    "image/webp",
+                  ];
+                  if (!validTypes.includes(fileType))
+                    return "Only JPG, JPEG, PNG, GIF, and WEBP image formats are allowed.";
+                  return true;
+                },
+                maxSize: (value) => {
+                  if (value[0] && value[0].size > 2 * 1024 * 1024)
+                    return "File size must be less than 2MB";
+                  return true;
+                },
+              },
             })}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             accept="image/*"
@@ -159,10 +156,10 @@ function ServicesForm() {
         </div>
 
         {/* Display Error and Success Messages */}
-        {(viewError || addError) && (
-          <p className="text-red-500 text-sm mt-1">{viewError || addError}</p>
+        {( addError) && (
+          <p className="text-red-500 text-sm mt-1">{ addError}</p>
         )}
-        {addMessage  ? (
+        {addMessage ? (
           <p className="text-green-500 text-sm mt-1">{addMessage}</p>
         ) : null}
 
@@ -170,18 +167,18 @@ function ServicesForm() {
         <div className="flex justify-end mt-4">
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isAdding}
             className={`px-4 py-2 text-white rounded-md ${
-              isSubmitting ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
+              isAdding ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
             }`}
           >
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isAdding ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>
 
       {/* Render Table of Services */}
-      <TableServices services={servicesList} handleRefresh={handleRefresh} />
+      <TableServices setError={setError}  />
     </div>
   );
 }

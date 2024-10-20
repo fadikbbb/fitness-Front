@@ -3,9 +3,9 @@ import useEditExercise from "../../../hooks/workoutPlans/useEditExercise";
 import { useForm } from "react-hook-form";
 import { FaEdit } from "react-icons/fa";
 
-function EditExerciseInWorkoutPlan({handleRefresh,exercise, day, planId }) {
+function EditExerciseInWorkoutPlan({ handleRefresh, exercise, day, planId }) {
     const [isOpen, setIsOpen] = useState(false);
-    const { editExercise, loading, error } = useEditExercise({handleRefresh, setIsOpen});
+    const { editExercise, loading, error } = useEditExercise({ handleRefresh, setIsOpen });
     const { register, handleSubmit } = useForm({
         defaultValues: {
             sets: exercise.sets || 0,
@@ -15,11 +15,9 @@ function EditExerciseInWorkoutPlan({handleRefresh,exercise, day, planId }) {
             note: exercise.note || "",
         },
     });
-
     const onSubmit = async (editForm) => {
         await editExercise(planId, exercise.exerciseId._id, day, editForm);
     };
-
     return (
         <div>
             <button onClick={() => setIsOpen(true)} className="m-2 flex items-center text-blue-500 hover:text-blue-700">
@@ -102,5 +100,4 @@ function EditExerciseInWorkoutPlan({handleRefresh,exercise, day, planId }) {
         </div>
     );
 }
-
 export default EditExerciseInWorkoutPlan;

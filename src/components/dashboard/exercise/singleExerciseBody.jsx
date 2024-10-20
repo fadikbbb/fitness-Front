@@ -1,102 +1,195 @@
+import React from "react";
+import { useParams } from "react-router-dom";
+import {
+  Dumbbell,
+  Clock,
+  Flame,
+  Target,
+  BarChart2,
+  FileText,
+} from "lucide-react";
 import useExerciseFetching from "../../../hooks/exercises/useExerciseFetching";
 import { useLocation } from "react-router-dom";
 
-function SingleExerciseBody() {
-  const { exercise, loading, error } = useExerciseFetching();
+export default function SingleExerciseBody() {
+  const { id } = useParams();
+  const { exercise, loading, error } = useExerciseFetching(id);
   const location = useLocation();
-  const exerciseData = location?.state?.exercise || {};
-  console.log(exerciseData);
+  const exerciseData = location?.state?.exercise;
 
-  if (loading)
-    return <div className="text-center text-gray-500">Loading...</div>;
-  if (error) return <div className="text-center text-red-500">{error}</div>;
-  if (!exercise)
-    return <div className="text-center text-gray-500">No exercise found</div>;
+  if (loading) return <ExerciseSkeleton />;
+  if (error) return <ErrorMessage message={error} />;
+  if (!exercise) return <NoExerciseFound />;
 
+  const combinedExerciseData = {
+    ...exercise,
+    restDuration: exerciseData?.restDuration || exercise.restDuration,
+    sets: exerciseData?.sets || exercise.sets,
+    minReps: exerciseData?.minReps || exercise.minReps,
+    maxReps: exerciseData?.maxReps || exercise.maxReps,
+    note: exerciseData?.note || exercise.note,
+  };
   return (
-    <div className="min-h-screen w-full bg-gray-100 ">
-      <div className="container mx-auto p-6 bg-white rounded-lg shadow-lg">
-        {/* Title */}
-        <h1 className="text-4xl font-bold mb-6 text-center text-primary">
-          {exercise.name}
-        </h1>
-
-        {/* Video Section */}
-        {exercise.videoUrl && (
-          <div
-            className="relative w-full mb-6 overflow-hidden shadow-lg"
-            style={{ paddingTop: "56.25%" }}
-          >
-            <iframe
-              src={exercise.videoUrl}
-              title="Exercise video"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute top-0 left-0 w-full h-full rounded-lg"
-            ></iframe>
-          </div>
-        )}
-
-        {/* Description */}
-        <p className="mb-6 text-sm text-muted text-center leading-relaxed">
-          {exercise?.description}
-        </p>
-
-        {/* Exercise Details */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-          <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
-            <p className="text-gray-700">
-              <strong className="text-secondary">Category:</strong>{" "}
-              {exercise.category}
-            </p>
-          </div>
-
-          <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
-            <p className="text-gray-700">
-              <strong className="text-secondary">Rest Duration:</strong>{" "}
-              {exerciseData.restDuration
-                ? exerciseData.restDuration
-                : exercise.restDuration}{" "}
-              minutes
-            </p>
-          </div>
-
-          <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
-            <p className="text-gray-700">
-              <strong className="text-secondary">Intensity:</strong>{" "}
-              {exercise.intensity}
-            </p>
-          </div>
-
-          <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
-            <p className="text-gray-700">
-              <strong className="text-secondary">Sets:</strong>{" "}
-              {exerciseData.sets ? exerciseData.sets : exercise.sets}
-            </p>
-          </div>
-
-          <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
-            <p className="text-gray-700">
-              <strong className="text-secondary">Reps:</strong>{" "}
-              {exerciseData.minReps && exerciseData.maxReps
-                ? `${exerciseData.minReps} - ${exerciseData.maxReps}`
-                : `${exercise.minReps} - ${exercise.maxReps}`}
-            </p>
-          </div>
-
-          {exerciseData.note && (
-            <div className="p-4 border rounded-lg shadow-sm bg-gray-50">
-              <p className="text-gray-700">
-                <strong className="text-secondary">Note:</strong>{" "}
-                {exerciseData.note}
-              </p>
-            </div>
-          )}
+    <div className="container mx-auto p-6">
+      <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-6">
+          <h1 className="text-3xl font-bold mb-2">
+            {combinedExerciseData.name}
+          </h1>
+          <p className="text-gray-600 mb-6">
+            {combinedExerciseData.description}
+          </p>
+          <VideoSection videoUrl={combinedExerciseData.videoUrl} />
+          <ExerciseDetails exercise={combinedExerciseData} />
+          <ExerciseMetrics exercise={combinedExerciseData} />
         </div>
       </div>
     </div>
   );
 }
 
-export default SingleExerciseBody;
+function VideoSection({ videoUrl }) {
+  return (
+    <div
+      className="relative w-full overflow-hidden rounded-lg shadow-lg"
+      style={{ paddingTop: "56.25%" }}
+    >
+      <iframe
+        src={`${videoUrl}?autoplay=0&controls=1&rel=0&modestbranding=1`}
+        title="Exercise video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="absolute top-0 left-0 w-full h-full"
+      />
+    </div>
+  );
+}
+
+function ExerciseDetails({ exercise }) {
+  return (
+    <div className="flex flex-wrap justify-around my-6">
+      <DetailItem
+        icon={<Dumbbell className="w-5 h-5" />}
+        label="Category"
+        value={exercise.category}
+      />
+      <DetailItem
+        icon={<Flame className="w-5 h-5" />}
+        label="Intensity"
+        value={exercise.intensity}
+      />
+    </div>
+  );
+}
+
+function ExerciseMetrics({ exercise }) {
+  const { restDuration, sets, minReps, maxReps, note } = exercise;
+  return (
+    <div className="flex flex-wrap justify-between w-full">
+      {restDuration && (
+        <MetricItem
+          icon={<Clock className=" w-5 h-5" />}
+          label="Rest"
+          value={`${restDuration}min`}
+        />
+      )}
+      {sets && (
+        <MetricItem
+          icon={<Target className="w-5 h-5" />}
+          label="Sets"
+          value={sets}
+        />
+      )}
+      {minReps && maxReps && (
+        <MetricItem
+          icon={<BarChart2 className="w-5 h-5" />}
+          label="Reps"
+          value={`${minReps}-${maxReps}`}
+        />
+      )}
+      {note && (
+        <MetricItem
+          icon={<FileText className="w-5 h-5" />}
+          label="Note"
+          value={note}
+        />
+      )}
+    </div>
+  );
+}
+
+function DetailItem({ icon, label, value }) {
+  return (
+    <div className="flex items-center space-x-2 mb-4">
+      {icon}
+      <span className="font-medium">{label}:</span>
+      <span className="bg-gray-200 px-2 py-1 rounded-full text-sm">
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function MetricItem({ icon, label, value }) {
+  return (
+    <div
+      className={`w-full ${
+        label === "Note" ? "w-full" : "md:w-[calc(33%-0.5rem)]"
+      } flex flex-col items-center justify-center bg-white shadow rounded-lg p-4sm:w-auto mb-4 `}
+    >
+      {icon}
+      <h3 className="mt-2 font-semibold">{label}</h3>
+      <p className="text-2xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+function ExerciseSkeleton() {
+  return (
+    <div className="container mx-auto p-6">
+      <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden animate-pulse">
+        <div className="p-6">
+          <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-full mb-6"></div>
+          <div className="w-full h-64 bg-gray-200 rounded mb-6"></div>
+          <div className="flex justify-between mb-6">
+            <div className="h-10 bg-gray-200 rounded w-full mr-4"></div>
+            <div className="h-10 bg-gray-200 rounded w-full"></div>
+          </div>
+          <div className="flex justify-between flex-wrap">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="h-24 bg-gray-200 rounded w-full sm:w-1/4 mb-4"
+              ></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <div className="container mx-auto p-6">
+      <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-6 flex items-center justify-center h-64">
+          <p className="text-red-500 text-xl">{message}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NoExerciseFound() {
+  return (
+    <div className="container mx-auto p-6">
+      <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="p-6 flex items-center justify-center h-64">
+          <p className="text-gray-500 text-xl">No exercise found</p>
+        </div>
+      </div>
+    </div>
+  );
+}

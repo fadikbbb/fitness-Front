@@ -2,21 +2,18 @@ import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import useDeleteFood from "../../../hooks/foods/useDeleteFood";
 
-function DeleteFood({ foodId, onSuccess }) {
+function DeleteFood({ foodId, onDelete }) {
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const { error, loading, message, deleteFood } = useDeleteFood();
+  const { deleteFoodError, deleteFoodLoading, deleteFoodMessage, deleteFood } =
+    useDeleteFood({ onDelete, setDeleteConfirmOpen });
   const handleDelete = () => {
     setDeleteConfirmOpen(true);
   };
-  
+
   const handleConfirmDelete = async () => {
     await deleteFood(foodId);
-    if (!error) {
-      onSuccess();
-    }
-    setDeleteConfirmOpen(false);
   };
-  
+
   return (
     <div>
       {isDeleteConfirmOpen && (
@@ -31,14 +28,18 @@ function DeleteFood({ foodId, onSuccess }) {
               Confirm Deletion
             </h2>
             <p>Are you sure you want to delete this food?</p>
-            {message && <p className="text-green-500 mb-4">{message}</p>}
-            {error && <p className="text-red-500 mb-4">{error}</p>}
+            {deleteFoodMessage && (
+              <p className="text-green-500 mb-4">{deleteFoodMessage}</p>
+            )}
+            {deleteFoodError && (
+              <p className="text-red-500 mb-4">{deleteFoodError}</p>
+            )}
             <button
               onClick={handleConfirmDelete}
               className="bg-red-500 text-white py-2 px-4 rounded-md mt-4"
-              disabled={loading}
+              disabled={deleteFoodLoading}
             >
-              {loading ? "Deleting..." : "Confirm"}
+              {deleteFoodLoading ? "Deleting..." : "Confirm"}
             </button>
             <button
               onClick={() => setDeleteConfirmOpen(false)}

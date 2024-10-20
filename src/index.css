@@ -8,9 +8,9 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
   scroll-behavior: smooth;
-  scroll-margin: 60px;
+
 }
-/* src/index.css or src/App.css */
+
 @keyframes shake {
   0%,
   100% {
@@ -33,6 +33,7 @@
     transform: rotate(180deg);
   }
 }
+
 .animate-shake {
   animation: shake 0.5s ease-in-out;
 }
@@ -44,12 +45,30 @@
   animation: plusAndMinus 0.3s ease-in-out backwards;
 }
 .logout-message {
-  background-color: #4caf50; /* Green background */
-  color: white; /* White text */
+  background-color: #4caf50;
+  color: white;
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.loader {
+  border: 8px solid #f3f4f6;
+  border-top: 8px solid #3b82f6;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useFetchContent from "../../../hooks/settings/useFetchContents";
-import useUpdateContent from "../../../hooks/settings/useUpdateContents";
+import { useSelector } from "react-redux";
+import useUpdateContent from "../../../../hooks/settings/useUpdateSettings";
 
 function SocialMediaForm() {
-  const [changes, setChanges] = useState(false);
-  const handleReset = () => {
-    setChanges(!changes);
-  };
-
+  const { socialMedia, error } = useSelector((state) => state.settings);
   const {
     register,
     handleSubmit,
@@ -21,19 +17,11 @@ function SocialMediaForm() {
       twitter: "",
       instagram: "",
       linkedin: "",
+      whatsApp: "",
     },
   });
-
-  const { socialMedia, viewError, viewSocialMedia } = useFetchContent(); // Destructure fetchSocialMedia from the hook
-  // Trigger fetchSocialMedia when the component mounts
-  useEffect(() => {
-    viewSocialMedia();
-  }, []);
-
-  console.log(socialMedia);
   const { updateSocialMedia, updateMessage, updateError } = useUpdateContent({
     setError,
-    handleReset,
   });
 
   useEffect(() => {
@@ -43,6 +31,7 @@ function SocialMediaForm() {
         twitter: socialMedia?.twitter || "",
         instagram: socialMedia?.instagram || "",
         linkedin: socialMedia?.linkedin || "",
+        whatsApp: socialMedia?.whatsApp || "",
       },
       {
         keepDefaultValues: true,
@@ -54,7 +43,6 @@ function SocialMediaForm() {
     console.log(data);
     await updateSocialMedia(data);
   };
-
   return (
     <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
       <h3 className="text-lg font-semibold">Social Media Links</h3>
@@ -69,7 +57,17 @@ function SocialMediaForm() {
         <input
           id="facebook"
           type="text"
-          {...register("facebook")}
+          {...register("facebook", {
+            required: {
+              value: true,
+              message: "Facebook link is required",
+            },
+            pattern: {
+              value:
+                /^(http\:\/\/|https\:\/\/)?(?:www\.)?facebook\.com\/(?:(?:\w\.)*#!\/)?(?:pages\/)?(?:[\w\-\.]*\/)*([\w\-\.]*)/i,
+              message: "Please enter a valid Facebook link",
+            },
+          })}
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
         />
         {errors.facebook && (
@@ -87,7 +85,17 @@ function SocialMediaForm() {
         <input
           id="twitter"
           type="text"
-          {...register("twitter")}
+          {...register("twitter", {
+            required: {
+              value: true,
+              message: "Twitter link is required",
+            },
+            pattern: {
+              value:
+                /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/([a-zA-Z0-9_]{1,15})\/?$/i,
+              message: "Please enter a valid Twitter link",
+            },
+          })}
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
         />
         {errors.twitter && (
@@ -105,7 +113,17 @@ function SocialMediaForm() {
         <input
           id="instagram"
           type="text"
-          {...register("instagram")}
+          {...register("instagram", {
+            required: {
+              value: true,
+              message: "Instagram link is required",
+            },
+            pattern: {
+              value:
+                /^(https?:\/\/)?(www\.)?instagram\.com\/([a-zA-Z0-9_.]{1,30})\/?$/i,
+              message: "Please enter a valid Instagram link",
+            },
+          })}
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
         />
         {errors.instagram && (
@@ -125,14 +143,49 @@ function SocialMediaForm() {
         <input
           id="linkedin"
           type="text"
-          {...register("linkedin")}
+          {...register("linkedin", {
+            required: {
+              value: true,
+              message: "LinkedIn link is required",
+            },
+            pattern: {
+              value:
+                /^(https?:\/\/)?(www\.)?linkedin\.com\/(in|company)\/[a-zA-Z0-9_-]+\/?$/i,
+              message: "Please enter a valid LinkedIn link",
+            },
+          })}
           className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
         />
         {errors.linkedin && (
           <p className="text-red-500 text-sm mt-1">{errors.linkedin.message}</p>
         )}
       </div>
-
+      <div>
+        <label
+          htmlFor="whatsApp"
+          className="block text-sm font-medium text-gray-700"
+        >
+          WhatsApp
+        </label>
+        <input
+          id="whatsApp"
+          type="number"
+          {...register("whatsApp", {
+            required: {
+              value: true,
+              message: "WhatsApp number is required",
+            },
+            pattern: {
+              value: /^\d+$/,
+              message: "Please enter a valid WhatsApp number",
+            },
+          })}
+          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+        />
+        {errors.whatsApp && (
+          <p className="text-red-500 text-sm mt-1">{errors.whatsApp.message}</p>
+        )}
+      </div>
       <div className="flex justify-end">
         <button
           type="submit"
@@ -145,12 +198,12 @@ function SocialMediaForm() {
         </button>
       </div>
       {/* Display error messages */}
-      {viewError && (
+      {error && (
         <div
           className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
           aria-live="polite"
         >
-          <span className="block sm:inline">{viewError}</span>
+          <span className="block sm:inline">{error}</span>
         </div>
       )}
 

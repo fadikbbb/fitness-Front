@@ -1,30 +1,30 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { FaEdit } from "react-icons/fa";
-import { FaPlusCircle, FaSpinner } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
+import { useSelector } from "react-redux";
 function FoodForm({
     handleEditSubmit,
     handleAddSubmit,
     isAdding,
     isEditing,
-    foodCategories,
     setEditFormOpen,
     setAddFormOpen,
     food,
     setFormErrors,
     formErrors,
     setGlobalError,
-    setMessage,
+    globalError,
+    setGlobalMessage,
+    globalMessage,
 }) {
+    const foodCategories = useSelector((state) => state.food.foodCategories)
     const onSubmit = (data) => {
         if (food) {
             handleEditSubmit(data);
         } else {
             handleAddSubmit(data);
         }
-
     };
-
     const {
         register,
         handleSubmit,
@@ -34,16 +34,15 @@ function FoodForm({
         reset
     } = useForm({
         defaultValues: {
-            name: food?.name,
-            description: food?.description,
-            image: food?.image,
-            category: food?.category,
-            calories: food?.calories,
-            weight: food?.weight,
-            fat: food?.fat,
-            protein: food?.protein,
-            carbohydrates: food?.carbohydrates,
-            fiber: food?.fiber,
+            name: food?.name || "",
+            image: food?.image || "",
+            category: food?.category || "",
+            calories: food?.calories || "",
+            weight: food?.weight || "",
+            fat: food?.fat || "",
+            protein: food?.protein || "",
+            carbohydrates: food?.carbohydrates || "",
+            fiber: food?.fiber || "",
         },
     });
 
@@ -63,7 +62,6 @@ function FoodForm({
     useEffect(() => {
         reset({
             name: food?.name,
-            description: food?.description,
             image: food?.image,
             category: food?.category,
             calories: food?.calories,
@@ -76,188 +74,268 @@ function FoodForm({
     }, [food, reset]);
 
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-            encType="multipart/form-data"
-            className="space-y-1"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data" className="space-y-1">
             <div className="flex flex-col items-start">
                 <label htmlFor="name" className="mr-2">
                     Name:
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="text"
                     id="name"
-                    {...register("name")}
+                    {...register("name", {
+                        required: "Name is required",
+                    })}
                     className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500" : "border-gray-300"}`}
+                        rounded-md w-full 
+                        focus:outline-none focus:ring-2 focus:ring-primary ${errors.name ? "border-red-500" : "border-gray-300"}`}
+                    autoComplete="name"
                 />
-
                 {errors.name && (
                     <small className="text-red-500">{errors.name.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="image" className="mr-2">
                     image:
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="file"
                     id="image"
-                    {...register("image")}
+                    {...register("image", {
+                        required:
+                            !food ?
+                                "Image is required" :
+                                false,
+                        validate: {
+                            requiredFile: value => {
+                                if (!value[0]) return !food ?
+                                    "Image is required" :
+                                    false;
+                                const fileType = value[0].type;
+                                const validTypes = ['image/jpeg',
+                                    'image/jpg',
+                                    'image/png',
+                                    'image/gif',
+                                    'image/bmp',
+                                    'image/webp',];
+                                if (!food && !validTypes.includes(fileType)) return "Only JPG, JPEG, PNG, GIF, and WEBP image formats are allowed.";
+                                return true;
+                            },
+                            maxSize: value => {
+                                if (value[0] && value[0].size > (2 * 1024 * 1024)) return "File size must be less than 2MB";
+                                return true;
+                            },
+                        }
+                    })}
                     className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.image ? "border-red-500" : "border-gray-300"}`}
-
+                        rounded-md w-full 
+                        focus:outline-none focus:ring-2 focus:ring-primary ${errors.image ? "border-red-500" : "border-gray-300"}`}
+                    autoComplete="image"
                 />
                 {errors.image && (
                     <small className="text-red-500">{errors.image.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="category" className="mr-2">
                     Category:
                 </label>
                 <select
                     id="category"
-                    {...register("category")}
-                    className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.category ? "border-red-500" : "border-gray-300"}`}
-
+                    disabled={isAdding || isEditing ? true : false}
+                    {...register("category", {
+                        required: "Category is required",
+                    })}
+                    className={`p-2 border rounded-md w-full
+                        focus:outline-none focus:ring-2
+                        focus:ring-primary
+                        ${errors.category ?
+                            "border-red-500" :
+                            "border-gray-300"}`}
+                    autoComplete="category"
+                    defaultValue={food?.category || ""}
                 >
-                    <option value="" disabled selected >Select a category</option>
+                    <option value="" disabled>
+                        Select a category
+                    </option>
                     {foodCategories.map((category) => (
                         <option key={category} value={category}>
                             {category}
                         </option>
                     ))}
-                    <option value="">all</option>
                 </select>
                 {errors.category && (
                     <small className="text-red-500">{errors.category.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="calories" className="mr-2">
-                    Calories:
+                    Calories: (kJ)
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="number"
                     step={0.1}
                     id="calories"
-                    {...register("calories")}
-                    className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.calories ? "border-red-500" : "border-gray-300"}`}
+                    {...register("calories", {
+                        required: "Calories is required",
+                        valueAsNumber: true,
+                        min: {
+                            value: "0",
+                            message: "Calories must be greater than 0",
 
+                        }
+                    })}
+                    className={`p-2 border
+                        rounded-md w-full 
+                        focus:outline-none focus:ring-2 focus:ring-primary ${errors.calories ? "border-red-500" : "border-gray-300"}`}
+
+                    autoComplete="calories"
                 />
                 {errors.calories && (
                     <small className="text-red-500">{errors.calories.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="weight" className="mr-2">
-                    Weight:
+                    Weight: (g)
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="number"
                     step={0.1}
                     id="weight"
-                    
-                    {...register("weight")}
-                    className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.weight ? "border-red-500" : "border-gray-300"}`}
 
+                    {...register("weight"
+
+                        , {
+                            required: "Weight is required",
+                            valueAsNumber: true,
+                            min: {
+                                value: "0",
+                                message: "Weight must be greater than 0",
+                            }
+                        }
+                    )}
+                    className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.weight ? "border-red-500" : "border-gray-300"}`}
+                    autoComplete="weight"
                 />
                 {errors.weight && (
                     <small className="text-red-500">{errors.weight.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="fat" className="mr-2">
-                    Fat:
+                    Fat: (g)
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="number"
                     step={0.1}
                     id="fat"
-                    {...register("fat")}
-                    className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.fat ? "border-red-500" : "border-gray-300"}`}
-
+                    {...register("fat",
+                        {
+                            required: "Fat is required",
+                            valueAsNumber: true,
+                            min: {
+                                value: "0",
+                                message: "Fat must be greater than 0",
+                            }
+                        }
+                    )}
+                    className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.fat ? "border-red-500" : "border-gray-300"}`}
+                    autoComplete="fat"
                 />
                 {errors.fat && (
                     <small className="text-red-500">{errors.fat.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="protein" className="mr-2">
-                    protein:
+                    protein: (g)
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="number"
                     step={0.1}
                     id="protein"
-                    {...register("protein")}
-                    className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.protein ? "border-red-500" : "border-gray-300"}`}
+                    {...register("protein",
+                        {
+                            required: "Protein is required",
+                            valueAsNumber: true,
+                            min: {
+                                value: "0",
+                                message: "Protein must be greater than 0",
+                            }
 
+                        }
+                    )}
+                    className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.protein ? "border-red-500" : "border-gray-300"}`}
+                    autoComplete="protein"
                 />
                 {errors.protein && (
                     <small className="text-red-500">{errors.protein.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="carbohydrates" className="mr-2">
-                    Carbohydrates:
+                    Carbohydrates: (g)
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="number"
                     step={0.1}
                     id="carbohydrates"
-                    {...register("carbohydrates")}
-                    className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.carbohydrates ? "border-red-500" : "border-gray-300"}`}
-
+                    {...register("carbohydrates",
+                        {
+                            required: "Carbohydrates is required",
+                            valueAsNumber: true,
+                            min: {
+                                value: "0",
+                                message: "Carbohydrates must be greater than 0",
+                            }
+                        }
+                    )}
+                    className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.carbohydrates ? "border-red-500" : "border-gray-300"}`}
+                    autoComplete="carbohydrates"
                 />
                 {errors.carbohydrates && (
                     <small className="text-red-500">{errors.carbohydrates.message}</small>
                 )}
             </div>
-
             <div className="flex flex-col items-start">
                 <label htmlFor="fiber" className="mr-2">
-                    Fiber:
+                    Fiber: (g)
                 </label>
                 <input
+                    disabled={isAdding || isEditing ? true : false}
                     type="number"
                     step={0.1}
                     id="fiber"
-                    {...register("fiber")}
-                    className={`p-2 border
-                         rounded-md w-full 
-                         focus:outline-none focus:ring-2 focus:ring-primary ${errors.fiber ? "border-red-500" : "border-gray-300"}`}
-
+                    {...register("fiber",
+                        {
+                            required: "Fiber is required",
+                            valueAsNumber: true,
+                            min: {
+                                value: "0",
+                                message: "Fiber must be greater than 0",
+                            }
+                        })}
+                    className={`p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary ${errors.fiber ? "border-red-500" : "border-gray-300"}`}
+                    autoComplete="fiber"
                 />
                 {errors.fiber && (
                     <small className="text-red-500">{errors.fiber.message}</small>
                 )}
             </div>
-
-
+            {globalError && (
+                <small className="text-red-500">{globalError}</small>
+            )}
+            {globalMessage && (
+                <small className="text-green-500">{globalMessage}</small>
+            )}
             <div className="flex justify-center">
                 {food ? (
                     <button
@@ -272,7 +350,6 @@ function FoodForm({
                             <FaSpinner className="animate-spin text-2xl" />
                         ) : (
                             <>
-                                <FaEdit className="text-md mr-2" />
                                 Edit Food
                             </>
                         )}
@@ -290,7 +367,7 @@ function FoodForm({
                             <FaSpinner className="animate-spin text-2xl " />
                         ) : (
                             <>
-                                <FaPlusCircle className="text-md mr-2" />
+
                                 Add Food
                             </>
                         )}
@@ -301,7 +378,7 @@ function FoodForm({
                     onClick={() => {
                         setFormErrors({})
                         setGlobalError(null)
-                        setMessage(null)
+                        setGlobalMessage(null)
                         if (food) {
                             setEditFormOpen(false)
                         }
@@ -310,8 +387,9 @@ function FoodForm({
                         }
                     }
                     }
-                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                >
+                    className={`bg-red-500 text-white font-bold py-2 px-4 rounded
+                    ${isAdding || isEditing ? "opacity-[0.5]" : ""}`}
+                    disabled={isAdding || isEditing ? true : false}>
                     Cancel
                 </button>
             </div>

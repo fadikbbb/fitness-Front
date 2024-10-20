@@ -1,23 +1,17 @@
 import { TableAboutUs } from "./viewAboutUs";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useContentsHook from "../../../../hooks/settings/useFetchContents";
-import useAddContentsHook from "../../../../hooks/settings/useAddContents";
+import useAddContentsHook from "../../../../hooks/settings/useAddSettings";
+import { useSelector } from "react-redux";
 
 function AboutUsForm() {
-  const [changes, setChanges] = useState(false);
-
-  const handleRefresh = () => {
-    setChanges((prev) => !prev);
-  };
-
   const {
     register,
     handleSubmit,
     reset,
     setError,
     clearErrors,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     defaultValues: {
       image: "",
@@ -25,13 +19,6 @@ function AboutUsForm() {
       description: "",
     },
   });
-
-  const { about, viewAbout, viewError } = useContentsHook();
-
-  useEffect(() => {
-    viewAbout({ changes, setChanges });
-  }, [changes]);
-
   const {
     handleAddAbout,
     addError,
@@ -40,7 +27,6 @@ function AboutUsForm() {
     setAddMessage,
     setAddError,
   } = useAddContentsHook();
-
   useEffect(() => {
     reset({
       image: "",
@@ -63,8 +49,7 @@ function AboutUsForm() {
       });
       return;
     }
-
-    await handleAddAbout(data, handleRefresh);
+    await handleAddAbout(data);
   };
 
   return (
@@ -81,7 +66,28 @@ function AboutUsForm() {
             id="image"
             type="file"
             {...register("image", {
-              required: "Service image is required",
+              required: "Image is required",
+              validate: {
+                requiredFile: (value) => {
+                  const fileType = value[0].type;
+                  const validTypes = [
+                    "image/jpeg",
+                    "image/jpg",
+                    "image/png",
+                    "image/gif",
+                    "image/bmp",
+                    "image/webp",
+                  ];
+                  if (!validTypes.includes(fileType))
+                    return "Only JPG, JPEG, PNG, GIF, and WEBP image formats are allowed.";
+                  return true;
+                },
+                maxSize: (value) => {
+                  if (value[0] && value[0].size > 2 * 1024 * 1024)
+                    return "File size must be less than 2MB";
+                  return true;
+                },
+              },
             })}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             accept="image/*"
@@ -152,21 +158,17 @@ function AboutUsForm() {
         <div className="flex justify-end mt-4">
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isAdding}
             className={`px-4 py-2 text-white rounded-md ${
-              isSubmitting ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
+              isAdding ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
             }`}
           >
-            {isSubmitting ? "Submitting..." : "Submit"}
+            {isAdding ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>
 
-      <TableAboutUs
-        viewError={viewError}
-        aboutUs={about}
-        handleRefresh={handleRefresh}
-      />
+      <TableAboutUs setError={setError}/>
     </div>
   );
 }
