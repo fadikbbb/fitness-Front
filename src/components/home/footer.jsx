@@ -12,15 +12,15 @@ export default function Footer() {
   const legalLinks = ["Privacy Policy", "Terms of Service"];
 
   return (
-    <footer className="w-full bg-gray-900 text-gray-100">
+    <footer className="w-full bg-secondaryBackground dark:bg-darkSecondary text-gray-100 dark:text-darkText">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <FaDumbbell className="h-8 w-8 text-primary" />
+              <FaDumbbell className="h-8 w-8 text-primary dark:text-darkPrimary" />
               <span className="text-2xl font-bold">FitLife Gym</span>
             </div>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-muted dark:text-darkText">
               Empowering you to reach your fitness goals and live a healthier
               life.
             </p>
@@ -32,7 +32,7 @@ export default function Footer() {
                 <li key={item}>
                   <Link
                     to={`/${item.toLowerCase()}`}
-                    className="text-sm hover:text-primary transition-colors duration-200"
+                    className="text-sm hover:text-primary dark:hover:text-darkPrimary transition-colors duration-200"
                   >
                     {item}
                   </Link>
@@ -57,15 +57,15 @@ export default function Footer() {
               { icon: Twitter, href: socialMedia?.twitter },
               { icon: Linkedin, href: socialMedia?.linkedin },
               {
-              icon: FaWhatsapp,
-              href: `https://wa.me/${socialMedia?.whatsApp}`,
+                icon: FaWhatsapp,
+                href: `https://wa.me/${socialMedia?.whatsApp}`,
               },
             ].map((item, index) => (
               <a
                 key={index}
                 href={item.href}
                 aria-label={item.icon.name}
-                className="text-gray-400 hover:text-primary transition-colors duration-200"
+                className="text-gray-400 hover:text-primary dark:hover:text-darkPrimary transition-colors duration-200"
               >
                 <item.icon className="h-6 w-6" />
               </a>
@@ -76,14 +76,14 @@ export default function Footer() {
               <Link
                 key={item}
                 to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                className="text-sm text-gray-400 hover:text-primary transition-colors duration-200"
+                className="text-sm text-gray-400 hover:text-primary dark:hover:text-darkPrimary transition-colors duration-200"
               >
                 {item}
               </Link>
             ))}
           </div>
         </div>
-        <div className="mt-4 text-center text-sm text-gray-400">
+        <div className="mt-4 text-center text-sm text-muted dark:text-darkText">
           <p>&copy; {currentYear} FitLife Gym. All rights reserved.</p>
           <p className="mt-2">Made with ❤️ by Fadi & Hadi Kabbani</p>
         </div>

@@ -67,7 +67,6 @@ export default function SingleFoodBody() {
     useFoodFetching();
   const {
     colors,
-    dominantColor,
     loading: colorLoading,
   } = useExtractColor(foodData?.image, {
     maxColors: 10,

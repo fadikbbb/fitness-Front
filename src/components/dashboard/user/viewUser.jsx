@@ -1,10 +1,107 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Line } from "react-chartjs-2";
 import useFetchUser from "../../../hooks/users/useUserFetching";
+import apiClient from "../../../utils/axiosConfig";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function ViewUser() {
   const { user, fetchUserError, fetchUserLoading } = useFetchUser();
+  const [userReports, setUserReports] = useState([]);
+  const { userId } = useParams();
 
+  useEffect(() => {
+    async function fetchReportsOfUser() {
+      try {
+        const response = await apiClient.get(`/weekly-reports/${userId}`);
+        setUserReports(response.data.reports);
+        console.log(response.data.reports);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchReportsOfUser();
+  }, [userId]);
+
+  // Prepare chart data
+  const weightChartData = {
+    labels: userReports.map((report) =>
+      new Date(report.createdAt).toLocaleDateString()
+    ), // Assuming the report has a date field
+    datasets: [
+      {
+        label: "Weight (kg)",
+        data: userReports.map((report) => report.weight), // Assuming the report has a weight field
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+        tension: 0.1,
+      },
+    ],
+  };
+  const levelChartData = {
+    labels: userReports.map((report) =>
+      new Date(report.createdAt).toLocaleDateString()
+    ), // Assuming the report has a date field
+    datasets: [
+      {
+        label: "sleep (kg)",
+        data: userReports.map((report) => report.sleepLevel), // Assuming the report has a weight field
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+        tension: 0.1,
+      },
+      {
+        label: "eating (kg)",
+        data: userReports.map((report) => report.eatingLevel), // Assuming the report has a weight field
+        borderColor: "rgba(75, 12, 92, 1)",
+        backgroundColor: "rgba(75, 12, 92, 0.2)",
+        fill: true,
+        tension: 0.1,
+      },
+      {
+        label: "exercise (kg)",
+        data: userReports.map((report) => report.exerciseLevel), // Assuming the report has a weight field
+        borderColor: "rgba(175, 123, 92, 1)",
+        backgroundColor: "rgba(175, 123, 92, 0.2)",
+        fill: true,
+        tension: 0.1,
+      },
+    ],
+  };
+  const generateChartOptions = (title) => ({
+    responsive: false,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: title,
+      },
+    },
+  });
   if (fetchUserError) {
     return (
       <div className="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg">
@@ -29,30 +126,26 @@ function ViewUser() {
     <div className="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="text-center mb-8">
         <div className="relative inline-block">
-          <img
-            src={user?.image}
-            alt={`${user?.firstName} ${user?.lastName}`}
-            className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-blue-500 transition-transform duration-300 hover:scale-105"
-          />
-          <span
-            className={`absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-white ${
-              user?.isActive ? "bg-green-500" : "bg-red-500"
-            }`}
-          ></span>
+          {/* Chart displaying weight trend */}
+          {userReports.length > 0 && (
+            <div className="flex flex-wrap justify-center items-center gap-4">
+              <Line
+                options={generateChartOptions("Weight Trend")}
+                width={300}
+                height={200}
+                data={weightChartData}
+              />
+              <Line
+                options={generateChartOptions("Level Trend")}
+                width={300}
+                height={200}
+                data={levelChartData}
+              />
+            </div>
+          )}
         </div>
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">
-          {user?.firstName} {user?.lastName}
-        </h2>
-        <span
-          className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-            user?.isActive
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          {user?.isActive ? "Active" : "Inactive"}
-        </span>
       </div>
+
       <div className="bg-gray-50 rounded-lg p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InfoItem icon="📧" label="Email" value={user?.email} />
@@ -67,12 +160,32 @@ function ViewUser() {
           <InfoItem icon="📏" label="Height" value={`${user?.height} cm`} />
         </div>
       </div>
+
+      {/* Reports Section */}
+      <div className="bg-gray-50 rounded-lg p-6 mb-8">
+        <h3 className="text-xl font-semibold mb-4">Weekly Reports</h3>
+        {userReports.length > 0 ? (
+          userReports.map((report, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center bg-white p-4 mb-2 rounded-lg shadow-sm"
+            >
+              <span>{new Date(report.createdAt).toLocaleDateString()}</span>
+              <span>{report.weight} kg</span>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500">No reports found for this user.</p>
+        )}
+      </div>
+
       <div className="text-center mb-8">
         <h3 className="text-xl font-semibold mb-3">Subscription Status</h3>
         <span className="inline-block px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
           {user?.subscriptionStatus}
         </span>
       </div>
+
       <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
         <Link
           to={`/dashboard/${user?._id}/nutrition-plan`}

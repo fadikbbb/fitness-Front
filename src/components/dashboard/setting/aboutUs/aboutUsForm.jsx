@@ -2,8 +2,6 @@ import { TableAboutUs } from "./viewAboutUs";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useAddContentsHook from "../../../../hooks/settings/useAddSettings";
-import { useSelector } from "react-redux";
-
 function AboutUsForm() {
   const {
     register,

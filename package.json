@@ -27,6 +27,7 @@
     "react-router-hash-link": "^2.4.3",
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.6",
+    "react-world-flags": "^1.6.0",
     "redux": "^5.0.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"

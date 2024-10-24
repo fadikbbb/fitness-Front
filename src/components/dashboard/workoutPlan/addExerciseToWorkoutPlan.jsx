@@ -2,20 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import {
-  IoFilterOutline,
   IoAddCircleOutline,
   IoSearchOutline,
 } from "react-icons/io5";
 import useAddToWorkout from "../../../hooks/workoutPlans/useAddToWorkout";
 import useExercisesFetching from "../../../hooks/exercises/useExercisesFetching";
 import ExerciseModal from "./ExerciseModal";
-import { motion, AnimatePresence } from "framer-motion";
+import { Filter } from "../filter";
+import { Pagination } from "../pagination";
 
 function AddExerciseToWorkoutPlan({ handleRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { addToWorkout, error, setError } = useAddToWorkout({
     handleRefresh,
     setShowModal,
@@ -37,13 +37,18 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
 
   const categories = useSelector((state) => state.exercise.exerciseCategories);
 
-  const handlePageChange = (newPage) => setPage(newPage);
-
   useEffect(() => {
     if (page > totalPages) {
-      setPage(totalPages > 0 ? totalPages : 1);
+      if (totalPages > 0) {
+        setPage(totalPages);
+      } else {
+        setPage(1);
+        setTotalPages(1);
+      }
     }
   }, [totalPages, page]);
+
+  const handlePageChange = (newPage) => setPage(newPage);
 
   const formValues = watch();
   const { exercises, loading } = useExercisesFetching({
@@ -99,66 +104,13 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
                   />
                 </div>
 
-                <div className="mb-4">
-                  <button
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-left text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-50"
-                  >
-                    <span>Filters</span>
-                    <IoFilterOutline
-                      className={`w-5 h-5 transform transition-transform duration-200 ${
-                        isFilterOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  <AnimatePresence>
-                    {isFilterOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="mt-2 space-y-2 overflow-hidden"
-                      >
-                        <select
-                          {...register("category")}
-                          className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="" disabled selected>
-                            All Categories
-                          </option>
-                          {categories.map((category) => (
-                            <option key={category} value={category}>
-                              {category}
-                            </option>
-                          ))}
-                        </select>
-                        <select
-                          {...register("intensity")}
-                          className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="" disabled selected>
-                            All Intensities
-                          </option>
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
-                        </select>
-                        <select
-                          {...register("limit")}
-                          className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="5">5 per page</option>
-                          <option value="10">10 per page</option>
-                          <option value="15">15 per page</option>
-                          <option value="20">20 per page</option>
-                          <option value="50">50 per page</option>
-                          <option value="100">100 per page</option>
-                        </select>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <Filter
+                  isExercise={true}
+                register={register}
+                  categories={categories}
+                  setIsOpen={setIsOpen}
+                  isOpen={isOpen}
+                />
 
                 <ExerciseModal
                   setError={setError}
@@ -172,33 +124,12 @@ function AddExerciseToWorkoutPlan({ handleRefresh }) {
                   loading={loading}
                 />
 
-                <div className="flex items-center justify-between mt-6">
-                  <button
-                    onClick={() => handlePageChange(page - 1)}
-                    disabled={page === 1}
-                    className={`px-4 py-2 text-sm font-medium rounded-md ${
-                      page === 1
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
-                  >
-                    Previous
-                  </button>
-                  <span className="text-sm text-gray-700">
-                    Page {page} of {totalPages}
-                  </span>
-                  <button
-                    onClick={() => handlePageChange(page + 1)}
-                    disabled={page === totalPages}
-                    className={`px-4 py-2 text-sm font-medium rounded-md ${
-                      page === totalPages
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-blue-500 text-white hover:bg-blue-600"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div>
+                <Pagination
+                  handlePageChange={handlePageChange}
+                  page={page}
+                  totalPages={totalPages}
+                  items={exercises}
+                />
               </div>
             </div>
           </div>

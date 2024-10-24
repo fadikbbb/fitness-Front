@@ -1,8 +1,11 @@
 import React from "react";
-import LineChart from "../../components/dashboard/lineChart";
-
+import UserDistributionChart from "../../components/dashboard/lineChart";
 function Dashboard() {
-  return <LineChart />;
+  return (
+    <div>
+      <UserDistributionChart />
+    </div>
+  );
 }
 
 export default Dashboard;

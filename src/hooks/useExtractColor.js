@@ -25,11 +25,11 @@ function useExtractColor(imageUrl, optionsCustom = {}) {
             try {
                 const colors = await extractDominantColors(imageUrl, options.maxSize);
                 if (isMounted) {
-                    const formatedColors = formatColors(colors, options.format, options.maxColors);
-                    setDominantColor(formatedColors.dominantColor);
-                    setDarkerColor(formatedColors.darkerColor);
-                    setLighterColor(formatedColors.lighterColor);
-                    setColors(formatedColors.colors);
+                    const formattedColors = formatColors(colors, options.format, options.maxColors);
+                    setDominantColor(formattedColors.dominantColor);
+                    setDarkerColor(formattedColors.darkerColor);
+                    setLighterColor(formattedColors.lighterColor);
+                    setColors(formattedColors.colors);
                 }
             } catch (error) {
                 if (isMounted) {
@@ -48,7 +48,7 @@ function useExtractColor(imageUrl, optionsCustom = {}) {
         return () => {
             isMounted = false;
         };
-    }, [imageUrl]);
+    }, [imageUrl, options.maxSize, options.format, options.maxColors]);
 
     return { dominantColor, darkerColor, lighterColor, loading, error, colors };
 }
@@ -195,7 +195,6 @@ function getLighterColor(color) {
 
 
 
-// funciones para convertir colores
 function rgbToHex(rgb) {
     const rgbaRegex = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(\.\d+)?))?\)/;
     const match = rgb.match(rgbaRegex);
@@ -242,6 +241,7 @@ function rgbaToHsl(rgba) {
             case r: h = (g - b) / d + (g < b ? 6 : 0); break;
             case g: h = (b - r) / d + 2; break;
             case b: h = (r - g) / d + 4; break;
+            default: h = 0;
         }
 
         h /= 6;
@@ -277,6 +277,7 @@ function rgbaToHsv(rgba) {
             case r: h = (g - b) / d + (g < b ? 6 : 0); break;
             case g: h = (b - r) / d + 2; break;
             case b: h = (r - g) / d + 4; break;
+            default: h = 0
         }
 
         h /= 6;

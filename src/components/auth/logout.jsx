@@ -10,11 +10,15 @@ export default function Logout({ isLogoutModalOpen, setIsLogoutModalOpen }) {
   const handleLogout = async () => {
     try {
       if (token) {
-        await apiClient.post("/auth/logout", {}, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true, 
-        });
-        dispatch(clearAuthState()); 
+        await apiClient.post(
+          "/auth/logout",
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          }
+        );
+        dispatch(clearAuthState());
         setIsLogoutModalOpen(false);
         console.log("Logged out successfully");
       }
@@ -28,7 +32,9 @@ export default function Logout({ isLogoutModalOpen, setIsLogoutModalOpen }) {
       {isLogoutModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded shadow-lg max-w-md w-full mx-4 text-center">
-            <h2 className="text-lg font-bold mb-4 text-black">Confirm Logout</h2>
+            <h2 className="text-lg font-bold mb-4 text-black">
+              Confirm Logout
+            </h2>
             <p className="mb-4 text-black">Are you sure you want to log out?</p>
             <div className="flex justify-around">
               <button

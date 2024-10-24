@@ -1,16 +1,22 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IoLogOutOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const Profile = memo(
   ({ setIsOpenProfile, setIsLogoutModalOpen, exception, isOpenProfile }) => {
     const { userId, userRole } = useSelector((state) => state.auth);
     const { user } = useSelector((state) => state.user);
-
+    const navigate = useNavigate();
     if (!userId && userId === "undefined" && userId === "null") {
       setIsOpenProfile(false);
     }
+    const [isSunday, setIsSunday] = useState(false);
+    useEffect(() => {
+      const today = new Date();
+      setIsSunday(today.getDay() === 2); // Check if today is Sunday
+    }, [isSunday, userId, navigate]);
     return (
       <>
         {userId && userRole ? (
@@ -59,12 +65,15 @@ const Profile = memo(
                 >
                   Nutrition Plan
                 </Link>
-                <Link
-                  className="hover:text-green-500 duration-300 md:text-base text-xs"
-                  to={`/user/weekly-reports/${userId}`}
-                >
-                  Weekly report
-                </Link>
+
+                {isSunday && (
+                  <Link
+                    className="hover:text-green-500 duration-300 md:text-base text-xs"
+                    to={`/user/weekly-reports/${userId}`}
+                  >
+                    Weekly report
+                  </Link>
+                )}
               </>
             )}
 

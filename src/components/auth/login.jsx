@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import { FaEye, FaEyeSlash, FaSpinner,FaEnvelope,FaLock } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom";
+import { FaEye, FaEyeSlash, FaSpinner, FaEnvelope, FaLock } from "react-icons/fa";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -17,30 +16,33 @@ const Login = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const [emailSent, setEmailSent] = useState(false);
+  const location = useLocation();
+  const [emailChangePassword, setEmailChangePassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const location = useLocation();
-  const { email, password } = location.state || {};
+  
+  const { email, password } = location?.state || {};
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (token != null) {
+    if (token) {
       navigate("/");
     }
   }, [navigate]);
 
   useEffect(() => {
-    if (email) {
-      setValue("email", email);
-    }
-    if (password) {
-      setValue("password", password);
-    }
+    const initialEmail = email || '';
+    const initialPassword = password || '';
+
+    setValue("email", initialEmail);
+    setEmailChangePassword(initialEmail);
+    setValue("password", initialPassword);
   }, [email, password, setValue]);
 
   const onSubmit = async (data) => {
     setLoading(true);
+    setEmailChangePassword(data.email);
+    
     try {
       const response = await axios.post(`${BASE_URL}/auth/login`, {
         ...data,
@@ -48,7 +50,6 @@ const Login = () => {
       });
 
       if (response.status === 200 || response.status === 201) {
-        setEmailSent(true);
         setError("");
         setMessage(response.data.message);
         navigate("/auth/verify-code", {
@@ -62,9 +63,7 @@ const Login = () => {
     } catch (error) {
       setMessage("");
       if (error.response) {
-        setError(
-          error.response.data.message || "An error occurred. Please try again."
-        );
+        setError(error.response.data.message || "An error occurred. Please try again.");
       } else {
         setError("Network error. Please check your connection.");
       }
@@ -79,7 +78,7 @@ const Login = () => {
 
   const goToPasswordResetRequest = () => {
     navigate("/auth/reset-password-request", {
-      state: { email: document.getElementById("email").value },
+      state: { email: emailChangePassword },
     });
   };
 
@@ -89,30 +88,23 @@ const Login = () => {
         <h2 className="text-3xl font-bold text-center text-primary">Login</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
-            <label
-              className=" mb-2 text-sm font-bold text-gray-700 flex items-center"
-              htmlFor="email"
-            >
+            <label htmlFor="email" className="mb-2 text-sm font-bold text-gray-700 flex items-center">
               <FaEnvelope className="mr-2" /> Email
             </label>
             <input
-              id="email"
               type="email"
               {...register("email", { required: "Email is required" })}
               autoComplete="email"
+              id="email"
               className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                 errors.email ? "border-red-500" : "border-gray-300"
               }`}
+              disabled={loading}
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
           </div>
           <div className="mb-4 relative">
-            <label
-              className=" mb-2 text-sm font-bold text-gray-700 flex items-center"
-              htmlFor="password"
-            >
+            <label htmlFor="password" className="mb-2 text-sm font-bold text-gray-700 flex items-center">
               <FaLock className="mr-2" /> Password
             </label>
             <div className="relative">
@@ -124,18 +116,17 @@ const Login = () => {
                 className={`w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 }`}
+                disabled={loading}
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
           </div>
           <button
             type="submit"
@@ -144,16 +135,11 @@ const Login = () => {
             }`}
             disabled={loading}
           >
-            {loading && <FaSpinner className="animate-spin mr-2" />}
-            {!loading && "Login"}
+            {loading ? <FaSpinner className="animate-spin mr-2" /> : "Login"}
           </button>
         </form>
-        {emailSent && message && (
-          <p className="mt-4 text-sm text-center text-green-500">{message}</p>
-        )}
-        {error && (
-          <p className="mt-4 text-sm text-center text-red-500">{error}</p>
-        )}
+        {message && <p className="mt-4 text-sm text-center text-green-500">{message}</p>}
+        {error && <p className="mt-4 text-sm text-center text-red-500">{error}</p>}
         <div className="flex justify-between items-center mt-4">
           <button
             type="button"

@@ -7,26 +7,26 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-       
+
         sm: '640px',   // Small screens and up
         md: '768px',   // Medium screens and up
         lg: '1024px',  // Large screens and up
         xl: '1280px',  // Extra large screens and up
       },
       colors: {
-        primary: '#40513B',
-        secondary: '#609966',
-        text: '#40513B',
-        hover: '#9DC08B',
-        background: '#EDF1D6',
+        primary: '#344e41',
+        secondary: '#588157',
+        text: '#3a5a40',
+        hover: '#a3b18a',
+        background: '#dad7cd',
         secondaryBackground: '#40513B',
         button: '#609966',
-        buttonHover: '#40513B',
-        darkSecondary: '#5C8374',
-        darkPrimary: '#9EC8B9',
-        darkBackground: '#092635',
+        buttonHover: '#001d3d',
+        darkSecondary: '#ffc300',
+        darkPrimary: '#ffd60a',
+        darkBackground: '#000814',
         darkHover: '#1B4242',
-        darkText: '#9EC8B9',
+        darkText: '#003566',
         muted: '#A7A7A7',
         success: '#28A745',
         warning: '#FFC107',

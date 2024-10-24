@@ -5,7 +5,6 @@ import useAddExercise from "../../../hooks/exercises/useAddExercise";
 
 const AddExercise = ({ onAdd, categories }) => {
   const [addFormOpen, setAddFormOpen] = useState(false);
-
   const {
     isAdding,
     addExerciseError,

@@ -58,7 +58,8 @@ function ExerciseForm({
     } else {
       clearErrors();
     }
-  }, [formErrors]);
+  }, [formErrors, setError, clearErrors]); // Add setError and clearErrors to the dependency array
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" encType="multipart/form-data">
@@ -190,9 +191,12 @@ function ExerciseForm({
                 const validTypes = [
                   'video/mp4',
                   'video/mpeg',
-                  'video/x-msvideo',
-                  'video/quicktime',
+                  'video/avi',
+                  'video/mov',
                   'video/webm',
+                  'video/mkv',
+                  'video/wmv',
+                  'video/flv',
                 ];
 
                 if (!validTypes.includes(fileType)) {

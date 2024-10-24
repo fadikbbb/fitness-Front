@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -20,6 +20,11 @@ const VerifyCode = () => {
   const { state } = location;
   const purpose = state?.purpose; // Default purpose to "login"
   const [data, setData] = useState(state || {}); // Set data to state || {}; // Default to an empty object
+  const [isMounted, setIsMounted] = useState(true); // Track if component is mounted
+  useEffect(() => {
+    setIsMounted(true); // Set mounted to true on mount
+    return () => setIsMounted(false); // Set mounted to false on unmount
+  }, []);
   const handleChange = (e, index) => {
     const { value } = e.target;
     if (/^[0-9]*$/.test(value)) {
@@ -62,11 +67,14 @@ const VerifyCode = () => {
         ...data,
         code: inputCode,
       });
-      setMessage(response.data.message);
+      if (isMounted) {
+        setMessage(response.data.message);
+        setError("");
+      }
       if (purpose === "login") {
         const token = response.data.token;
         try {
-          const decodedToken = jwtDecode(token); 
+          const decodedToken = jwtDecode(token);
           dispatch(setUserRole(decodedToken.role));
           dispatch(setToken(token));
           dispatch(setUserId(decodedToken.userId));
@@ -75,9 +83,12 @@ const VerifyCode = () => {
           setTimeout(() => {
             navigate("/");
           }, 1000);
-         
         } catch (error) {
-          console.error("Error decoding token:", error);
+          if (isMounted) {
+            setMessage("");
+            setError("Invalid token. Please try again.");
+            console.error("Error decoding token:", error);
+          }
         }
       } else if (purpose === "register") {
         setShake(true);
@@ -94,7 +105,9 @@ const VerifyCode = () => {
       }
     } finally {
       setTimeout(() => setShake(false), 1000);
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     }
   };
   const handleResendCode = async () => {
@@ -111,13 +124,13 @@ const VerifyCode = () => {
 
       setError(""); // Clear any previous errors
       setShake(true); // Trigger shaking animation
-      setMessage(response.data.message); // Set the success message
-
-      // Clear the code state and input fields
-      setCode("");
-      inputRefs.current.forEach((input) => {
-        if (input) input.value = ""; // Clear each input field
-      });
+      if (isMounted) {
+        setMessage(response.data.message); // Set the success message
+        setCode("");
+        inputRefs.current.forEach((input) => {
+          if (input) input.value = ""; // Clear each input field
+        });
+      }
     } catch (error) {
       setMessage(""); // Clear the message on error
       if (error.response) {
@@ -126,7 +139,9 @@ const VerifyCode = () => {
         setError("Something went wrong"); // Handle other types of errors
       }
     } finally {
-      setLoading(false); // Set loading to false
+      if (isMounted) {
+        setLoading(false); // Set loading to false
+      }
       setTimeout(() => {
         setShake(false); // Stop the shaking animation after a delay
       }, 1000);

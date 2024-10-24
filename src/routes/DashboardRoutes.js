@@ -13,9 +13,8 @@ import Workout from '../pages/dashboard/workoutPlan/workoutPlan';
 import NutritionPlan from '../pages/dashboard/nutritionPlan/nutritionPlan';
 import NavBar from '../components/home/navBar';
 import SideBar from '../components/dashboard/sidebar';
-import WeeklyReports from '../components/dashboard/weeklyReports/weeklyReports';
-import SingleWeeklyReport from '../components/dashboard/weeklyReports/singleWeeklyReport';
 import NotFound from "../pages/notfound";
+
 const DashboardRoutes = () => (
     <div className="flex flex-col min-h-screen container mx-auto">
         <NavBar />
@@ -28,28 +27,16 @@ const DashboardRoutes = () => (
                             <RequireAdmin element={<Dashboard />} />
                         } />
                     } />
-                    <Route path="/weekly-reports"element={
-                        <RequireAuth element={
-                            <RequireAdmin element={<WeeklyReports />} />
-                        } />
-                    } />
-                    <Route path="/weekly-reports/:id"element={
-                        <RequireAuth element={
-                            <RequireAdmin element={<SingleWeeklyReport />} />
-                        } />
-                    } />
                     <Route path="/exercise" element={
                         <RequireAuth element={
                             <RequireAdmin element={<Exercise />} />
                         } />
                     } />
-
                     <Route path="/exercise/:exerciseId" element={
                         <RequireAuth element={
                             <RequireAdmin element={<SingleExercise />} />
                         } />
                     } />
-
                     <Route path="/food" element={
                         <RequireAuth element={
                             <RequireAdmin element={<Food />} />

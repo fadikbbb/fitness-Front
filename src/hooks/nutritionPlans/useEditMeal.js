@@ -9,7 +9,7 @@ const useEditMeal = ({ setIsOpen }) => {
     const editMeal = async (mealName, mealId, planId, handleRefresh) => {
         setIsEditingMeal(true);
         try {
-            const response = await apiClient.patch(
+            await apiClient.patch(
                 `/nutrition-plans/${userId}/plans/${planId}/meals/${mealId}`,
                 {
                     mealName: mealName,

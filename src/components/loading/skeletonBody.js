@@ -1,21 +1,23 @@
 import React from "react";
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 function SkeletonBody() {
   return (
-    <div className="animate-pulse space-y-4">
+    <div className="space-y-4">
       {/* Search and Add Exercise Section */}
       <div className="flex justify-between mb-4">
-        <div className="w-[70%] h-10 bg-gray-300 rounded-md" />
-        <div className="w-20 h-10 bg-gray-300 rounded-md" />
+        <Skeleton width="70%" height={40} borderRadius={8} />
+        <Skeleton width={80} height={40} borderRadius={8} />
       </div>
 
       {/* Filter Section */}
       <div className="bg-white rounded-md p-4 space-y-4">
-        <div className="w-full h-10 bg-gray-300 rounded-md" />
+        <Skeleton width="100%" height={40} borderRadius={8} />
         <div className="flex justify-between space-x-2">
-          <div className="w-1/3 h-10 bg-gray-300 rounded-md" />
-          <div className="w-1/3 h-10 bg-gray-300 rounded-md" />
-          <div className="w-1/3 h-10 bg-gray-300 rounded-md" />
+          <Skeleton width="33%" height={40} borderRadius={8} />
+          <Skeleton width="33%" height={40} borderRadius={8} />
+          <Skeleton width="33%" height={40} borderRadius={8} />
         </div>
       </div>
 
@@ -24,18 +26,15 @@ function SkeletonBody() {
         {Array(6)
           .fill(0)
           .map((_, index) => (
-            <div
-              key={index}
-              className="bg-gray-300 h-40 rounded-md"
-            />
+            <Skeleton key={index} height={160} borderRadius={8} />
           ))}
       </div>
 
       {/* Pagination Section */}
       <div className="flex justify-center space-x-4 mt-6">
-        <div className="w-20 h-10 bg-gray-300 rounded-md" />
-        <div className="w-10 h-10 bg-gray-300 rounded-md" />
-        <div className="w-20 h-10 bg-gray-300 rounded-md" />
+        <Skeleton width={80} height={40} borderRadius={8} />
+        <Skeleton width={40} height={40} borderRadius={8} />
+        <Skeleton width={80} height={40} borderRadius={8} />
       </div>
     </div>
   );

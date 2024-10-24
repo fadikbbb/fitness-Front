@@ -52,7 +52,9 @@ function Register() {
       } else {
         setError("server", {
           type: "manual",
-          message: error.response.data?.error || "An error occurred. Please try again.",
+          message:
+            error.response.data?.error ||
+            "An error occurred. Please try again.",
         });
       }
     } finally {
@@ -67,10 +69,17 @@ function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full mx-auto p-8 bg-white rounded-lg shadow-lg mt-10">
-        <h2 className="text-3xl font-bold mb-8 text-center text-primary">Create an Account</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-primary">
+          Create an Account
+        </h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-1">
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
+            <label
+              htmlFor="firstName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              First Name
+            </label>
             <input
               type="text"
               id="firstName"
@@ -80,11 +89,18 @@ function Register() {
               }`}
             />
             {errors.firstName && (
-              <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.firstName.message}
+              </p>
             )}
           </div>
           <div className="space-y-1">
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Last Name
+            </label>
             <input
               type="text"
               id="lastName"
@@ -94,11 +110,18 @@ function Register() {
               }`}
             />
             {errors.lastName && (
-              <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.lastName.message}
+              </p>
             )}
           </div>
           <div className="space-y-1">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
             <input
               type="email"
               id="email"
@@ -108,10 +131,17 @@ function Register() {
               }`}
             />
             {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.email.message}
+              </p>
             )}
           </div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
           <div className="space-y-1 relative">
             <input
               type={passwordVisible ? "text" : "password"}
@@ -136,22 +166,33 @@ function Register() {
             </button>
           </div>
           {errors.password && (
-            <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
           )}
           {errors.server && (
             <p className="text-red-500 text-xs mt-1">{errors.server.message}</p>
           )}
-          <div className="flex">
+          <div className="flex gap-4 items-center">
             <button
               type="submit"
-              className={`w-full py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all ${
+              className={`w-fit py-3 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all ${
                 loading ? "cursor-not-allowed" : ""
               }`}
               disabled={loading}
             >
-              {loading ? <FaSpinner className="animate-spin mx-auto" /> : "Register"}
+              {loading ? (
+                <FaSpinner className="animate-spin mx-auto" />
+              ) : (
+                "Register"
+              )}
             </button>
-            <div onClick={goToHome} className="w-full py-3 px-4  text-t rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">go home</div>
+            <div
+              onClick={goToHome}
+              className="w-fit hover:text-blue-700 cursor-pointer transition-all"
+            >
+              go home
+            </div>
           </div>
         </form>
       </div>

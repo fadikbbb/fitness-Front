@@ -9,10 +9,11 @@ import DashboardRoutes from "./routes/DashboardRoutes";
 import UserRoutes from "./routes/UserRoutes";
 import { fetchUser } from "./store/userSlice";
 import { fetchAllSettings } from "./store/settingsSlice";
+import FloatingCircleMenu from "./components/home/FAB";
 
 function App() {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth.userId); // Assuming you have auth state for userId
+  const userId = useSelector((state) => state.auth.userId);
 
   useEffect(() => {
     dispatch(fetchAllSettings());
@@ -20,7 +21,7 @@ function App() {
 
   useEffect(() => {
     if (userId) {
-      dispatch(fetchUser(userId)); // Pass userId here
+      dispatch(fetchUser(userId));
     }
   }, [dispatch, userId]);
 
@@ -40,6 +41,7 @@ function App() {
 export default function AppContainer() {
   return (
     <Provider store={store}>
+      <FloatingCircleMenu />
       <App />
     </Provider>
   );

@@ -1,4 +1,3 @@
-// src/hooks/useUpdateSettings.js
 import { useState, useCallback } from "react";
 import apiClient from "../../utils/axiosConfig";
 import { useDispatch } from "react-redux";
@@ -8,7 +7,6 @@ import {
     fetchHeroSettings,
     fetchSocialMediaSettings,
     fetchTrainerSettings,
-
 } from "../../store/settingsSlice";
 
 const useUpdateSettings = ({ setError }) => {
@@ -17,7 +15,7 @@ const useUpdateSettings = ({ setError }) => {
     const [updateError, setUpdateError] = useState(null);
     const dispatch = useDispatch();
 
-    const handleError = (error) => {
+    const handleError = useCallback((error) => {
         if (error.response?.data?.message) {
             setUpdateError(error.response.data.message);
         } else if (error.response?.data?.errors) {
@@ -30,7 +28,7 @@ const useUpdateSettings = ({ setError }) => {
         } else {
             setUpdateError("An unexpected error occurred");
         }
-    };
+    }, [setError]);
 
     const updateContent = useCallback(async (url, data, from) => {
         setUpdateMessage(null);
@@ -64,10 +62,10 @@ const useUpdateSettings = ({ setError }) => {
                     break;
                 case "socialMedia":
                     dispatch(fetchSocialMediaSettings());
-                    break
+                    break;
                 case "hero":
                     dispatch(fetchHeroSettings());
-                    break
+                    break;
                 case "trainers":
                     dispatch(fetchTrainerSettings());
                     break;
@@ -76,8 +74,6 @@ const useUpdateSettings = ({ setError }) => {
             }
 
             setUpdateMessage(response.data.message);
-
-
         } catch (error) {
             handleError(error);
         } finally {
@@ -87,7 +83,7 @@ const useUpdateSettings = ({ setError }) => {
                 setUpdateMessage(null);
             }, 2000);
         }
-    }, [dispatch, setError,]);
+    }, [dispatch, handleError]);
 
     const updateHero = (data) => updateContent("/settings/update-content/hero", data, "hero");
     const updateSocialMedia = (data) => updateContent("/settings/update-content/social-media", data, "socialMedia");

@@ -5,8 +5,6 @@ import { IoPersonOutline } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
 import { GiMuscularTorso } from "react-icons/gi";
 import { useSelector } from "react-redux";
-import { AiOutlineFileText } from 'react-icons/ai'; // Example: Ant Design file icon
-
 function SideBar() {
   const { hero } = useSelector((state) => state.settings);
   const location = useLocation();
@@ -69,17 +67,7 @@ function SideBar() {
             <span className="text-base font-medium md:block hidden">Users</span>
           </Link>
         </li>
-        <li>
-          <Link
-            to="/dashboard/weekly-reports"
-            className={`flex items-center md:justify-between justify-center p-2 md:p-4 ${isActive(
-              "/dashboard/users"
-            )}`}
-          >
-            <AiOutlineFileText  className="md:w-6 md:h-6 w-8 h-8" />
-            <span className="text-base font-medium md:block hidden">weekly report</span>
-          </Link>
-        </li>
+       
       </ul>
       <ul className="flex flex-col border-t border-primary">
         <li>

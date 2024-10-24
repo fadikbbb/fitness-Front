@@ -1,68 +1,94 @@
-import React, { useState, useEffect } from "react";
-import { FaCircle } from "react-icons/fa"; // Import icons for the clickable balls
+import { useState, useEffect } from "react";
+import { FaCircle } from "react-icons/fa";
+import apiClient from "../../../utils/axiosConfig";
+import { useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 function WeeklyReportForm() {
-  // State for form fields
-  const [formData, setFormData] = useState({
-    eatingCommitment: 5,
-    exerciseCommitment: 5,
-    sleepCommitment: 5,
-    weightOld: "",
-    weightNow: "",
-    noProblems: false,
-    problemDescription: "",
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const { userId } = useSelector((state) => state.auth);
+  const [addError, setAddError] = useState("");
+  const [addMessage, setAddMessage] = useState("");
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    setError,
+    clearErrors,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      eatingLevel: 5,
+      exerciseLevel: 5,
+      sleepLevel: 5,
+      weight: 0,
+      isProblems: false,
+      problems: "",
+    },
   });
 
-  // Effect to clear problem description if "noProblems" is unchecked
+  const onSubmit = async (data) => {
+    try {
+      const response = await apiClient.post(
+        `${BASE_URL}/weekly-reports/${userId}`,
+        data
+      );
+      setAddMessage(response.data.message);
+    } catch (error) {
+      if (error.response && error.response.data.errors) {
+        error.response.data.errors.forEach((err) =>
+          setError(err.path, {
+            type: "manual",
+            message: err.msg,
+          })
+        );
+      } else if (error.response && error.response.data.message) {
+        setAddError(error.response.data.message || "An error occurred");
+      }
+    } finally {
+      setTimeout(() => {
+        setAddMessage(null);
+        setAddError(null);
+        clearErrors(); // Clear form errors after timeout
+      }, 5000);
+    }
+  };
+
+  const renderRating = (name, value) => (
+    <div className="flex space-x-2">
+      {[...Array(10)].map((_, index) => (
+        <FaCircle
+          key={index}
+          size={20}
+          className={`cursor-pointer ${
+            index < value ? "text-indigo-600" : "text-gray-300"
+          }`}
+          onClick={() => setValue(name, index + 1)}
+        />
+      ))}
+    </div>
+  );
+
+  const isProblems = watch("isProblems");
+
   useEffect(() => {
-    if (!formData.noProblems) {
-      setFormData((prevState) => ({
-        ...prevState,
-        problemDescription: "",
-      }));
+    const today = new Date();
+    const isItSunday = today.getDay() === 2;
+    if (!isItSunday) {
+      navigate("/");
     }
-  }, [formData.noProblems]);
+  }, [navigate]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-  const handleRatingChange = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.noProblems) {
-      // If no problems, ensure problemDescription is empty
-      formData.problemDescription = "";
+  useEffect(() => {
+    if (!isProblems) {
+      setValue("problems", "");
     }
-    console.log("Form Data:", formData);
-  };
-
-  const renderRating = (name, value) => {
-    return (
-      <div className="flex space-x-2">
-        {[...Array(10)].map((_, index) => (
-          <FaCircle
-            key={index}
-            size={20}
-            className={`cursor-pointer ${
-              index < value ? "text-indigo-600" : "text-gray-300"
-            }`}
-            onClick={() => handleRatingChange(name, index + 1)}
-          />
-        ))}
-      </div>
-    );
-  };
+  }, [isProblems, setValue]);
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
@@ -70,13 +96,16 @@ function WeeklyReportForm() {
         Weekly Commitment Report
       </h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         {/* Eating Commitment */}
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2">
             Commitment to Eating (1-10):
           </label>
-          {renderRating("eatingCommitment", formData.eatingCommitment)}
+          {renderRating("eatingLevel", watch("eatingLevel"))}
+          {errors.eatingLevel && (
+            <span className="text-red-500">{errors.eatingLevel.message}</span>
+          )}
         </div>
 
         {/* Exercise Commitment */}
@@ -84,7 +113,10 @@ function WeeklyReportForm() {
           <label className="block text-gray-700 font-bold mb-2">
             Commitment to Exercise (1-10):
           </label>
-          {renderRating("exerciseCommitment", formData.exerciseCommitment)}
+          {renderRating("exerciseLevel", watch("exerciseLevel"))}
+          {errors.exerciseLevel && (
+            <span className="text-red-500">{errors.exerciseLevel.message}</span>
+          )}
         </div>
 
         {/* Sleep Commitment */}
@@ -92,38 +124,26 @@ function WeeklyReportForm() {
           <label className="block text-gray-700 font-bold mb-2">
             Commitment to Sleep (1-10):
           </label>
-          {renderRating("sleepCommitment", formData.sleepCommitment)}
+          {renderRating("sleepLevel", watch("sleepLevel"))}
+          {errors.sleepLevel && (
+            <span className="text-red-500">{errors.sleepLevel.message}</span>
+          )}
         </div>
 
-        {/* Old and Current Weight */}
+        {/* Weight */}
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2">
-            Old Weight (kg):
+            Weight (kg):
           </label>
           <input
             type="number"
-            name="weightOld"
-            value={formData.weightOld}
-            onChange={handleChange}
-            placeholder="Enter your old weight"
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-gray-700 font-bold mb-2">
-            Current Weight (kg):
-          </label>
-          <input
-            type="number"
-            name="weightNow"
-            value={formData.weightNow}
-            onChange={handleChange}
+            {...register("weight", { required: "Weight is required" })}
             placeholder="Enter your current weight"
             className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
-            required
           />
+          {errors.weight && (
+            <span className="text-red-500">{errors.weight.message}</span>
+          )}
         </div>
 
         {/* Problem Checkbox */}
@@ -131,36 +151,44 @@ function WeeklyReportForm() {
           <label className="text-gray-700 font-bold">
             <input
               type="checkbox"
-              name="noProblems"
-              checked={formData.noProblems}
-              onChange={handleChange}
+              {...register("isProblems")}
               className="mr-2 leading-tight"
             />
-            Have Problems?
+            Do you have problems?
           </label>
         </div>
 
-        {/* Problem Description (conditionally rendered) */}
-        {formData.noProblems && (
+        {/* Problem Description */}
+        {isProblems && (
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               Describe the problem:
             </label>
             <textarea
-              name="problemDescription"
-              value={formData.problemDescription}
-              onChange={handleChange}
+              {...register("problems", {
+                required: isProblems
+                  ? "Problem description is required"
+                  : false,
+              })}
               placeholder="Describe any problems you encountered"
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
               rows="4"
-              required
             />
+            {errors.problems && (
+              <span className="text-red-500">{errors.problems.message}</span>
+            )}
           </div>
         )}
 
+        {/* Error Messages */}
+        {addError && <p className="text-red-500">{addError}</p>}
+        {addMessage && <p className="text-green-500">{addMessage}</p>}
+
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700"
+          disabled={!isValid} // Disable button if form is invalid
         >
           Submit Commitment
         </button>

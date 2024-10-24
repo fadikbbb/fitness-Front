@@ -8,9 +8,24 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
   scroll-behavior: smooth;
-
 }
-
+body {
+  top: 0 !important;
+  left: 0 !important;
+}
+#goog-gt-tt,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-aZ2wEe-OiiCO,
+.VIpgJd-ZVi9od-aZ2wEe {
+  display: none !important;
+}
+.VIpgJd-yAWNEb-VIpgJd-fmcmS-sn54Q {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.skiptranslate {
+  display: none;
+}
 @keyframes shake {
   0%,
   100% {

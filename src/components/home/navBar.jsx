@@ -16,6 +16,7 @@ export default function NavBar({ exception }) {
   const { user } = useSelector((state) => state.user);
 
   const { hero, loading } = useSelector((state) => state.settings);
+
   return (
     <>
       {loading ? (

@@ -170,11 +170,14 @@ export function RenderForm({
                 if (!value[0]) return true; // Allow no file if it's optional
                 const fileType = value[0].type;
                 const validTypes = [
-                  "video/mp4",
-                  "video/mpeg",
-                  "video/x-msvideo",
-                  "video/quicktime",
-                  "video/webm",
+                 'video/mp4',
+                  'video/mpeg',
+                  'video/avi',
+                  'video/mov',
+                  'video/webm',
+                  'video/mkv',
+                  'video/wmv',
+                  'video/flv',
                 ];
                 if (!validTypes.includes(fileType))
                   return "Only video/mp4 , video/mpeg, video/x-msvideo, video/quicktime and video/webm image formats are allowed.";

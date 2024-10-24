@@ -64,7 +64,7 @@ function SocialMediaForm() {
             },
             pattern: {
               value:
-                /^(http\:\/\/|https\:\/\/)?(?:www\.)?facebook\.com\/(?:(?:\w\.)*#!\/)?(?:pages\/)?(?:[\w\-\.]*\/)*([\w\-\.]*)/i,
+                /^(http:\/\/|https:\/\/)?(?:www\.)?facebook.com\/(?:(?:\w\.)*#!\/)?(?:pages\/)?(?:[\w.-]*\/)*([\w.-]*)/i,
               message: "Please enter a valid Facebook link",
             },
           })}
@@ -92,7 +92,7 @@ function SocialMediaForm() {
             },
             pattern: {
               value:
-                /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\/([a-zA-Z0-9_]{1,15})\/?$/i,
+                /^(https?:\/\/)?(www\.)?(twitter.com|x.com)\/([a-zA-Z0-9_]{1,15})\/?$/i,
               message: "Please enter a valid Twitter link",
             },
           })}
@@ -120,7 +120,7 @@ function SocialMediaForm() {
             },
             pattern: {
               value:
-                /^(https?:\/\/)?(www\.)?instagram\.com\/([a-zA-Z0-9_.]{1,30})\/?$/i,
+                /^(https?:\/\/)?(www\.)?instagram.com\/([a-zA-Z0-9_.]{1,30})\/?$/i,
               message: "Please enter a valid Instagram link",
             },
           })}
@@ -150,7 +150,7 @@ function SocialMediaForm() {
             },
             pattern: {
               value:
-                /^(https?:\/\/)?(www\.)?linkedin\.com\/(in|company)\/[a-zA-Z0-9_-]+\/?$/i,
+                /^(https?:\/\/)?(www\.)?linkedin.com\/(in|company)\/[a-zA-Z0-9_-]+\/?$/i,
               message: "Please enter a valid LinkedIn link",
             },
           })}

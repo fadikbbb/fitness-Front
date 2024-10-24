@@ -8,6 +8,7 @@ import PasswordResetRequest from "../components/auth/PasswordResetRequest";
 import ResetPassword from "../components/auth/ResetPassword";
 import NotFound from "../pages/notfound";
 const AuthRoutes = () => (
+
     <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
@@ -16,6 +17,7 @@ const AuthRoutes = () => (
         <Route path="/reset-password/reset/:token" element={<ResetPassword />} />
         <Route path="*" element={<NotFound />} />
     </ Routes>
+
 );
 
 export default AuthRoutes;

@@ -42,7 +42,7 @@ function HeroForm() {
         heroDescription: hero?.heroDescription || "",
       });
     }
-  }, [hero]);
+  }, [hero, reset]);
 
   const toggleMode = () => {
     setActiveMode(activeMode === "edit" ? "preview" : "edit");

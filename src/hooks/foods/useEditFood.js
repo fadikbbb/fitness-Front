@@ -18,6 +18,7 @@ const useEditFood = ({ onEdit, setEditFormOpen }) => {
                 formData.append(key, data[key]);
             }
         });
+        formData.forEach((value, key) => console.log(key, value));
         setIsEditing(true);
         try {
             setEditFoodError(null);
